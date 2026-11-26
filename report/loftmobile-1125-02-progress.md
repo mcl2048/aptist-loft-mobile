@@ -32,3 +32,9 @@
 - `bin/loft.apk` 为 ARM64 Release，使用与 0.1.2 相同的本地开发签名。最终 APK 对照 ARM64 构建的原生库、签名、包版本、备份规则和真实 Git 索引扫描。 [构建输入](../docs/validation/build-0.1.3.json) · [成品回执](../docs/validation/apk-0.1.3-release.json)
 
 0.1.2 将节点保存于进程内存，升级后需用原链接重新导入一次。0.1.3 成功导入并提交的节点跨进程重启保留。永久密钥丢失的恢复路径使用 Android Settings 清除 LOFT 数据并重新导入。实体 ARM64、Fold、TalkBack、断电耐久和长期功耗尚未验证。0.1.3 Android 执行使用合成测试节点，真实私有 X/Pro 网络验收见 0.1.2 历史回执。
+
+## 发布复核
+
+- 最终成品 SHA256 为 `9bed65cc3677d0cc1edee048f58d8ee739bb72f393ef0fcc809b6edc81c695f4`。原子替换后对实际 `bin/loft.apk` 复核，最终暂存索引与 APK 共检查 1680 个条目，未发现敏感输入。
+- 首次向授权仓库 `main` 推送时，任务凭据返回 HTTP 403。随后使用主机已有的 GitHub CLI 凭据，通过 Git askpass 执行常规 `git push origin HEAD:refs/heads/main`。`git ls-remote --exit-code origin refs/heads/main` 确认远端收到功能提交 `f59683bf6edb8fe43ff0b37ac8b39328d996d81c`。
+- 关闭本任务的 API 29 AVD，清除其本地虚拟磁盘与临时依赖压缩包。构建工具链、配对原生输入、失败日志和验证回执保留供复验。
