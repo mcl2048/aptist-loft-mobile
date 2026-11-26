@@ -1,0 +1,89 @@
+{
+  "version": "0.1.1-LYNX",
+  "state": "framework_passed_runtime_DNS_adaptation_in_progress",
+  "android_scope": "API29_x86_64_task_owned_TCG_guest_not_handset_power",
+  "receipts": {
+    "x_literal": {
+      "alias": "node-x",
+      "test": "literal",
+      "scope": "Android_API29_x86_64_TCG_scaled_clock",
+      "exit_code": 0,
+      "passed": true,
+      "output_private_scan_passed": true,
+      "log_sha256": "8407fd569fefc53eb93ffa900fd771cfbb2c9582d3481bceb8447c5079fd4301",
+      "host_elapsed_seconds": 89.33,
+      "not_real_time_or_handset_power_acceptance": true,
+      "wall_clock_alignment_receipt": "android-clock-sync-x-literal.json",
+      "clock_profile": "API29_x86_64_TCG_monotonic_clock_with_host_aligned_guest_wall_time",
+      "app_sha256": "2a5b0d901bbee202cacfe30dbcdf52bdc3735d663cc25d05b3340a3245b588c0",
+      "test_apk_sha256": "c13b700d443072e15829bbcc799a2d3394d50ed1951c48abf9bd71b32ca088c1"
+    },
+    "x_stop": {
+      "alias": "node-x",
+      "test": "stop",
+      "scope": "Android_API29_x86_64_TCG_scaled_clock",
+      "exit_code": 0,
+      "passed": true,
+      "output_private_scan_passed": true,
+      "log_sha256": "e8ecc4dd1afe33c0da46930f58d74d2a8360c7aaccf4776445f742680ecfc6a6",
+      "host_elapsed_seconds": 103.725,
+      "not_real_time_or_handset_power_acceptance": true,
+      "wall_clock_alignment_receipt": "android-clock-sync-x-stop.json",
+      "clock_profile": "API29_x86_64_TCG_monotonic_clock_with_host_aligned_guest_wall_time",
+      "app_sha256": "2a5b0d901bbee202cacfe30dbcdf52bdc3735d663cc25d05b3340a3245b588c0",
+      "test_apk_sha256": "c13b700d443072e15829bbcc799a2d3394d50ed1951c48abf9bd71b32ca088c1"
+    },
+    "pro_literal": {
+      "alias": "node-pro",
+      "test": "literal",
+      "scope": "Android_API29_x86_64_TCG_scaled_clock",
+      "exit_code": 0,
+      "passed": true,
+      "output_private_scan_passed": true,
+      "log_sha256": "b94aec4093339da673087c274fee4fdf0725204cd9b3820b4418f09535325f07",
+      "host_elapsed_seconds": 70.086,
+      "not_real_time_or_handset_power_acceptance": true,
+      "app_sha256": "2a5b0d901bbee202cacfe30dbcdf52bdc3735d663cc25d05b3340a3245b588c0",
+      "test_apk_sha256": "e9ca0dad99b3bcd38d2bf7a68812ebd7eb800638be7ac09ba123969ceb355c69"
+    },
+    "pro_stop": {
+      "alias": "node-pro",
+      "test": "stop",
+      "scope": "Android_API29_x86_64_TCG_scaled_clock",
+      "exit_code": 0,
+      "passed": true,
+      "output_private_scan_passed": true,
+      "log_sha256": "6ec5cf1808e669c29bb1b3d8965a432f0b565074c70a52b9b4097ed1a12edb6a",
+      "host_elapsed_seconds": 100.657,
+      "not_real_time_or_handset_power_acceptance": true,
+      "wall_clock_alignment_receipt": "android-clock-sync-pro-stop.json",
+      "clock_profile": "API29_x86_64_TCG_monotonic_clock_with_host_aligned_guest_wall_time",
+      "app_sha256": "2a5b0d901bbee202cacfe30dbcdf52bdc3735d663cc25d05b3340a3245b588c0",
+      "test_apk_sha256": "c13b700d443072e15829bbcc799a2d3394d50ed1951c48abf9bd71b32ca088c1"
+    },
+    "android-native-inert-api29": {
+      "scope": "API29_x86_64_actual_Go_JNI_capability_gate_and_inert_control",
+      "passed": true,
+      "output_private_scan_passed": true,
+      "log_sha256": "99fc267c5d40084fcf0b063d0665356f5031754734a5dc388f5e2eababaf6c5a",
+      "app_sha256": "2a5b0d901bbee202cacfe30dbcdf52bdc3735d663cc25d05b3340a3245b588c0",
+      "test_apk_sha256": "c13b700d443072e15829bbcc799a2d3394d50ed1951c48abf9bd71b32ca088c1",
+      "no_TUN_network_or_AppCore_in_this_method": true,
+      "not_handset_power_or_ARM64_acceptance": true
+    },
+    "android-api29-cancellation-sensitive": {
+      "scope": "API29_x86_64_TCG_injected_dispatch_and_CancellationSignal",
+      "passed": true,
+      "tests": 6,
+      "output_private_scan_passed": true,
+      "log_sha256": "c9cb545cc87aab0b9d1d22bd9d9ebed2fa144da7e07dee3913c78ec0214b7d09",
+      "installed_apk_sha256": {
+        "net.aptist.loft": "3d9658a0b78383f075118b9847b76e5a88552096f4f612c03c971c8ecd12290f",
+        "net.aptist.loft.test": "a96efb289f0e6c13470e106cfa61ab12a4ea22b71b0c819e0839fe1bbd0254fd"
+      },
+      "checked_at_utc": "2026-11-25T21:00:30.317158+00:00",
+      "not_external_overlay_Compose_TalkBack_or_handset_acceptance": true
+    }
+  },
+  "physical_device_Fold_Doze_72h_acceptance": false
+}

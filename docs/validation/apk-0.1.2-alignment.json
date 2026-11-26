@@ -1,0 +1,26 @@
+{
+  "result": "PASS",
+  "apk": "loft.apk",
+  "native_libraries": {
+    "lib/arm64-v8a/libandroidx.graphics.path.so": {
+      "machine": "AArch64",
+      "load_segments": 3,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libgojni.so": {
+      "machine": "AArch64",
+      "load_segments": 4,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libjnidispatch.so": {
+      "machine": "AArch64",
+      "load_segments": 2,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libloft_ffi.so": {
+      "machine": "AArch64",
+      "load_segments": 4,
+      "alignment": "16KiB-compatible"
+    }
+  }
+}

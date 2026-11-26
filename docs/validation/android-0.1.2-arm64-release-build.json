@@ -1,0 +1,439 @@
+{
+  "schema_version": 1,
+  "version": "0.1.2-LYNX",
+  "checked_at_utc": "2026-11-26T05:18:46.889745+00:00",
+  "command": [
+    "bash",
+    "scripts/build-android.sh"
+  ],
+  "canonical_entry_gradle_tasks": [
+    ":ui-foundation:test",
+    ":app:testReleaseUnitTest",
+    ":app:lintRelease",
+    ":app:assembleRelease"
+  ],
+  "gradle_workers": 2,
+  "gradle_parallel": false,
+  "gradle_jvm_max_heap": "1536MiB",
+  "kotlin_execution": "Kotlin daemon (actual host process observed)",
+  "returncode": 0,
+  "host_elapsed_seconds": 480.809,
+  "source_preflight_sha256": "205fb8df1fe2d49b2d32f1e47b4c17a4937f1f1401f0a57a7813d3e7827e6acc",
+  "source_entries": 130,
+  "source_and_verified_inputs_still_match": true,
+  "tools": {
+    "Rust": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+    "Go": "go version go1.27.4 linux/amd64",
+    "Java": "openjdk version \"21.0.13.1\" 2026-11-17"
+  },
+  "log": "tmp/verification/android-delivery-0.1.2/arm64-release-build.log",
+  "log_sha256": "0945cc81e48b7297d5cd47a91ccb0d7689380c6de7de2421fc5d8315b057bb51",
+  "suites": [
+    {
+      "name": "appRelease",
+      "counts": {
+        "tests": 78,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "xml": [
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.service.CoreAvailabilityGuardTest.xml",
+          "sha256": "e4877b009f16147e46410507f29aa3143e12e3b79f296f16143e81692a0da34e",
+          "counts": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.service.GoNetworkPolicyTest.xml",
+          "sha256": "559e2e613568355d2f116dc8d82ceed7073d5f397bc4343a310fb5943a8ecaf9",
+          "counts": {
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.service.GoPendingStartupReceiptTest.xml",
+          "sha256": "209e7b669f25ebed0fa7bd7ac2e04860ae171150b235bcdcc8a97652f8e4e496",
+          "counts": {
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.service.GoRuntimeInfoTest.xml",
+          "sha256": "bb9a3bf163e85e1e20e79bdc1fc269f7aa046c514786aa38838ff35a8be4e8e3",
+          "counts": {
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.service.GoSnapshotAdmissionTest.xml",
+          "sha256": "78b73cf967c16fc928bc2c35078d8cab4b8e36bd18d9526fb1ebd51f92d7f075",
+          "counts": {
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.service.GoVpnSnapshotTest.xml",
+          "sha256": "12f7b5582fbdef6a09dac67dae70a2215ad1ae561a9bbc40616c2e38787ca56b",
+          "counts": {
+            "tests": 13,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.service.NetworkPrivacyReceiptsTest.xml",
+          "sha256": "f0f82ab267bbd9146b4112ff517bc4ed43fef54e67acc3baa34671a4baf0fd99",
+          "counts": {
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.service.NetworkResourceSnapshotTest.xml",
+          "sha256": "c82696705f4ea384e0d16343f569663dc3c562b5fcfe9349374f26a921709fd4",
+          "counts": {
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.service.NodePageSelectionTest.xml",
+          "sha256": "1c50db48f3159c5131d284533da2bbe909127927de9dff95b2c83e1ab6c2947a",
+          "counts": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.service.NodePageWireTest.xml",
+          "sha256": "c8619fdd98de8b0c8790c27919761724e6d4287fddd2263f64d786b30af33345",
+          "counts": {
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.service.SnapshotPublicationTest.xml",
+          "sha256": "be4c073086e3be9328c0cfd43ec299c5103b438c5e825fdd8cb090e3c1f6eb56",
+          "counts": {
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.service.SnapshotWireTest.xml",
+          "sha256": "56c8d6d9ff1d827a8d5ab2cda3ed52c60107c4fd5dfa7fe6cfa7b31aecbf6787",
+          "counts": {
+            "tests": 18,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.service.VpnNotificationProjectionTest.xml",
+          "sha256": "578366154fdcf42d7848a89d919fc4a0dc2876c91aefd08995c58d27fdbe8f53",
+          "counts": {
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/app/build/test-results/testReleaseUnitTest/TEST-net.aptist.loft.testing.BoundedPrivateInputTest.xml",
+          "sha256": "adefc8a503bde0420d1c232578586ec4a6047f6b2a7f3266efcea3a3adbee315",
+          "counts": {
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "foundation",
+      "counts": {
+        "tests": 115,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "xml": [
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.AdaptiveLayoutTest.xml",
+          "sha256": "b8c55aee9f06bac6ce840d6952ba613a173c32435087986b533cf8a07266ad66",
+          "counts": {
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.ControlCodecTest.xml",
+          "sha256": "c7a37d430856446da4602e12a335a334f37803112a3fd1e1986063d57d7dd8fc",
+          "counts": {
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.FailureDispatchTest.xml",
+          "sha256": "d4c5704e217e1ea0ba42cfc317087f0dbed0dac84a0cedae8dfd4ce5e9be5e8e",
+          "counts": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.ForegroundPublicationTest.xml",
+          "sha256": "1d018415fe9ed58ad25369d88028f5a7fd655e9c74cf1ad9beaed83f394578e2",
+          "counts": {
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.FrozenUidScopeTest.xml",
+          "sha256": "fb6f0196ad2b59a22690f42a15e5c7cfbe2c997dd818304cb19f9a1c51b98de9",
+          "counts": {
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.MailNotificationEventsTest.xml",
+          "sha256": "f88e3a3056b8e1c51bcf929f098f71a7ff062679a773bbeab8a1a7f4134fc7fd",
+          "counts": {
+            "tests": 10,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.NativeResourcesTest.xml",
+          "sha256": "bc54f0bde67aa071df1567ba9564506540af6eb44dfa7339ae86438a4362bfca",
+          "counts": {
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.NavigationTest.xml",
+          "sha256": "28ae0b66a7abc7ea57ee8fe0c81d4e52057aac1c64e82d07254247e77fe0f9e9",
+          "counts": {
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.NetworkPrivacyCommandTest.xml",
+          "sha256": "6b8644ef862d99c0b5acd81652c998e7614ed27477e6fea6c7c039bb445287d8",
+          "counts": {
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.NodeResolutionOwnershipTest.xml",
+          "sha256": "1db3b0d98e27e8da91f84dc8a9093bcb0a11bbf55bc100a007c4a3e8ec74fcac",
+          "counts": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.NotificationAccessTest.xml",
+          "sha256": "7b0be997975ff1766260d9382fc87772bf20c8ae4cb28366b51bc18f1f7ab8b8",
+          "counts": {
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.ObscuredTouchGateTest.xml",
+          "sha256": "9815601fa38f28629dccec9d5007decbadeb43e79d6416ac6d6bafaab506eb04",
+          "counts": {
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.OriginalTunOwnershipTest.xml",
+          "sha256": "4b601c4f7d39a2161fd7dc23332b84ae45a9dcb174429717a98de617f8be93ab",
+          "counts": {
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.PriorityControlQueueTest.xml",
+          "sha256": "18019bbc06e17fe2219bb69891a0d18e732a5a6b3c610942dfdeb72ed9710326",
+          "counts": {
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.QueryGateTest.xml",
+          "sha256": "3549fded42aec9126dcf6dffcc37f338714197cf359b0e62f1fa85c303c53c6d",
+          "counts": {
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.RoutingDraftTest.xml",
+          "sha256": "5c272ec4147bec9ed0899079f5051db2ea43eae5526dc7d60ea170bb2a30a0d8",
+          "counts": {
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.SharedUidScopeTest.xml",
+          "sha256": "3c7b59f8429b2dd0985e82d13800fccf78bd4e407612aaf013cfe36e31fd8ac7",
+          "counts": {
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.SnapshotSequenceTest.xml",
+          "sha256": "322d37fd03f0806106d0cc404ed8932b76539bd53e4857887624267a4e07cd75",
+          "counts": {
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.StartOwnershipTest.xml",
+          "sha256": "54390dde15dc6a8cc8d8c17e98e63ee4e169daa9a893fe90de8408f1ad8bb3c4",
+          "counts": {
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.StopDispatchTest.xml",
+          "sha256": "b2a491d4378980e2f3fad3c91533002d3f1b7db6faf97c0eb662c3b2fd8502ac",
+          "counts": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.VisibilityEpochTest.xml",
+          "sha256": "039743c2ec8405d252d3131ccc707b6ad8ac03c66ab64c59aae21ff1e1dd538b",
+          "counts": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "path": "loft-android/ui-foundation/build/test-results/test/TEST-net.aptist.loft.foundation.VpnPermissionDraftTest.xml",
+          "sha256": "b2cd9817a7ca1fe13707c0f79ea5b1fcc88b462f28055835ba7732a0dffb8cd8",
+          "counts": {
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        }
+      ]
+    }
+  ],
+  "lint": {
+    "counts": {
+      "Fatal": 0,
+      "Error": 0,
+      "Warning": 32,
+      "Information": 0,
+      "Ignore": 0
+    },
+    "path": "loft-android/app/build/reports/lint-results-release.xml",
+    "sha256": "27ade5b7173c488e61c62d374f95f9178f18e91bbd77fadcd0dd4c2158c66b09"
+  },
+  "scope": "Complete ARM64 Release compilation/R8/resource shrink/lint/host unit checks; not signature, Android ARM64 execution or physical-device acceptance",
+  "artifact": {
+    "path": "loft-android/app/build/outputs/apk/release/app-release-unsigned.apk",
+    "bytes": 21499830,
+    "sha256": "fdcec3c1686e578657e208817ea3fbc9f0c30cc7f3a070e14e94f0463b2338d1",
+    "signing": "unsigned"
+  },
+  "passed": true,
+  "kotlin_environment_request": "ORG_GRADLE_PROJECT_kotlin.compiler.execution.strategy=in-process",
+  "kotlin_environment_request_was_not_execution_fact": true,
+  "kotlin_observation_sha256": "c0402b640bbbe8f57a64615e75d10171667a654565b6fae6c792319c9733e7c1",
+  "kotlin_daemon_max_heap": "1536MiB",
+  "r8_and_resource_shrink_executed": true
+}

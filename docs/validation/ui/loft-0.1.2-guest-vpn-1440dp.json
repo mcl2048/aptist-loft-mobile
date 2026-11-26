@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "version": "0.1.2-LYNX",
+  "checked_at_utc": "2026-11-26T05:07:48.894039+00:00",
+  "artifact_sha256": "e6b575c29d3c3010656d5328e920bf217d20181f43dbc1d91318ada0ede40103",
+  "png": "docs/validation/ui/loft-0.1.2-guest-vpn-1440dp.png",
+  "png_sha256": "696b82823baf16a7386cf7f234dd128afcfcc571ecb095ab333497ceb2227e2d",
+  "png_bytes": 66271,
+  "actual_pixels": [
+    900,
+    563
+  ],
+  "density_dpi": 100,
+  "width_dp": 1440,
+  "height_dp": 900.8,
+  "actual_activity_configuration": [
+    "mCurrentConfig={1.0 310mcc260mnc [en_US] ldltr sw900dp w1440dp h820dp 100dpi xlrg land finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 900, 563) mAppBounds=Rect(0, 0 - 900, 528) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0} s.3}"
+  ],
+  "page": "VPN_HOME",
+  "fresh_force_stopped_guest": true,
+  "no_private_node_imported": true,
+  "actual_disconnected_text_observed": true,
+  "visible_left_rail": [
+    {
+      "label": "Open account and server settings",
+      "bounds": [
+        11,
+        21,
+        34,
+        44
+      ]
+    },
+    {
+      "label": "Home",
+      "bounds": [
+        3,
+        53,
+        42,
+        88
+      ]
+    },
+    {
+      "label": "Network",
+      "bounds": [
+        3,
+        94,
+        42,
+        129
+      ]
+    },
+    {
+      "label": "Protection",
+      "bounds": [
+        3,
+        135,
+        42,
+        170
+      ]
+    },
+    {
+      "label": "Records",
+      "bounds": [
+        3,
+        176,
+        42,
+        211
+      ]
+    },
+    {
+      "label": "Settings",
+      "bounds": [
+        3,
+        490,
+        42,
+        525
+      ]
+    }
+  ],
+  "hierarchy_sha256": "e169793a4291e9b6a274f830dfefd751aa985a3517a3990ed27bb913d10507cf",
+  "private_scan_passed": true,
+  "host_elapsed_seconds": 174.902,
+  "scope": "Real Compose UI in API29 x86_64 software guest with actual display override; normal app UID",
+  "not_physical_fold_or_arm64_release_execution": true
+}

@@ -1,0 +1,689 @@
+{
+  "schema_version": 1,
+  "version": "0.1.2-LYNX",
+  "checked_at_utc": "2026-11-26T04:14:32.887276+00:00",
+  "owner_preflight_sha256": "205fb8df1fe2d49b2d32f1e47b4c17a4937f1f1401f0a57a7813d3e7827e6acc",
+  "source_entries": 130,
+  "verified_input_entries": 5,
+  "matched": true,
+  "sources": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 1588,
+      "sha256": "c9cab8723557415bad11aae552bb982280d44ef059d972abde5bb8a04adf389a"
+    },
+    {
+      "path": "PROGRESS.md",
+      "bytes": 45407,
+      "sha256": "c4d4109e5bc8a6789fca59ebeb7be809ff2b7fccb3f2ab09e9ab17611d5e63e4"
+    },
+    {
+      "path": "app/build.gradle.kts",
+      "bytes": 3872,
+      "sha256": "cf7d4568c16396999a956096d90a2cb5ad6e90e471170560cdf89925896f5cd0"
+    },
+    {
+      "path": "app/proguard-rules.pro",
+      "bytes": 567,
+      "sha256": "fc613c1c76f18bd6459bf78d01326f616407d9cb960976a9a21d2b1350f25f32"
+    },
+    {
+      "path": "app/src/androidTest/kotlin/net/aptist/loft/SensitiveTouchIntegrationTest.kt",
+      "bytes": 7530,
+      "sha256": "f130c4e4f943d655fa3e3022b75f9be21e421560f25e94699dbe9eb0a959e5e8"
+    },
+    {
+      "path": "app/src/androidTest/kotlin/net/aptist/loft/service/AndroidNativeBoundaryTest.kt",
+      "bytes": 4644,
+      "sha256": "4f0e57b522febb7be888c7e08184a22f13b944a912a9d287c68d25fafd0e1c48"
+    },
+    {
+      "path": "app/src/androidTest/kotlin/net/aptist/loft/service/AndroidQueryCancellationTest.kt",
+      "bytes": 1477,
+      "sha256": "3033c8585f581dfff28a9c27058cc36177a7ad8e1ff5a7078ff55e79c5f273a6"
+    },
+    {
+      "path": "app/src/androidTest/kotlin/net/aptist/loft/service/AndroidVpnIntegrationTest.kt",
+      "bytes": 28048,
+      "sha256": "42baca5f611873546f92dc1b25f7fa445719527baa24e199228410724aab764a"
+    },
+    {
+      "path": "app/src/main/AndroidManifest.xml",
+      "bytes": 2348,
+      "sha256": "8ed4a7d3e79fd3c5b32bae395187aa31deaa207ac6cb75fc86c53becfc883979"
+    },
+    {
+      "path": "app/src/main/aidl/net/aptist/loft/ipc/ILoftControl.aidl",
+      "bytes": 419,
+      "sha256": "495e69f563328530284887396546b1053dcc8d1a44f602cc467842cb31ebf5de"
+    },
+    {
+      "path": "app/src/main/aidl/net/aptist/loft/ipc/ILoftEvents.aidl",
+      "bytes": 252,
+      "sha256": "39348c9f59113daaa42661f614c164e441e0213862a91bfd3724a522bc539c7b"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/MainActivity.kt",
+      "bytes": 7069,
+      "sha256": "4810d789e0bf83e5fddffe6d7e77c9b7a42981255be7bdbe35e0c790002f71b8"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/AndroidPackageScope.kt",
+      "bytes": 2554,
+      "sha256": "05d7620b3a48bf0fb5681a4acec8081536370bb6240ae675ce249ab7ac47b7dc"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/AndroidSocketProtector.kt",
+      "bytes": 4119,
+      "sha256": "622ab0926d96731e4036650e7f733a4b8aceed02570041b5ea38450f26f17408"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/CoreAvailabilityGuard.kt",
+      "bytes": 357,
+      "sha256": "3a53c6060fb3da1f34081f966a515bf64b1775fd0fcd25cb3f8d7a97d8b44bbe"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/CoreServiceClient.kt",
+      "bytes": 9041,
+      "sha256": "4358f211296829f67a967f1f73cbd12975449ca96e3516af66e07949c65507c9"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/GoNetworkPolicy.kt",
+      "bytes": 4729,
+      "sha256": "6abb7c83916749e65fb10a47f27fa15dfac02b92f7540490c3604fda4a111bf7"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/GoNetworkPrivacyFacts.kt",
+      "bytes": 2159,
+      "sha256": "7700090eb39056863c5a19a3ea220f4d36f0456f26389586cff6755db2773ce1"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/GoRuntimeInfo.kt",
+      "bytes": 842,
+      "sha256": "2c3b5dd6f23b2fd17da419abc10468c6024b00fbce59d864546f49585f10d913"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/GoSnapshotAdmission.kt",
+      "bytes": 2416,
+      "sha256": "529a070735aee157e74691831c57ab1bcbf857eb5110b27ac1b6560486b0f144"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/GoVpnSnapshot.kt",
+      "bytes": 12256,
+      "sha256": "535138da3b01e7876e819ed7b4663f57cc15a73b0c3af8b6941e5be7af13637d"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/LoftCoreService.kt",
+      "bytes": 1741,
+      "sha256": "b0a1be77f329488e0f1e6cf628bfbf2a060188998d886bff33bb69bb07187678"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/LoftMailNotifications.kt",
+      "bytes": 4015,
+      "sha256": "60b49b6e4161842c55dbc2b265e3c8df9cec3229119d75b2ca6a40eb32056241"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/LoftNotificationChannels.kt",
+      "bytes": 2112,
+      "sha256": "1dadb083f1242cc6dda8d274884d4f51efb7b22134acdfd3acf4b297089ddfcd"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/LoftRuntimeOwner.kt",
+      "bytes": 34119,
+      "sha256": "78e44537b81e66ea1a4bdd3433dfb8e32d7c8623234fade473bdcc289bca4062"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/LoftVpnService.kt",
+      "bytes": 7412,
+      "sha256": "dd6a25e0c2a304c2b1e06ceea73a944d78bf8e66103748b1b205f478fe934d7c"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/NetworkPrivacyAdapter.kt",
+      "bytes": 1343,
+      "sha256": "e2a3ce9b41a2e219e794cf29cd591cb16068bea3eab72260b48a64080ed6cc46"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/NetworkPrivacyReceipts.kt",
+      "bytes": 2699,
+      "sha256": "fe8f08bf332114efd779d53b019a1bf93389e01982e05d04878643ca40da8bde"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/NetworkResourceSnapshot.kt",
+      "bytes": 1923,
+      "sha256": "789997cd61fe1ed50186e21ee0b88726df4a1ea6bda1c6c9308a900359e7c3f4"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/NodeChoice.kt",
+      "bytes": 963,
+      "sha256": "88a6a9833393d4b71e42b0d1a55ee3eae501f8862460f4c374fdce9c645e3014"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/NodePageConsumer.kt",
+      "bytes": 1331,
+      "sha256": "363d434b23e66fa3d670bf3edf293071b5252515efe14a71bf0ca1b2f3ca3fd8"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/NodePageWire.kt",
+      "bytes": 4899,
+      "sha256": "40ad986f52934dd41c860e3d099b81e21b46abd8c697adf66b15e78bfff0071a"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/ReceiptCode.kt",
+      "bytes": 6568,
+      "sha256": "3a9a033de6452c879d3b9efaf8eac70d2f51ee1eed405752d1ec9b9176f8dbb5"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/SnapshotConsumer.kt",
+      "bytes": 535,
+      "sha256": "ae5b9a42a90775d96ee909cbed7a45fd241b26eac2e5db4a38119d304c87806c"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/SnapshotPublisher.kt",
+      "bytes": 1437,
+      "sha256": "9ca00b95edc777528f792502dd52a68d701e6d4693293b194599d45731086d7f"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/SnapshotWire.kt",
+      "bytes": 17975,
+      "sha256": "b6ea9086098f469ecc4756f2bef4265e8908ca5c4a649d58462447e6601c3660"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/VpnNotificationProjection.kt",
+      "bytes": 1948,
+      "sha256": "164400c94b3ef5e563ebc13831ee106ba925c14075793caa8ac5ea2cd2ca7732"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/service/VpnPolicy.kt",
+      "bytes": 288,
+      "sha256": "ef251be04a6fc5968d48dafa8d207929d871530233790129c91e4e5413ee66b6"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/ui/LoftApp.kt",
+      "bytes": 46622,
+      "sha256": "c839438de59aa5ff3cde0ad0a07b9c9fac762754e9d89536f8b28bd19cb624ad"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/ui/LoftTheme.kt",
+      "bytes": 3665,
+      "sha256": "237d1fab268bcefe04e54f332df00f4188a4194f3d013b5a6a9371e0a1e885fd"
+    },
+    {
+      "path": "app/src/main/kotlin/net/aptist/loft/ui/LoftViewModel.kt",
+      "bytes": 24585,
+      "sha256": "bcbd40e241e846b2c780424aa255f9a6cd59df85efb248bbaa961bd5ed3335cd"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_account.xml",
+      "bytes": 455,
+      "sha256": "a681aa4fbd27612c0991f772c70f6f8c5beeb7604d1da8cba7c2adbb9801c640"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_add.xml",
+      "bytes": 389,
+      "sha256": "9d5954ef80acb531ca328d29ae30e1d86a4c12f17664d530a238b78d1c3e33a2"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_alert.xml",
+      "bytes": 404,
+      "sha256": "550db7bbd5bbad41e4aa1e65010f1e69e24e5dd2068e99d163b6fe1dddae2643"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_apps.xml",
+      "bytes": 427,
+      "sha256": "bf2a94ceed329547074c722046cbbd40ce33a9ca140e5c2f2f3ebcc55e33873e"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_arrow_back.xml",
+      "bytes": 397,
+      "sha256": "32518c8b27859b2c83762dee64eb4e0978dfcfb5fc21fd576e74f98a34e9a5ab"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_chevron.xml",
+      "bytes": 388,
+      "sha256": "241baaa608400e7ecb43b7cd7ef3ae5ca76d73682e868266f5ab7ca98d58463d"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_home.xml",
+      "bytes": 406,
+      "sha256": "917f689569e5eb91368900ceafa463e4741298832a6c3ab72f4858f2ef605291"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_link.xml",
+      "bytes": 445,
+      "sha256": "57dd4bdd7ad0bd3c7ca1951c173b545e3b389ce0234c9ad217d72c700345fac8"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_loft.xml",
+      "bytes": 350,
+      "sha256": "bf28cbe3f31de26323793f31f7c6384875e4b5bf456d87e3fa6bd925da8e5967"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_log.xml",
+      "bytes": 409,
+      "sha256": "31ed7f4d585037b338250ba776f13a1af4ea19902834de50eb6467c20d4b1cf5"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_mail.xml",
+      "bytes": 401,
+      "sha256": "b4bf52d3a7d51b692cc84d01419bf1824403d284590225f846f5cbf51aa41e1b"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_menu.xml",
+      "bytes": 396,
+      "sha256": "7eccda04f501e8c9519bf94688874623ebf756cd5df8544b3284069e67a23f55"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_network.xml",
+      "bytes": 438,
+      "sha256": "606b641b8c286e032bf93f1e03cfa8a11cba951be87931857ae0d934614a8d7f"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_settings.xml",
+      "bytes": 482,
+      "sha256": "7260d4bd6f8d5d5a2d6637c36f687df613ce4971133f7b21a8a40711e130a899"
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_shield.xml",
+      "bytes": 438,
+      "sha256": "0966e258a634b9ba49ee5dd6b212e7b5e0170e9c6a45d594861dfef5ff4a4596"
+    },
+    {
+      "path": "app/src/main/res/values/strings.xml",
+      "bytes": 22914,
+      "sha256": "8b17ffa3023c1bd41fc6757d78d3a1d621dbe7353ee0589e9456eeb8a6a62284"
+    },
+    {
+      "path": "app/src/main/res/values/themes.xml",
+      "bytes": 398,
+      "sha256": "9df97510171ac03e59accf1db166c3f93ecd27923dbbb6f603a5c55fa3940a64"
+    },
+    {
+      "path": "app/src/main/res/values-de/strings.xml",
+      "bytes": 24829,
+      "sha256": "c162110794f96329880272a92ad3a30c17cb9ea64554cd8e976abe6543664c0b"
+    },
+    {
+      "path": "app/src/main/res/values-ja/strings.xml",
+      "bytes": 27240,
+      "sha256": "4fa87ca046552144ea143e83552c074f0cf208bbad067e22f8595275f2026b59"
+    },
+    {
+      "path": "app/src/main/res/values-zh/strings.xml",
+      "bytes": 21815,
+      "sha256": "e4d6f3437187666354c59a2c3467a631f4bfbc939bcd6c413c0c81f09d3ce008"
+    },
+    {
+      "path": "app/src/main/res/xml/data_extraction_rules.xml",
+      "bytes": 671,
+      "sha256": "8b55ff5489071bb19a4e89967b604a16c0e4d1e87a2df3c73c64417314a59f22"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/service/CoreAvailabilityGuardTest.kt",
+      "bytes": 2380,
+      "sha256": "810082f09ce69cb92cc070fdc49c9bcf53610549537ad7592a4ca8acef70f3e4"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/service/GoNetworkPolicyTest.kt",
+      "bytes": 4236,
+      "sha256": "4cd00d24dc961f49b4230e89e881e024096227abc8a034857562806860ee1a60"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/service/GoPendingStartupReceiptTest.kt",
+      "bytes": 5249,
+      "sha256": "3d0b57bdb43697181f17ac55439d8daba3b01b4f828d865b31f3cf0189900aa7"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/service/GoRuntimeInfoTest.kt",
+      "bytes": 1457,
+      "sha256": "b0fba237d2237b5a504feceb5ef9d5ea95d94d285366ea386d9a1079b27a3c1b"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/service/GoSnapshotAdmissionTest.kt",
+      "bytes": 6200,
+      "sha256": "a6c838c2c677844776a08a29ffc8b921fe752b6e0e4e6a763bab7bf1cd3d0980"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/service/GoVpnSnapshotTest.kt",
+      "bytes": 9873,
+      "sha256": "4e05e309c3f52167c46906b2e2172eef3745747ea73ad2403f81ba214c883c7c"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/service/NetworkPrivacyReceiptsTest.kt",
+      "bytes": 4840,
+      "sha256": "e2dbe4c363d63626c80ebb679da01e128a4320e3ea6ac7179df50174807b5103"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/service/NetworkResourceSnapshotTest.kt",
+      "bytes": 3039,
+      "sha256": "c8bf25a4678bbb0fefb76f6b87f03eb26f94026508487a243c6f8d8a3e0b61e8"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/service/NodePageSelectionTest.kt",
+      "bytes": 3479,
+      "sha256": "592e5a9498250b39235f08bfc39c29406db829c3642aed4c586f1b6d80a54b83"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/service/NodePageWireTest.kt",
+      "bytes": 3150,
+      "sha256": "70d16aba679110a11500434134d9e46aa1882b78ab2cc7782237a104d5f32020"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/service/SnapshotPublicationTest.kt",
+      "bytes": 5600,
+      "sha256": "259d6cf49417a1dfa6442fcc469f262e4c50d61f7f3ff0f0908242cbff832c45"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/service/SnapshotWireTest.kt",
+      "bytes": 13851,
+      "sha256": "4520a2bb53a5842fb2e6fdd93ebdc629df874d45963b39a16db86e414fd978b4"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/service/VpnNotificationProjectionTest.kt",
+      "bytes": 3427,
+      "sha256": "5d49764d86ae4428468412ed8cf1aebc63196314e92969ac5437ea1b1c113261"
+    },
+    {
+      "path": "app/src/test/kotlin/net/aptist/loft/testing/BoundedPrivateInputTest.kt",
+      "bytes": 2354,
+      "sha256": "388653654b5b1d6c9feb17664b6ff5181c561d7c4aa3aa6e7ad2cf9218bce18b"
+    },
+    {
+      "path": "app/src/test/resources/net/aptist/loft/service/observed-go-start-frames.json",
+      "bytes": 6363,
+      "sha256": "84459b765e466e3413d394f28a0db0857765754355e69ea22b1897490d5e4100"
+    },
+    {
+      "path": "app/src/testCommon/kotlin/net/aptist/loft/testing/BoundedPrivateInput.kt",
+      "bytes": 835,
+      "sha256": "02621d6c6a7dd3a06680098bea8d8b79ab04076bfa6e0451b6d7c6a3f376c008"
+    },
+    {
+      "path": "app/src/testCommon/kotlin/net/aptist/loft/testing/NetworkPrivacyFixtures.kt",
+      "bytes": 474,
+      "sha256": "8505072a2c960f320e76dfd669a223bf4b2a58d64cfb3d550753594a05b80fd2"
+    },
+    {
+      "path": "build.gradle.kts",
+      "bytes": 1107,
+      "sha256": "a6bc7b74251c3369d22e45db5b666877ed136a212dc0a4e66cb7af51a0ee4003"
+    },
+    {
+      "path": "gradle.properties",
+      "bytes": 211,
+      "sha256": "038d111dc8af3493c953301c707f7e574f918dfda7603cb5752686d024b3f94f"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "bytes": 340,
+      "sha256": "fb6a778bee07605e5ba62a4464c2668e7ac0f5e6e62af01113d663160066d0b8"
+    },
+    {
+      "path": "ui-foundation/build.gradle.kts",
+      "bytes": 634,
+      "sha256": "f6710c519b0e10b0faf0b1d628169e3facf72a69dbf4ae0f508ec30a32ee1a67"
+    },
+    {
+      "path": "ui-foundation/settings.gradle.kts",
+      "bytes": 330,
+      "sha256": "7ee293e2b14d902e950146175ecc4d3fcfc07df7eac6af2613f18c83eeee8453"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/AdaptiveLayout.kt",
+      "bytes": 6022,
+      "sha256": "cc07daee194fd024dc5b1f54dca893fbf390183624d679b4449de1ad360b9b76"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/ControlCodec.kt",
+      "bytes": 8655,
+      "sha256": "ae39599c405d6d545e0c9306b729707a60514227832fdba00adef8b74081de68"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/FailureDispatch.kt",
+      "bytes": 297,
+      "sha256": "f42e553a88400d78c999d83e170707d4f8ac0129afa9fd555ad6aa98cd420e9e"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/ForegroundPublication.kt",
+      "bytes": 966,
+      "sha256": "429429cb6a76bebb30275514dfc7b924974c3b5a8a8b462e9b4ca4bbde9e08bc"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/FrozenUidScope.kt",
+      "bytes": 2173,
+      "sha256": "60841cd82a588c08c5beb8a03f0467e4d9f6c8ed7b87b7918da92a8240ab437e"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/MailNotificationEvents.kt",
+      "bytes": 9631,
+      "sha256": "af40e46d08ad72f82ca40567067824e53dcd24eb9bbdf4678cae18d995b0872f"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/NativeResources.kt",
+      "bytes": 1689,
+      "sha256": "6242b81a6a80c57c5a9d0273dd84d09324bce994b9ad6e316fb21c1a8bfa8bf5"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/Navigation.kt",
+      "bytes": 4067,
+      "sha256": "290e91ef5ffaffcfce2fe95e088c7417305be7f661277d50ba2d8f6d0cda0a93"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/NetworkPrivacyDraft.kt",
+      "bytes": 856,
+      "sha256": "821ed1bae3445ca66acba872ed58c8bd3ee26a511fc05cdbd3b6ce0d174e4c66"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/NodeResolutionOwnership.kt",
+      "bytes": 696,
+      "sha256": "31bb9f4f18aad1870af64715913e7f4ba11675e5e236658e85a36f7b39385221"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/NotificationAccess.kt",
+      "bytes": 875,
+      "sha256": "c8adf379bfaa65250edba903d7ce5a48e319d0c57c78e5bb2f73c84f86e14351"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/ObscuredTouchGate.kt",
+      "bytes": 1553,
+      "sha256": "63d05a974a61a3a4afe5e9d37266238b47fc892b8d291176dfb0f60305ccc706"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/OriginalTunOwnership.kt",
+      "bytes": 2311,
+      "sha256": "ea2c6b7a5fea55c20d65ec369d17f737325af517b2a55e003970cd205b04153f"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/PriorityControlQueue.kt",
+      "bytes": 730,
+      "sha256": "57983ac6d40bca977571d9bae054215a248bcba0c8910dc9f3bb03cc1767b9a0"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/QueryGate.kt",
+      "bytes": 2557,
+      "sha256": "56e1ef4b12692a0250519e612f89b4eda461963319e84f7cd99eb85fd489381e"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/RoutingDraft.kt",
+      "bytes": 2738,
+      "sha256": "a0a501f6d5323bad9f73ac3fe01360d3af7a2e24a18592cbed01a95a69810e1e"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/SharedUidScope.kt",
+      "bytes": 3080,
+      "sha256": "22ab51a394a55a425c3e68e3706bd22ca9bb1897240a7f9e0292a3583ec95f80"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/SnapshotSequence.kt",
+      "bytes": 630,
+      "sha256": "f430a01e983a5de536be3a57e1381722de4c0e7d8c0abbea25bf10a13171f502"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/StartOwnership.kt",
+      "bytes": 966,
+      "sha256": "07712d15db1a86ebe6009988f4c4ba6646b96211bdcac9eda5e0a82f79a4634b"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/StopDispatch.kt",
+      "bytes": 406,
+      "sha256": "663b02e460015e983aef8c8c4b4dac28263d26b8ccc5b62fb7c4d3c9024b2f24"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/VisibilityEpoch.kt",
+      "bytes": 376,
+      "sha256": "f33bc88fc61497abab78f9573973f180ce5eabb709ebbe9c0f94e721297427b8"
+    },
+    {
+      "path": "ui-foundation/src/main/kotlin/net/aptist/loft/foundation/VpnPermissionDraft.kt",
+      "bytes": 719,
+      "sha256": "77e5c1cb3c07490c1e65f178403ad20fd12c7b147424242714f7a6166e856b91"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/AdaptiveLayoutTest.kt",
+      "bytes": 5086,
+      "sha256": "f266e08ab671ea3b2090d1951cc5d96d78d19701a9d1c60773027ff9820e9a27"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/ControlCodecTest.kt",
+      "bytes": 3927,
+      "sha256": "0a4de18fbdca076e53b572153bdb1ac31a9b3a63bc1b24ee6d39488bc76d469b"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/FailureDispatchTest.kt",
+      "bytes": 2254,
+      "sha256": "5df5dce23afff20e7a416229b37c7aa4079d44950619e586669e1218535467d2"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/ForegroundPublicationTest.kt",
+      "bytes": 2456,
+      "sha256": "e2bc879b919407ff32b5d4083858394d24fb3290c5cfe56c130a9c71d0f9f455"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/FrozenUidScopeTest.kt",
+      "bytes": 4732,
+      "sha256": "16095d557feadb566a7d06c502bc700d1d2dadb940807a7202a77544dc1d2197"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/MailNotificationEventsTest.kt",
+      "bytes": 7128,
+      "sha256": "40021b3e377363b858ef2671f102042655e77f913859f28f5a6e0501f7109fe1"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/NativeResourcesTest.kt",
+      "bytes": 4942,
+      "sha256": "f0dbd638d04113ffaa2f36bcaf268273396bd9ab26440969c2f35da790f3e89d"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/NavigationTest.kt",
+      "bytes": 2695,
+      "sha256": "42c10a851f702f5809663d13d6d8dfcfa5ea58980b3366e024bbcb4c832a4219"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/NetworkPrivacyCommandTest.kt",
+      "bytes": 3230,
+      "sha256": "2e8518bab53388dcb74795747939626cbf2435dc70dc0dd300f70e45fc009170"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/NodeResolutionOwnershipTest.kt",
+      "bytes": 2943,
+      "sha256": "0a7ce01797cf5ed8f3b40840f2eb7506a3fbda32b773b0dd9fa1db36dcf08e65"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/NotificationAccessTest.kt",
+      "bytes": 1478,
+      "sha256": "bb868f26d601e6232fee5a5a2707135ec67ab3b42693ed54b574c498baa4a297"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/ObscuredTouchGateTest.kt",
+      "bytes": 2598,
+      "sha256": "74b47d7040ab3ec1d858078b9070c1751e8fa20e0b5c7715400d5a0b413a9cd6"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/OriginalTunOwnershipTest.kt",
+      "bytes": 2977,
+      "sha256": "4b63e65362c239ad1c0219d15c65969d442d6a29921c12809e6c28bc63812bb2"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/PriorityControlQueueTest.kt",
+      "bytes": 1305,
+      "sha256": "673a23a0e18db0bcb3e06dde698544e642fb72d4d2762b6465d48f85f21faad8"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/QueryGateTest.kt",
+      "bytes": 4674,
+      "sha256": "7a4dbb2d290917f438888837823d6b66d71f3770bb1b15dad632fd51b74479ff"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/RoutingDraftTest.kt",
+      "bytes": 3014,
+      "sha256": "4716caa4b45a6c6fa0849cdb473e11d2c2ae45012d8a70b59f7cedee8ce48a0f"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/SharedUidScopeTest.kt",
+      "bytes": 3337,
+      "sha256": "532de09574ed23519ebc444abba7c4bd8a2b6251535bb9342093a24fc5911511"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/SnapshotSequenceTest.kt",
+      "bytes": 1976,
+      "sha256": "67fc76f17c32fcd16eb638a8bbb99ca240053a7078d0c313cc11797fe44f615f"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/StartOwnershipTest.kt",
+      "bytes": 2402,
+      "sha256": "41519f6640a1bb5c619b870a8571f5a111c43e650f5be051fc1bb1032af3f6a6"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/StopDispatchTest.kt",
+      "bytes": 4284,
+      "sha256": "483d7eeb4d2f629dddd7778dc6823476c60b2c319051977a1860d4e4551d912b"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/VisibilityEpochTest.kt",
+      "bytes": 817,
+      "sha256": "a264f10734a038a9ab397b6df34e8838c1c50ea36c524836a732d04b5b71513b"
+    },
+    {
+      "path": "ui-foundation/src/test/kotlin/net/aptist/loft/foundation/VpnPermissionDraftTest.kt",
+      "bytes": 1435,
+      "sha256": "cff67383d5a40e15a12cfba48ff078f885c5f9602fa60aa29c26cfc0c0e9c248"
+    },
+    {
+      "path": "wire-tests/build.gradle.kts",
+      "bytes": 3298,
+      "sha256": "e49b6cdd979d577e1aae4e948302bf0be7116f4e911b2a6899de65d1bfc56275"
+    },
+    {
+      "path": "wire-tests/settings.gradle.kts",
+      "bytes": 250,
+      "sha256": "aacbb2fa70880e2721cfa5c12f44fc08181946e75707f3d7b4ff4008bcd6cbea"
+    }
+  ],
+  "verified_inputs": [
+    {
+      "path": "/home/coder/LOFT-mobile/loft-android/app/build/generated/uniffi/net/aptist/loft/core/generated/loft_ffi.kt",
+      "bytes": 143797,
+      "sha256": "656d7b78abac672575af6ef1ec3cec4bba324356eccbc8d0216d4681809ef853"
+    },
+    {
+      "path": "/home/coder/LOFT-mobile/loft-android/app/build/generated/jniLibs/arm64-v8a/libloft_ffi.so",
+      "bytes": 1582648,
+      "sha256": "ac386efe89d8ea30cd437e3309ca52b78b2649e11391e9867b4f2b4aa9ea5446"
+    },
+    {
+      "path": "/home/coder/LOFT-mobile/VERSION",
+      "bytes": 11,
+      "sha256": "c5d6b92ba83dafb28a2566dd2b8ee17cb22d861464323c3832c2b0175277991c"
+    },
+    {
+      "path": "/home/coder/LOFT-mobile/loft-android/app/build/generated/gomobile/loft-engine.aar",
+      "bytes": 11208593,
+      "sha256": "77df0f72d069de9047762c0dbcf8c2df9dbe05634825ee7ef09b583026ee57f4"
+    },
+    {
+      "path": "/home/coder/LOFT-mobile/tmp/native-test-x86_64/generated/gomobile/loft-engine.aar",
+      "bytes": 11892386,
+      "sha256": "f65a4397dcb9987522653734674c3739ead93f1816eadf9af8abb493bbbe1d1e"
+    }
+  ],
+  "scope": "Exact Android source and generated/Version input identity only; compilation and device execution recorded separately"
+}

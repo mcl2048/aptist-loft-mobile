@@ -1,0 +1,19 @@
+[package]
+name = "loft-ffi"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[lib]
+name = "loft_ffi"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+loft-core = { path = "../loft-core" }
+uniffi.workspace = true
+zeroize.workspace = true
+
+[lints]
+workspace = true
+

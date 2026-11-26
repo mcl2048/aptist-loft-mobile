@@ -1,0 +1,387 @@
+{
+  "baseline_preservation": {
+    "failure_receipt_sha256": "218353d26cbdba1678d2c793b02107d6e2b61ea72e869aae521a64314cf814cb",
+    "files": 497,
+    "freeze_receipt_sha256": "24ff5d8ef173973ed65245dd4a07a8da4c9628a8cef824eef4eb0d05b43045de",
+    "scope": "exact497-file source preimage for Root first normal failure",
+    "source_archive_sha256": "3663864e0ec333ebf5d5f8cf45018b652e2146b3afdf30de7e7a3691c04c83a8"
+  },
+  "checks": [
+    {
+      "checked_at_utc": "2026-11-26T03:02:36.432101+00:00",
+      "command": [
+        "python3",
+        "tools/verify_owned_sources.py"
+      ],
+      "elapsed_seconds": 0.52,
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "cdd1f79fa28301ad860e1f51ab0bb3d45251628caac3f4d6315e20ea527b898d"
+    },
+    {
+      "checked_at_utc": "2026-11-26T03:03:02.942919+00:00",
+      "command": [
+        "go",
+        "test",
+        "-tags=with_gvisor",
+        "-p=1",
+        "./...",
+        "-count=1",
+        "-json"
+      ],
+      "elapsed_seconds": 26.509,
+      "failures": [],
+      "packages_without_tests": [
+        "net.aptist.loft/loft-vpn-engine-go/internal/testsupport"
+      ],
+      "race_reported": false,
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "bb9e1f5a23eb982a5d719b67d0f673325e8e0e9aba3c29d109e284be0f538d0e",
+      "subtests": 145,
+      "test_skips": [],
+      "top_level_tests": 114
+    },
+    {
+      "checked_at_utc": "2026-11-26T03:03:47.847438+00:00",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "-tags=with_gvisor",
+        "-p=1",
+        "./...",
+        "-count=1",
+        "-json"
+      ],
+      "elapsed_seconds": 44.885,
+      "failures": [],
+      "packages_without_tests": [
+        "net.aptist.loft/loft-vpn-engine-go/internal/testsupport"
+      ],
+      "race_reported": false,
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "92c05cd7c23626eace281c0e243292427e02e62999b4970ddef5850332872593",
+      "subtests": 145,
+      "test_skips": [],
+      "top_level_tests": 114
+    }
+  ],
+  "frozen_files_verified": 499,
+  "original_root_failure": {
+    "checked_at_utc": "2026-11-26T02:19:42.766750+00:00",
+    "command": [
+      "go",
+      "test",
+      "-tags=with_gvisor",
+      "-p=1",
+      "./...",
+      "-count=1",
+      "-json"
+    ],
+    "elapsed_seconds": 27.055,
+    "failures": [
+      "TestUnexpectedPeerLossRevokesReadinessAndStopsNewBusinessOpens/X",
+      "TestUnexpectedPeerLossRevokesReadinessAndStopsNewBusinessOpens",
+      "net.aptist.loft/loft-vpn-engine-go/internal/transport"
+    ],
+    "go_version": "go version go1.27.4 linux/amd64",
+    "race_reported": false,
+    "returncode": 1,
+    "skips": [
+      "net.aptist.loft/loft-vpn-engine-go/internal/testsupport"
+    ],
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "ebb3aa13c0c6e579d77f3de4008c3df9458d686c2d522711027e798ee3837f11",
+    "subtests": 142,
+    "top_level_tests": 111
+  },
+  "owner_checks": {
+    "fmt": {
+      "argv": [
+        "gofmt",
+        "-l",
+        "engine",
+        "internal"
+      ],
+      "checked_at_utc": "2026-11-26T02:47:46.364165+00:00",
+      "elapsed_seconds": 0.067,
+      "exit_code": 0,
+      "log": ".verification/x-peer-loss-investigation/fmt-final.stdout.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "race_reported": false,
+      "receipt": ".verification/x-peer-loss-investigation/fmt-final.receipt.json",
+      "receipt_sha256": "4f54b70a865393fa351879200e69313057efe3d439b62b5bf0e314a784b3e85e",
+      "stderr_log": ".verification/x-peer-loss-investigation/fmt-final.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "subtests": 0,
+      "top_level": 0
+    },
+    "gobind": {
+      "argv": [
+        "go",
+        "tool",
+        "gobind",
+        "-tags=with_gvisor",
+        "-lang=java",
+        "-javapkg=net.aptist.loft",
+        "-outdir=.verification/x-peer-loss-investigation/gobind-final",
+        "./engine"
+      ],
+      "checked_at_utc": "2026-11-26T02:51:58.525915+00:00",
+      "elapsed_seconds": 14.946,
+      "exit_code": 0,
+      "log": ".verification/x-peer-loss-investigation/gobind-final.stdout.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "race_reported": false,
+      "receipt": ".verification/x-peer-loss-investigation/gobind-final.receipt.json",
+      "receipt_sha256": "5484f71fe870f429e523e971c0992f79934b7f474a63b6447d4509e8e367d0f5",
+      "stderr_log": ".verification/x-peer-loss-investigation/gobind-final.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "subtests": 0,
+      "top_level": 0
+    },
+    "govulncheck": {
+      "argv": [
+        ".verification/tools/govulncheck",
+        "-tags=with_gvisor",
+        "./..."
+      ],
+      "checked_at_utc": "2026-11-26T02:51:43.458584+00:00",
+      "elapsed_seconds": 16.54,
+      "exit_code": 0,
+      "log": ".verification/x-peer-loss-investigation/govuln-final.stdout.log",
+      "log_sha256": "3016e51e4eac0d421674d2128bbbdefb2924b4646e0c14a1ab034977ad73fae5",
+      "race_reported": false,
+      "receipt": ".verification/x-peer-loss-investigation/govuln-final.receipt.json",
+      "receipt_sha256": "dbce736facd174493c80d868161b63cf9e485c687d154bf595b223b1fb1eae03",
+      "stderr_log": ".verification/x-peer-loss-investigation/govuln-final.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "subtests": 0,
+      "top_level": 0
+    },
+    "linked_dependencies": {
+      "argv": [
+        "go",
+        "list",
+        "-deps",
+        "-tags=with_gvisor",
+        "-json",
+        "./engine"
+      ],
+      "checked_at_utc": "2026-11-26T02:50:06.729582+00:00",
+      "elapsed_seconds": 0.713,
+      "exit_code": 0,
+      "log": ".verification/x-peer-loss-investigation/linked-deps-final.stdout.log",
+      "log_sha256": "57c36110b36ceed0be0d9c8f732becbe361d6a28295a0f6997a36c8ea209db99",
+      "race_reported": false,
+      "receipt": ".verification/x-peer-loss-investigation/linked-deps-final.receipt.json",
+      "receipt_sha256": "7b21a1b310f343066929a369abc3ac7792f56c513f0e1febd39386731d344b11",
+      "stderr_log": ".verification/x-peer-loss-investigation/linked-deps-final.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "subtests": 0,
+      "top_level": 0
+    },
+    "lint": {
+      "argv": [
+        ".verification/tools/golangci-lint",
+        "run",
+        "--build-tags=with_gvisor",
+        "--concurrency=1",
+        "./..."
+      ],
+      "checked_at_utc": "2026-11-26T02:49:01.268893+00:00",
+      "elapsed_seconds": 5.984,
+      "exit_code": 0,
+      "log": ".verification/x-peer-loss-investigation/lint-final.stdout.log",
+      "log_sha256": "e92606b0bf483111dff0a120c315ea165821348f31365020e2468a0059095c47",
+      "race_reported": false,
+      "receipt": ".verification/x-peer-loss-investigation/lint-final.receipt.json",
+      "receipt_sha256": "ad46daec010f77de8b5bdf468ebb2701bf348454af506a67c4d1e5a2332554da",
+      "stderr_log": ".verification/x-peer-loss-investigation/lint-final.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "subtests": 0,
+      "top_level": 0
+    },
+    "mod_verify": {
+      "argv": [
+        "go",
+        "mod",
+        "verify"
+      ],
+      "checked_at_utc": "2026-11-26T02:44:43.189260+00:00",
+      "elapsed_seconds": 7.108,
+      "exit_code": 0,
+      "log": ".verification/x-peer-loss-investigation/mod-verify-final.stdout.log",
+      "log_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+      "race_reported": false,
+      "receipt": ".verification/x-peer-loss-investigation/mod-verify-final.receipt.json",
+      "receipt_sha256": "efa6fd1b02d81658da09a23ce590edb6541eda019997c4e131b48d30f7288942",
+      "stderr_log": ".verification/x-peer-loss-investigation/mod-verify-final.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "subtests": 0,
+      "top_level": 0
+    },
+    "module_graph": {
+      "argv": [
+        "go",
+        "list",
+        "-m",
+        "-json",
+        "all"
+      ],
+      "checked_at_utc": "2026-11-26T02:44:43.314856+00:00",
+      "elapsed_seconds": 0.025,
+      "exit_code": 0,
+      "log": ".verification/x-peer-loss-investigation/module-graph-final.stdout.log",
+      "log_sha256": "26928eb3e8f11e59d7c8116a7dc08f6ffb42d372694c23d21b3df137fecbe6cc",
+      "race_reported": false,
+      "receipt": ".verification/x-peer-loss-investigation/module-graph-final.receipt.json",
+      "receipt_sha256": "e433e2c202a8de1fc16c0c7c33533920f3f8d907a02f763dbbf24ee16430538d",
+      "stderr_log": ".verification/x-peer-loss-investigation/module-graph-final.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "subtests": 0,
+      "top_level": 0
+    },
+    "no_tag": {
+      "argv": [
+        "go",
+        "test",
+        "-p=1",
+        "./...",
+        "-count=1",
+        "-json"
+      ],
+      "checked_at_utc": "2026-11-26T02:47:55.386352+00:00",
+      "elapsed_seconds": 9.094,
+      "exit_code": 0,
+      "log": ".verification/x-peer-loss-investigation/full-no-tag-final.stdout.log",
+      "log_sha256": "42a213771e566c75236bef1fc6550b2d48c7b44ea16c9733d25a965b32608204",
+      "race_reported": false,
+      "receipt": ".verification/x-peer-loss-investigation/full-no-tag-final.receipt.json",
+      "receipt_sha256": "24c9c10fac47b70ed35ec52dd2fb3f5836a753d1535f086ada4140f8745b15ab",
+      "stderr_log": ".verification/x-peer-loss-investigation/full-no-tag-final.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "subtests": 140,
+      "top_level": 86
+    },
+    "normal": {
+      "argv": [
+        "go",
+        "test",
+        "-tags=with_gvisor",
+        "-p=1",
+        "./...",
+        "-count=1",
+        "-json"
+      ],
+      "checked_at_utc": "2026-11-26T02:45:03.478077+00:00",
+      "elapsed_seconds": 27.4,
+      "exit_code": 0,
+      "log": ".verification/x-peer-loss-investigation/full-normal-final.stdout.log",
+      "log_sha256": "91b34a386917e8c6d5a7e56f7045b06f2077c6c68655ad824743497362b3f133",
+      "race_reported": false,
+      "receipt": ".verification/x-peer-loss-investigation/full-normal-final.receipt.json",
+      "receipt_sha256": "87caf9175326ec876b82c006f8af451df0c1effdca6e4b68c6517d969476c7a3",
+      "stderr_log": ".verification/x-peer-loss-investigation/full-normal-final.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "subtests": 145,
+      "top_level": 114
+    },
+    "owned_sources": {
+      "argv": [
+        "python3",
+        "tools/verify_owned_sources.py"
+      ],
+      "checked_at_utc": "2026-11-26T02:44:36.682723+00:00",
+      "elapsed_seconds": 0.594,
+      "exit_code": 0,
+      "log": ".verification/x-peer-loss-investigation/owned-source-final.stdout.log",
+      "log_sha256": "cdd1f79fa28301ad860e1f51ab0bb3d45251628caac3f4d6315e20ea527b898d",
+      "race_reported": false,
+      "receipt": ".verification/x-peer-loss-investigation/owned-source-final.receipt.json",
+      "receipt_sha256": "1fc17bd610b0bbca9464a8324f148d5bfcd81a5054e709dcef754f1e8a828aec",
+      "stderr_log": ".verification/x-peer-loss-investigation/owned-source-final.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "subtests": 0,
+      "top_level": 0
+    },
+    "race": {
+      "argv": [
+        "go",
+        "test",
+        "-race",
+        "-tags=with_gvisor",
+        "-p=1",
+        "./...",
+        "-count=1",
+        "-json"
+      ],
+      "checked_at_utc": "2026-11-26T02:46:38.745749+00:00",
+      "elapsed_seconds": 46.705,
+      "exit_code": 0,
+      "log": ".verification/x-peer-loss-investigation/full-race-final.stdout.log",
+      "log_sha256": "781620b0a34722cf8d3699de7b4422f0a6ba5aeee8e2750497805db991d76138",
+      "race_reported": false,
+      "receipt": ".verification/x-peer-loss-investigation/full-race-final.receipt.json",
+      "receipt_sha256": "6d52e08fe13c0ff2143d12ce3a2276ac3f24d471602e1483b6eb359ab3ae20fd",
+      "stderr_log": ".verification/x-peer-loss-investigation/full-race-final.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "subtests": 145,
+      "top_level": 114
+    },
+    "source_tests": {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "checked_at_utc": "2026-11-26T02:44:37.903161+00:00",
+      "elapsed_seconds": 1.093,
+      "exit_code": 0,
+      "log": ".verification/x-peer-loss-investigation/source-tests-final.stdout.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "race_reported": false,
+      "receipt": ".verification/x-peer-loss-investigation/source-tests-final.receipt.json",
+      "receipt_sha256": "9e1c6b2206d80159eeb4a6252296b1f7ab09598ade1848b1bcb6a6b910930b38",
+      "stderr_log": ".verification/x-peer-loss-investigation/source-tests-final.stderr.log",
+      "stderr_sha256": "8815ae0e9092eacc79e1f40117e9c89ac2baa3eeef3f27ac2d491876a0e38877",
+      "subtests": 0,
+      "top_level": 0
+    },
+    "vet": {
+      "argv": [
+        "go",
+        "vet",
+        "-tags=with_gvisor",
+        "-p=1",
+        "./..."
+      ],
+      "checked_at_utc": "2026-11-26T02:48:55.184523+00:00",
+      "elapsed_seconds": 1.871,
+      "exit_code": 0,
+      "log": ".verification/x-peer-loss-investigation/vet-final.stdout.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "race_reported": false,
+      "receipt": ".verification/x-peer-loss-investigation/vet-final.receipt.json",
+      "receipt_sha256": "ffab3081c594e37df35d11b0304add53062c4d5255b930b18bcef39ce1363961",
+      "stderr_log": ".verification/x-peer-loss-investigation/vet-final.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "subtests": 0,
+      "top_level": 0
+    }
+  },
+  "owner_freeze_path": ".verification/vpn-privacy-peer-loss-freeze-receipt.json",
+  "production_change_scope": "X fixture ordering/error assertions only;431 production Go files unchanged from first freeze",
+  "schema_version": 1,
+  "scope": "independent host with_gvisor controlled data path; not Android/handset acceptance",
+  "source_freeze_receipt_sha256": "ccfb8e15f0b4a4966fdf1505fd2f040f2fd2bb99a77cb6756e6b4ceb94007292",
+  "version": "0.1.2-LYNX"
+}

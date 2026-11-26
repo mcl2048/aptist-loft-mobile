@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "version": "0.1.2-LYNX",
+  "checked_at_utc": "2026-11-26T04:50:06.148309+00:00",
+  "android_preflight_sha256": "205fb8df1fe2d49b2d32f1e47b4c17a4937f1f1401f0a57a7813d3e7827e6acc",
+  "source_entries_matched": 130,
+  "artifacts": [
+    {
+      "package": "net.aptist.loft",
+      "sha256": "e6b575c29d3c3010656d5328e920bf217d20181f43dbc1d91318ada0ede40103",
+      "matches_build_artifact": true
+    },
+    {
+      "package": "net.aptist.loft.test",
+      "sha256": "5856a00671f7e4d7099d68a32208263aa4acbb1bc4e26717e95a9b59897d89db",
+      "matches_build_artifact": true
+    }
+  ],
+  "current_apk_executed_tests": 8,
+  "failures": 0,
+  "checks": [
+    {
+      "check": "guest",
+      "passed": true,
+      "tests": 1,
+      "checked_at_utc": "2026-11-26T04:44:26.861368+00:00",
+      "receipt_sha256": "061235e3ab9df04fc2811ce4a684d8bed77b6593d896d5bbdd75333c35e794cd",
+      "log_sha256": "30b771dce67727967a5ca8cc659cdf4cccc7f3dacc89a8fc5e1e159d745a4b71",
+      "local_receipt": "tmp/verification/android-delivery-0.1.2/public-guest.json",
+      "host_elapsed_seconds": 51.449
+    },
+    {
+      "check": "guest-policy-locale",
+      "passed": true,
+      "tests": 1,
+      "checked_at_utc": "2026-11-26T04:45:25.680243+00:00",
+      "receipt_sha256": "f087116c9ed57329f6ad27a0ea153af1ecc1ccb222b191110a500a5b094f5d62",
+      "log_sha256": "6928fac2c9875a7e84a707563383e5eb640c870786a442dd77cbc4fd3e981a30",
+      "local_receipt": "tmp/verification/android-delivery-0.1.2/public-guest-policy-locale.json",
+      "host_elapsed_seconds": 55.303
+    },
+    {
+      "check": "blocked-notification",
+      "passed": true,
+      "tests": 1,
+      "checked_at_utc": "2026-11-26T04:20:19.005417+00:00",
+      "receipt_sha256": "0c723281e46caddc084a708c7b864a932716bec9728467008097e876b850d201",
+      "log_sha256": "20179f10523881cab76514c8e8677081710a34fecb5cc4a4eb9383434522d4cd",
+      "local_receipt": "tmp/verification/android-delivery-0.1.2/public-blocked-notification.json",
+      "host_elapsed_seconds": 65.953
+    },
+    {
+      "check": "node-x-domain",
+      "passed": true,
+      "tests": 1,
+      "checked_at_utc": "2026-11-26T04:24:25.429013+00:00",
+      "receipt_sha256": "7f5552661557b15d078f15043c49d9cd4e6ec5a86993ef61946940fd289d8001",
+      "log_sha256": "30519323f53747501cb6a8c9b509bc9e362c7f9891ff518f78c7f5f0b4fcfe57",
+      "local_receipt": "tmp/verification/android-delivery-0.1.2/node-x-domain.json",
+      "host_elapsed_seconds": 99.53,
+      "clock": {
+        "scope": "API29_x86_64_TCG_monotonic_clock_with_host_aligned_guest_wall_time",
+        "clock_sets": 15,
+        "child_exit": 0,
+        "cleanup_confirmed": true,
+        "application_gate_and_timeouts_unchanged": true
+      }
+    },
+    {
+      "check": "node-pro-domain",
+      "passed": true,
+      "tests": 1,
+      "checked_at_utc": "2026-11-26T04:28:20.964553+00:00",
+      "receipt_sha256": "a89855b025899b9eba3b4c7909a62fc2ca6ee038abfd78c45deafd5e825483dd",
+      "log_sha256": "7f4c287f29715b35a0d69c29883a22d14b6c90512872b55b05ae915b4ab4994e",
+      "local_receipt": "tmp/verification/android-delivery-0.1.2/node-pro-domain.json",
+      "host_elapsed_seconds": 103.717,
+      "clock": {
+        "scope": "API29_x86_64_TCG_monotonic_clock_with_host_aligned_guest_wall_time",
+        "clock_sets": 16,
+        "child_exit": 0,
+        "cleanup_confirmed": true,
+        "application_gate_and_timeouts_unchanged": true
+      }
+    },
+    {
+      "check": "node-x-stop",
+      "passed": true,
+      "tests": 1,
+      "checked_at_utc": "2026-11-26T04:32:18.482354+00:00",
+      "receipt_sha256": "c6e641ab29172877a1eaf6986ec6af4420d2dc4745e728ffb2e9a67561354791",
+      "log_sha256": "d70d4cc730b983a968a48e36384aaa3c44bf77177f8290ccbb4fb77fb9aa5ce6",
+      "local_receipt": "tmp/verification/android-delivery-0.1.2/node-x-stop.json",
+      "host_elapsed_seconds": 118.706,
+      "clock": {
+        "scope": "API29_x86_64_TCG_monotonic_clock_with_host_aligned_guest_wall_time",
+        "clock_sets": 19,
+        "child_exit": 0,
+        "cleanup_confirmed": true,
+        "application_gate_and_timeouts_unchanged": true
+      }
+    },
+    {
+      "check": "node-pro-stop",
+      "passed": true,
+      "tests": 1,
+      "checked_at_utc": "2026-11-26T04:34:42.455594+00:00",
+      "receipt_sha256": "da42d48f048edf23c9f2f2f8c23db0a4850ab847edb9f546953191bd91794827",
+      "log_sha256": "2820df4ef532551efc5b1ed2616c0e1b241847aa9b2d3aea4d25848616f12829",
+      "local_receipt": "tmp/verification/android-delivery-0.1.2/node-pro-stop.json",
+      "host_elapsed_seconds": 121.371,
+      "clock": {
+        "scope": "API29_x86_64_TCG_monotonic_clock_with_host_aligned_guest_wall_time",
+        "clock_sets": 19,
+        "child_exit": 0,
+        "cleanup_confirmed": true,
+        "application_gate_and_timeouts_unchanged": true
+      }
+    },
+    {
+      "check": "node-x-notification",
+      "passed": true,
+      "tests": 1,
+      "checked_at_utc": "2026-11-26T04:40:52.036933+00:00",
+      "receipt_sha256": "00bbdc603682a4f4e74f116ba1d314d35e2e4434ebf64e727c290614fd5600b7",
+      "log_sha256": "cd123cef91feab7d268dc2a369debe0f4037a667978774f349b7fa2fca5591b4",
+      "local_receipt": "tmp/verification/android-delivery-0.1.2/node-x-notification.json",
+      "host_elapsed_seconds": 107.506,
+      "clock": {
+        "scope": "API29_x86_64_TCG_monotonic_clock_with_host_aligned_guest_wall_time",
+        "clock_sets": 16,
+        "child_exit": 0,
+        "cleanup_confirmed": true,
+        "application_gate_and_timeouts_unchanged": true
+      }
+    }
+  ],
+  "previous_unchanged_execution": [
+    {
+      "check": "native-inert",
+      "tests": 1,
+      "passed_at_previous_execution": true,
+      "log_sha256": "8eefc9427d1b1a5ae2c0e196d6acec2e4361763736904bc3f5f95e0ffdca8b38",
+      "receipt_sha256": "d9d5c5e63e7922455a723a00bf5922250dd215df9258051f14e1a1454ba4f8ea",
+      "local_receipt": "tmp/verification/root-0.1.2/android-native-inert.json",
+      "test_sources_unchanged": true,
+      "source_hashes": {
+        "app/src/androidTest/kotlin/net/aptist/loft/service/AndroidNativeBoundaryTest.kt": "4f0e57b522febb7be888c7e08184a22f13b944a912a9d287c68d25fafd0e1c48"
+      },
+      "new_apk_execution": false,
+      "scope": "Prior0.1.2 API29 matching native/cancellation/sensitive execution; not rerun for current APK"
+    },
+    {
+      "check": "cancellation-sensitive",
+      "tests": 6,
+      "passed_at_previous_execution": true,
+      "log_sha256": "3d23a2c0a3804321f17819dade4d41c58c5873350f285194b263f2a5c311c414",
+      "receipt_sha256": "e04de466fe83c2b1718d6411b6cac370269252a760fc4f08db26d6a2344f9c64",
+      "local_receipt": "tmp/verification/root-0.1.2/android-cancellation-sensitive.json",
+      "test_sources_unchanged": true,
+      "source_hashes": {
+        "app/src/androidTest/kotlin/net/aptist/loft/service/AndroidQueryCancellationTest.kt": "3033c8585f581dfff28a9c27058cc36177a7ad8e1ff5a7078ff55e79c5f273a6",
+        "app/src/androidTest/kotlin/net/aptist/loft/SensitiveTouchIntegrationTest.kt": "f130c4e4f943d655fa3e3022b75f9be21e421560f25e94699dbe9eb0a959e5e8"
+      },
+      "new_apk_execution": false,
+      "scope": "Prior0.1.2 API29 matching native/cancellation/sensitive execution; not rerun for current APK"
+    }
+  ],
+  "device": {
+    "api": 29,
+    "abi": "x86_64",
+    "emulator_profile": "TCG/noKVM/icount software guest",
+    "system_fingerprint": "Android/sdk_phone_x86_64/generic_x86_64:10/QSR1.210820.001/7663313:userdebug/test-keys",
+    "application_uid": "normal application UID; root ADB used only for test-guest wall time"
+  },
+  "confirmed_network_path": "Both private X/Pro: selected APP UID, uncached VPN Network A query to synthetic198.19/16 alias, restored original hostname, certificate/TLS/HTTP200, priority Stop and finalized same-scope/resource assertions",
+  "confirmed_notification_path": "API29 Ready+Blocked posted notification: native smallIcon, actual NMS FGSflag and current AMS.foreground; four locales with unchanged Rust generation/attempt/privacy scope, hidden UI and real PendingIntent Stop/remove",
+  "negative_history_preserved": {
+    "x_domain_first_failure": "tmp/verification/root-0.1.2/first-android-node-x-domain.json",
+    "notification_first_failure": "tmp/verification/root-0.1.2/android-blocked-notification.json",
+    "notification_diagnostic_failure": "tmp/verification/root-0.1.2/android-blocked-notification-diagnostic.json",
+    "explicit_wire_dns": "Historical direct client TCP/UDP53 probes had no valid answer; not proof that node DNS is broken, and no physical business DNS fallback was added"
+  },
+  "remaining": [
+    "Actual ARM64 execution/16KiB hardware and Pixel/Samsung Fold postures",
+    "API33/36 permission/channel denial and rendered top status-bar icon acceptance",
+    "Browser SDP/WebRTC address enumeration and real device IPv6/selected-unselected/work-profile behavior",
+    "Always-on/lockdown, network switching, Doze/vendor survival, PSS/CPU/battery and24/48/72h",
+    "Actual Portal mail event source, Rust subscription authority and provider integration; no production push"
+  ],
+  "scope": "Current source/API29 software execution only; not full P0-P5 or physical-device certification",
+  "artifact_validation_receipt": "docs/validation/apk-0.1.2-release.json",
+  "additional_minified_release_startup_smoke": {
+    "path": "docs/validation/android-0.1.2-x86-r8-smoke.json",
+    "sha256": "d944992cb75662ba31f09e0a9f566888731493b60452779a47df45c36fcf48c0",
+    "go_jni_path": "docs/validation/android-0.1.2-x86-r8-go-jni.json",
+    "go_jni_sha256": "5a917675bd1434c5066a36f2cbf4ce97c60abefc0f6cf874ac5e7a6bcf034421",
+    "passed": true,
+    "scope": "Additional isolated x86 R8 startup/static-JNI validation; original8 Debug test artifacts remain preserved"
+  }
+}

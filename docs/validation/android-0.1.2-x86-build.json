@@ -1,0 +1,42 @@
+{
+  "android_preflight_sha256": "6ca78cbc557b0f925de1520432c49c1d38ea278dfd2e771cbdd021dd6f81f459",
+  "app_jvm_tests": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 72
+  },
+  "artifacts": [
+    {
+      "bytes": 49672189,
+      "path": "loft-android/app/build/test-x86_64/outputs/apk/debug/app-debug.apk",
+      "sha256": "652456169a6c9d91e635a2513bbb72c594a8482c6196ecbd0edaec82ce512ae8"
+    },
+    {
+      "bytes": 950420,
+      "path": "loft-android/app/build/test-x86_64/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+      "sha256": "f9e4e15888772fc2bc64b1a111b5f23e9c8e876f0c7212961555f3a838574c8a"
+    }
+  ],
+  "checked_at_utc": "2026-11-26T03:14:44.148224+00:00",
+  "command": [
+    "python3",
+    "scripts/run_gradle.py",
+    "-p",
+    "loft-android",
+    "-PloftTestAbi=x86_64",
+    "-PloftNativeGeneratedRoot=/home/coder/LOFT-mobile/tmp/native-0.1.2-x86",
+    ":app:testDebugUnitTest",
+    ":app:assembleDebug",
+    ":app:assembleDebugAndroidTest",
+    "--no-daemon",
+    "--max-workers=1",
+    "-Dorg.gradle.jvmargs=-Xmx1536m",
+    "-Pkotlin.compiler.execution.strategy=in-process"
+  ],
+  "elapsed_seconds": 216.4,
+  "log_sha256": "cee858e4ac4b2597ac76c74e27a14bbbb314e98c557000097351149133e92166",
+  "returncode": 0,
+  "schema_version": 1,
+  "scope": "matching x86_64 software-emulator profile compilation/JVM checks; not Android execution or ARM64/device acceptance"
+}

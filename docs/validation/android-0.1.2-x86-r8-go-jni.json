@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "instrumentation_exit_code": 0,
+  "checked_at_utc": "2026-11-26T05:59:11.191294+00:00",
+  "target_x86_minified_apk_sha256": "b99a6450bcb0ddb31913b801bd52c4c23c5d024db8eff58cab9bb78763654a27",
+  "probe_apk_sha256": "5cb7f2285f7356d4dc8553af59eba6eab4c2fb13056cbffdf607b8554a1de6da",
+  "probe_java_sha256": "475566a59c6b2c52d546ff66f5a376ec83cf50b42493e7677cfe652a57f64e4f",
+  "log_sha256": "86803a0202ed58e68fd8768dd4c19892e190eceefd5ae267e421e6f95ca034bf",
+  "output_private_scan_passed": true,
+  "returned_fields": {
+    "compiled_gvisor_linked": "true",
+    "gomaxprocs_two": "true",
+    "info_bytes": "305",
+    "info_sha256": "79fd2e1fae2fa486553fb6e03e8b3a744598317a9d24ea5e6cb02023123cf51c",
+    "ordinary_uid": "true",
+    "passed": "true",
+    "stage": "COMPLETE_STATIC_METADATA_ONLY",
+    "transport_and_ipv6_inactive": "true"
+  },
+  "host_elapsed_seconds": 25.266,
+  "canonical_arm64_sha256": "64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e",
+  "canonical_unchanged": true,
+  "scope": "Actual kept Engine.vpnRuntimeInfo() reflection in ordinary target application UID against minified x86 Release; static Go JNI/schema/compiled-gVisor/Android scheduler only. No Go VPN runtime constructor, TUN, node, socket or network request invoked. Descriptor Ready=false is not a live VPN receipt.",
+  "not_arm64_or_real_node_r8_acceptance": true,
+  "probe_source_java": "package net.aptist.loft.r8probe;\n\nimport android.app.Activity;\nimport android.app.Instrumentation;\nimport android.os.Bundle;\nimport android.os.Process;\nimport java.lang.reflect.Method;\nimport java.nio.charset.StandardCharsets;\nimport java.security.MessageDigest;\nimport org.json.JSONObject;\n\n/** Test-only static metadata JNI probe. No runtime constructor/TUN/node API. */\npublic final class NativeProbe extends Instrumentation {\n    @Override public void onCreate(Bundle arguments) {\n        super.onCreate(arguments);\n        start();\n    }\n\n    @Override public void onStart() {\n        Bundle result = new Bundle();\n        boolean passed = false;\n        String stage = \"LOAD_KEPT_ENGINE\";\n        try {\n            Class<?> engine = getTargetContext().getClassLoader().loadClass(\"net.aptist.loft.engine.Engine\");\n            Method info = engine.getMethod(\"vpnRuntimeInfo\");\n            stage = \"INVOKE_STATIC_GO_JNI\";\n            Object value = info.invoke(null);\n            if (!(value instanceof String)) throw new IllegalStateException();\n            String raw = (String) value;\n            if (raw.length() < 2 || raw.getBytes(StandardCharsets.UTF_8).length > 4096) throw new IllegalStateException();\n            stage = \"VALIDATE_STATIC_CAPABILITIES\";\n            JSONObject json = new JSONObject(raw);\n            boolean normalUid = Process.myUid() >= 10000;\n            boolean linked = json.getBoolean(\"gvisor_built\") && json.getBoolean(\"linked_into_mobile_data_plane\");\n            boolean inactive = !json.getBoolean(\"transport_ready\") && !json.getBoolean(\"ipv6_forwarded\");\n            boolean scheduler = json.getInt(\"gomaxprocs\") == 2;\n            passed = normalUid && linked && inactive && scheduler && json.getInt(\"schema_version\") == 1;\n            result.putBoolean(\"ordinary_uid\", normalUid);\n            result.putBoolean(\"compiled_gvisor_linked\", linked);\n            result.putBoolean(\"transport_and_ipv6_inactive\", inactive);\n            result.putBoolean(\"gomaxprocs_two\", scheduler);\n            result.putInt(\"info_bytes\", raw.getBytes(StandardCharsets.UTF_8).length);\n            byte[] digest = MessageDigest.getInstance(\"SHA-256\").digest(raw.getBytes(StandardCharsets.UTF_8));\n            StringBuilder hash = new StringBuilder();\n            for (byte valueByte : digest) hash.append(String.format(java.util.Locale.ROOT, \"%02x\", valueByte & 255));\n            result.putString(\"info_sha256\", hash.toString());\n            stage = \"COMPLETE_STATIC_METADATA_ONLY\";\n        } catch (Throwable error) {\n            result.putString(\"failure_type\", error.getClass().getSimpleName());\n        }\n        result.putString(\"stage\", stage);\n        result.putBoolean(\"passed\", passed);\n        finish(passed ? Activity.RESULT_OK : Activity.RESULT_CANCELED, result);\n    }\n}\n",
+  "probe_manifest_xml": "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" package=\"net.aptist.loft.r8probe\">\n    <uses-sdk android:minSdkVersion=\"29\" android:targetSdkVersion=\"36\" />\n    <application android:label=\"LOFT Release JNI Probe\" android:allowBackup=\"false\" android:usesCleartextTraffic=\"false\" />\n    <instrumentation android:name=\"net.aptist.loft.r8probe.NativeProbe\" android:targetPackage=\"net.aptist.loft\" />\n</manifest>\n"
+}

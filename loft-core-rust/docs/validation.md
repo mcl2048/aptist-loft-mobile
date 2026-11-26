@@ -1,0 +1,147 @@
+# Rust validation evidence
+
+## Frozen schema-1 foundation, 2026-11-25
+
+Toolchain observed directly: `cargo 1.100.0 (3acc79c0c 2026-11-05)` and `rustc 1.100.0 (0ef1bc386 2026-11-09)`. `Cargo.lock` pins dependencies; UniFFI is 0.32.2. Builds used at most two workers.
+
+The first test compilation failed because rcgen 0.14 renamed a fixture public-key API. The fixture was corrected to `PublicKeyData::subject_public_key_info`; this compiler error was not counted as TDD red behavior.
+
+`cargo test -p loft-core --no-fail-fast` then exited 101 against compileable admission shells: 26 tests, 24 expected failures and two startup/rejection cases passing. Failed targets were `--lib`, `core_state`, `import_validation`, `server_origin` and `snapshot_budget`. They observed missing real imports, missing origin normalization, wrong routing/resource error branches and missing generation-exhaustion behavior. After implementation all 26 passed. A dedup fixture's unescaped fragment space was corrected to `%20` without relaxing the parser.
+
+`cargo test -p loft-ffi --no-fail-fast` exited 101 against exported adapter shells: four tests failed on real `AppCore` command/state behavior. After forwarding and exhaustive boundary conversions all four passed, including four concurrent callers committing 200 unique nodes and isolated snapshot copies.
+
+A self-review regression reproduced accepted dotted hexadecimal IPv4 in both origin and node inputs. `hexadecimal_ipv4_components_are_rejected_as_ambiguous_origins` and `legacy_numeric_node_addresses_cannot_change_identity_in_an_adapter` each exited 101 before correction. An independent Node URL constructor, without networking, normalized three hex variants to `https://127.0.0.1`. The common host validator was strengthened; the complete workspace subsequently passed 32 tests.
+
+The first direct binding-generation command exited 1: UniFFI 0.32 rejected the old flat CLI config shape and could not find ambient `cargo metadata`. The generator's optional metadata discovery was disabled and an explicit global `[crate-roots]` configuration was added. Fresh generation from the repository root then exited 0 without an ambient Cargo-path requirement. Generated records use immutable Kotlin `val` fields; `AppCore()` is real, disposal is `close()`/`destroy()`, and errors are flat `CoreException` types with empty messages.
+
+Fresh final foundation checks:
+
+| Command | Observed result |
+| --- | --- |
+| `cargo fmt --all --check` | Exit 0 |
+| `cargo clippy --workspace --all-targets --locked -- -D warnings` | Exit 0; one nested-format fixture lint was fixed first |
+| `cargo test --workspace --locked --no-fail-fast` | Exit 0; 32 passed, zero failed |
+| `cargo build -p loft-ffi -p loft-bindgen --locked` | Exit 0; host native library and executable built |
+| `loft-bindgen generate <host-so> --language kotlin --config <global-config> --out-dir <target-generated> --no-format` from repository root | Exit 0 |
+| `cargo test -p loft-core --test snapshot_budget --locked -- --nocapture` | Exit 0; maximum fixture metadata JSON Parcel was 61,622 bytes |
+
+The snapshot fixture uses 50 maximum-length endpoints/escaped labels, 100 routing selections and a maximum-length server origin. This is a serialization bound, not measured JVM/Go/native PSS or device acceptance. Node admission tests also fill the retained-byte budget with valid independent generated certificate material and verify that removal returns quota.
+
+No Rust test uses TEST.TXT, task credentials, real deployment secrets or production nodes. Certificate fixtures are generated independently in test memory and are excluded from production compilation. Source Gateway/Portal roots were read-only. Reviewed URI source pin: Gateway `231f14813f2b45cb6f0bde984181c57cba1d02fd`; protocol payload limits remain X 1..1024 and Pro 0..65507.
+
+The foundation has no actual data plane, TUN, encrypted storage, cloud authentication, mailbox or scanner. Its successful native compilation does not prove Android socket protection, full TLS behavior, actual app routing, real-device VPN, memory/battery budgets or 72-hour acceptance. ARM64 library packaging and 16 KiB alignment belong to the root native build evidence.
+
+## Actual VPN port extension
+
+The user subsequently requested real X/Pro VPN-module testing. Root approved the opaque ticket/real receipt extension in [the port proposal](engine-port-proposal.md). The frozen foundation's 32 tests are not relabelled as actual VPN tests.
+
+
+## Frozen 0.1.1-LYNX receipt port, 2026-11-25
+
+The initial extension red run exited 101 with ten new core failures (nine lifecycle/ticket/receipt tests plus X/Pro private URI preservation) while 28 existing domain tests stayed green. After implementation all 38 passed. The FFI extension first exited 101 with four new exported-port/owner failures while the original four stayed green. A specific poison regression then observed Connected after owner-lock poison and failed expecting Unavailable. Published immutable metadata, explicit unavailable projection and atomic/try-lock priority stop corrected it; the held-normal-lock stop test passed without waiting for that mutex.
+
+The priority revocation test separately failed with Err(StaleGeneration) where a trusted Revoked cause had to be recordable after cancellation. It was corrected without accepting a late generic start failure or ready callback. Rust 1.100 warned that atomic fetch_update was renamed; the implementation uses try_update.
+
+All workspace/lockfile own-package versions are 0.1.1 and exported core_version is 0.1.1-LYNX. Fresh cargo test --workspace --no-fail-fast exited 0 with 50 passed, zero failed. Fresh cargo fmt --all --check and cargo clippy --workspace --all-targets --locked -- -D warnings exited 0. Counter-exhaustion and complete snapshot-boundary tests also pass. These are independent local validation/reducer/FFI/cancellation tests, not live VPN or device evidence.
+
+Complete-metadata tests measured an initial UTF-16 JSON Parcel of 61,790 bytes and a maximum draft/applied UTF-8 byte-array frame of 35,157 bytes, below the live 60 KiB frame limit. This is serialization/admission evidence, not process PSS or kernel/Go memory cost.
+
+The matching ARM64 release library was built using scripts/env.sh, RUSTUP_TOOLCHAIN=1.100.0, NDK 28.2.13676358, API 29 linker and -C link-arg=-Wl,-z,max-page-size=16384. cargo build -p loft-ffi --release --locked --target aarch64-linux-android exited 0. It was copied to Android generated jniLibs/arm64-v8a and Kotlin regenerated directly from that artifact using the global config, exit 0. All four ELF PT_LOAD segments have 0x4000 alignment.
+
+Freeze artifact: library 1,539,256 bytes, SHA256 e2772aac339612501b6de0515fce0d2ea5d208cfc297fbe53903505e72c39517; generated Kotlin SHA256 e5e767f313219a78d0be792d75d759bf0d622c234e7bc313de82eb28d169da95. Source/copied native SHA matched. Generated output is not source delivery. Android/Go own actual JNI, TUN/protected-socket, protocol/live-node, DNS and consumer-ordering evidence. No TEST.TXT credential entered Rust files or logs.
+
+## REQ-NODE-01: read-only memory-directory pages, 2026-11-25
+
+The independent review in the root's `docs/validation/spec-compliance/requirements/REQ-NODE-01.md` found a current framework gap: Rust accepted 200 nodes but only the first 50 could be discovered through state queries. The owner re-read guide v3.6's accepted-node/200-workset requirements, UI design's import-order/stable-ID pagination requirement and `docs/contracts/framework.md`'s 50-row snapshot limit. Those constraints require bounded access to all accepted session-local records; pending SQLCipher/Keystore work does not justify hiding records 51–200. The independent review's actual binary snapshot result (28,428 bytes) is its host serializer evidence, not a new Rust measurement or a confirmed overflow.
+
+Android and Rust froze `AppCore.node_page(offset: u32, expected_generation: u64) -> Result<NodePage, CoreError>`, generated as `nodePage(offset: UInt, expectedGeneration: ULong): NodePage`. `NodePage` is an immutable schema-1 record with generation, offset, full-workset node_count, at most 50 existing redacted summaries and optional next_offset. Valid page starts are 0/50/100/150 smaller than the current nonempty count; an empty directory accepts only zero. Generation is checked before the offset. `InvalidNodePage` was appended to the error enum; stale requests use `StaleGeneration`, poisoned owners use `StateUnavailable`.
+
+The core method reads existing memory state through `&self` and clones only one page in original import order. The FFI read drops its ordinary mutex guard before converting the record. It does not use the mutation helper, reconcile priority cancellation or publish a snapshot. The snapshot schema/first 50 rows, global generation, 200-node/8 MiB admission and non-waiting priority Stop remain intact. No SQL, new runtime, persistence or raw configuration field was added.
+
+TDD used actual core and exported `AppCore` imports/queries. Tests were written before compileable query shells. The first `cargo test --workspace --locked --no-fail-fast` exited 101: the original 50 tests passed; 11 new tests failed on missing page behavior and one new Pro metadata fixture failed earlier with `MissingField` because it omitted mandatory material. That fixture mistake was corrected using the existing independently generated valid X/Pro identity fixtures and was not counted as TDD red evidence. `cargo test -p loft-core --test node_pages --test import_validation --locked --no-fail-fast` then exited 101 with all eight new core/page-material tests failing on `StateUnavailable` from the shell, while the 11 prior material tests passed. The five new FFI/owner tests had already failed on the query shell in the full red run.
+
+After implementation, fresh verification from this workspace, with `source ../scripts/env.sh` supplying the pinned toolchain and two workers:
+
+| Command | Observed result |
+| --- | --- |
+| `cargo test --workspace --locked --no-fail-fast` | Exit 0; 63 passed, zero failed, including all original 50 |
+| `cargo fmt --all` then `cargo fmt --all --check` | Both exit 0 |
+| `cargo clippy --workspace --all-targets --locked -- -D warnings` | Exit 0 |
+| `cargo build -p loft-ffi -p loft-bindgen --locked` | Exit 0; host debug library/generator only |
+| `target/debug/loft-bindgen generate target/debug/libloft_ffi.so --language kotlin --config bindings/uniffi.toml --out-dir target/generated/kotlin --no-format` | Exit 0; generated matching host Kotlin |
+
+The shell initially lacked Cargo in PATH (`cargo --version` exited 127); loading the existing environment script resolved it. This was environment setup, not a validation failure.
+
+New tests cover all four full pages with no missing/duplicate IDs, original order, terminal empty/partial pages, invalid offsets including u32::MAX, stale generations after off-page changes and profile/routing mutations, future generations, later-page target/removal behavior, active/pending removal rejection, owned caller copies, actual generated X/Pro/PEM/seed and SOCKS credential redaction, poison errors, and queued-query priority cancellation without generation reconciliation. These are reducer/FFI state proofs; the synthetic stopped receipt in the selection/removal test does not prove Android TUN closure or a live connection.
+
+Host debug library SHA256: `814a3b4b3c5426a2264db92edf73a97021c980bac95e9f87ba74756cf46ed52f`. Generated Kotlin at `target/generated/kotlin/net/aptist/loft/core/generated/loft_ffi.kt` SHA256: `0f04b7df8550e111fdc7f5552d72aeec01b7d14b619949ad3d521dbb36569467`. Generated declarations were inspected for the frozen UInt/ULong method, six val record fields and appended error variant. No Android generated directory was overwritten. The earlier ARM64 receipt-port artifact predates paging; final matching ARM64 regeneration/16 KiB alignment, page Binder serialization, UI selection/order handling and device acceptance remain Android/root integration work. Version stays `0.1.1-LYNX`; no commit/push was performed.
+
+## Maintained PEM parser migration, 2026-11-25
+
+Root's cargo-audit 0.23.0 report contained zero known vulnerabilities and two unmaintained notices. `rustls-pemfile 2.2.0` / `RUSTSEC-2025-0134` was a direct production dependency of `loft-core`; this notice was not treated as an exploitable finding. Its actual local source delegates to `rustls-pki-types 1.16.0`. The owner read that version's `pem.rs`/`lib.rs`, including `PemObject`, slice iteration, private-key section conversion and `Zeroize` implementation.
+
+The production dependency was removed from workspace/core manifests and the lockfile. Certificate decoding now uses `rustls::pki_types::CertificateDer::pem_slice_iter`; private-key decoding uses `PrivateKeyDer::from_pem_slice`. The existing strict envelope, eight-certificate/one-key limit, DER completeness, time/SAN/SPKI-pin/chain/EKU checks, key relationship and `Zeroizing` ownership remain. The decoder's diagnostic text still maps to a flat `InvalidCertificate`. Empty required material retains `MissingField`. FFI, pager, public record/error ordering and version were not changed.
+
+Four tests were added using independently generated real X/Pro identities and a signed eight-certificate chain. Initial test expectations incorrectly assigned `InvalidCertificate` to empty required fields; they were corrected to the existing `MissingField` before baseline/red evidence and did not change production validation. `cargo test -p loft-core --test import_validation --locked pem_ -- --nocapture` then passed all four against the old implementation. A temporary envelope/cap bypass produced three real failures: preamble-bearing certificate/key imports and a ninth certificate were wrongly accepted. Restoring the envelope and substituting a decoding shell produced two failures on valid X/Pro material and the valid eight-link chain. These are deliberate regression sensitivity probes, not vulnerabilities reported against the original implementation. The maintained decoder passed all four afterward. Temporary probes were removed; no lint or audit suppression was added.
+
+Cargo's lockfile pruning removed only `rustls-pemfile 2.2.0` and the `loft-core` dependency reference: 138 packages became 137, with no new packages and every retained registry record/version/checksum unchanged. An initial `--no-deps` metadata query did not prune. Full offline metadata pruned the lockfile but failed when trying to load the uncached, unrelated-platform `r-efi 6.0.0`; `cargo metadata --offline --locked --format-version 1 --filter-platform x86_64-unknown-linux-gnu` then succeeded without downloading or upgrading it.
+
+Fresh final commands used `source ../scripts/env.sh` and at most two build workers:
+
+| Command | Observed result |
+| --- | --- |
+| `cargo test --workspace --locked --no-fail-fast` | Exit 0; 67 passed, zero failed, including all prior 63 |
+| `cargo fmt --all --check` | Exit 0 after formatting |
+| `cargo clippy --workspace --all-targets --locked -- -D warnings` | Exit 0 |
+| `cargo build -p loft-ffi -p loft-bindgen --locked` | Exit 0; matching host debug library/generator |
+| `target/debug/loft-bindgen generate target/debug/libloft_ffi.so --language kotlin --config bindings/uniffi.toml --out-dir target/generated/kotlin --no-format` | Exit 0; Kotlin hash unchanged |
+| `cargo audit --json --no-fetch --file Cargo.lock` | Exit 0; zero known vulnerabilities, one unmaintained notice |
+
+The remaining `basic-toml 0.1.10` / `RUSTSEC-2026-0374` notice is in the host binding-generator/proc-macro chain: `basic-toml -> askama_derive 0.16.1 -> askama_macros (proc-macro) -> askama -> uniffi_bindgen 0.32.2 -> uniffi/loft-bindgen`. Workspace feature unification can also show `loft-ffi` beneath `uniffi`; the normal Android `loft-ffi` runtime dependency graph does not contain `basic-toml`. It remains in the audited lockfile and was not ignored or relabelled as a production exploit. Upgrading that tool chain is outside this API-preserving migration.
+
+Final SHA256 inventory:
+
+| Artifact | SHA256 |
+| --- | --- |
+| `Cargo.lock` | `ee4e0e421696d1acd3cb27dd3507b61dcfa632d2cf1f8a5532a31ca9bd2c8242` |
+| `crates/loft-core/src/certificates.rs` | `7beb0c0ca29f724af8bfaae3f6ccd6d80e8fd8a5cccef192dbc0ee67c5a5d481` |
+| `target/debug/libloft_ffi.so` | `cf19b0babf3cc3a066565e21d93e5e2606addc40ca995cf5c0e34871520b05d6` |
+| `target/generated/kotlin/net/aptist/loft/core/generated/loft_ffi.kt` | `0f04b7df8550e111fdc7f5552d72aeec01b7d14b619949ad3d521dbb36569467` |
+| `target/pem-migration-audit.json` | `833be0657b1d7878bb060b40c285d038d87daf6ddedecedc16752401422ea48a` |
+| `target/pem-migration-host-metadata.json` | `8058430d8e1662d09e732a2b835d520748ca49d1bb8d8ae621152acfbedcd838` |
+
+Host output is not delivery source. No ARM64 rebuild, Android generated-file replacement, upstream-source change, commit or push was performed; root owns the final native/architecture/release checks and root documentation.
+
+## 0.1.2-LYNX VPN-global network privacy contract
+
+Root approved the source-pinned shared Go DNS/RTC guard and the typed Rust policy/receipt seam after read-only v3.6/UI/resource-contract review. This supersedes the old development wire-resolver default: the initial Rust policy epoch is 1, DNS is explicitly synthetic node-domain/Fake-IP routing, DNS/WebRTC leak modes are ProxyOnly, resolver endpoint is empty and Hydra is disabled. Fake-IP does not establish a real resolver answer or Gateway DNS/Firewall deployment success. Recognition is scoped to actual supported DNS/RTC channels and captured VPN UIDs; browser-local SDP candidates, unselected apps and other profiles are not claimed hidden/protected.
+
+`privacy.rs` owns bounded validation, normalization, deterministic canonical policy JSON, actual UID identity normalization and framed SHA256 scope derivation. No production dependency was added; the same 137 locked packages remain, with the three own-package versions synchronized to 0.1.2. A changed valid policy increments global configuration generation and a separate checked policy epoch atomically; a normalized no-op increments neither. Existing tickets and confirmed applied policies retain their captured settings until explicit Stop/join/new attempt. Read-only pages still use schema 1 and original capacity/fences.
+
+Android/Go/root agreed the actual scope after a package-only digest was identified as insufficient: `freezeEffectivePackages` is followed by one `freezeNetworkScope(NetworkScopeIdentity)` with actual service owner UID and complete package→UID pairs. Rust validates the 100-row/4,096-name-byte cap, exact expanded package membership, duplicates, signed-Android UID range and same installation/user profile. Full tunnel uses empty pairs plus actual owner/profile identity. Android revalidates actual membership before Builder, after establishment and before Ready; changed identity denies/Stops rather than rebinding. Canonical policy and one-use raw URI require a live identity-frozen ticket; canonical delivery comes first. Frozen nonsecret scope metadata remains available for later failure/closure receipts.
+
+CoreSnapshot payload schema is 2; Android publication envelope is independently 3, while NodePage and canonical Go policy remain schema 1. Snapshots expose separate draft policy/epoch, confirmed applied policy/scope and Inactive/Active/Blocked enforcement. Ready requires original transport/auth/TUN/socket/consumption/routing proof plus exact epoch/scope/modes, actual installed DNS/RTC/IPv6 enforcement, no pending resource owner, matching Hydra profile scope and Android IPv4/no-bypass/IPv6 capture confirmations. Stop projects Inactive without waiting for the state mutex; poison also clears applied privacy. Blocked requires actual original TUN held/drop and matching captured scope/platform proof. DNS/RTC/Hydra packet counters remain Go resource metadata; Rust adds no packet copies, timer, poll or runtime.
+
+Meaningful red/green observations:
+
+- `cargo test -p loft-core --test privacy_policy --locked --no-fail-fast`: first exited 101 against validation shells, five valid-policy failures and three rejection cases passing. Implemented normalization then passed all eight, including literal endpoints, DNS quotas, blocked modes and Hydra disabled/zero/boundary behavior.
+- `cargo test -p loft-core --test privacy_lifecycle --locked --no-fail-fast`: first exited 101 with ten failures against lifecycle/scope/config shells. After implementing draft/scope/canonical behavior, seven passed and three failed on actual wrong branches: Ready accepted unconfirmed privacy proof, Blocked accepted wrong scope, and confirmed privacy was absent. Exact receipt checks corrected those branches.
+- The first complete updated suite exited 101 with 88 passed and two failures. Existing/new FFI poison and held-normal-mutex priority Stop tests observed Active where Inactive was required from the published snapshot. Explicit immutable projection corrected both; ordinary Stop still does not wait for that mutex.
+- Two additional max-epoch regressions first passed the intended implementation. Deliberately substituting wrapping policy admission and signed JSON conversion made both fail: mutation returned Ok under a reused epoch, and JSON contained "-1" instead of "18446744073709551615". The original checked unsigned implementation was restored and final suites passed. These sensitivity probes are not reported as original exploitable findings.
+- A generated-real X/Pro material test rejects enabled Hydra without actual profile application/scope, then accepts only LogicalStreams for X or TcpOnly for Pro. It is a reducer receipt test, not actual wire shaping evidence; record/padding activity remains separate Go evidence.
+
+The original 67 test cases remain, adapted only for schema 2/new mandatory receipt and identity inputs. Test-only helper modules supply explicitly synthetic reducer/boundary proofs; they are excluded from production and never read task/private nodes. New tests include 17 separate invalid Ready conditions, policy draft versus applied/late receipt behavior, UID/profile digest changes, identity failures, one-use/cancelled configuration, policy generation/page conflicts, and platform/ownership/Hydra receipt rejection. No source-text or mock-only test was introduced.
+
+Fresh source verification from this workspace, with `source ../scripts/env.sh` and two workers:
+
+| Command | Observed result |
+| --- | --- |
+| `cargo test --workspace --locked --no-fail-fast` | Exit 0; 93 passed, zero failed (original 67 plus 26) |
+| `cargo fmt --all --check` | Exit 0 |
+| `cargo clippy --workspace --all-targets --locked -- -D warnings` | Exit 0 after fixing test initializer/borrow style, with no suppression |
+| `cargo audit --json --no-fetch --file Cargo.lock` | Exit 0; zero known vulnerabilities, remaining host basic-toml unmaintained notice |
+| `cargo test -p loft-core --test snapshot_budget --locked -- --nocapture` | Exit 0; complete schema-2 fixture 62,878-byte UTF-16 JSON Parcel and 36,240-byte draft/applied UTF-8 frame |
+
+The JSON fixture now includes both policy copies and effective status, but it is a conservative serializer fixture, not Android's actual binary Binder result. Actual payload/envelope size and foreign binding/engine/UID-scope/DNS/RTC behavior belong to Android/Go/root integration.
+
+The exact typed API is recorded in [network-privacy-contract.md](network-privacy-contract.md). Source inventory is in ignored `target/privacy-source-inventory.json`. No binding generation or native rebuild was performed for this checkpoint: root explicitly reserved those jobs until the agreed source/ABI and build slot are reviewed. The previous 0.1.1 host/ARM64/APK artifacts do not prove the new 0.1.2 privacy behavior. No upstream/private input, another subtree, commit or push was changed.

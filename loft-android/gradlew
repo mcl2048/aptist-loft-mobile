@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+loft_android_dir="$(cd -- "$(dirname -- "$0")" && pwd)"
+if [[ -n "${LOFT_GRADLE_BIN:-}" ]]; then
+    loft_gradle_bin="$LOFT_GRADLE_BIN"
+elif [[ -n "${LOFT_TOOLCHAIN_ROOT:-}" ]]; then
+    loft_gradle_bin="$LOFT_TOOLCHAIN_ROOT/gradle-8.13/bin/gradle"
+else
+    loft_gradle_bin="${XDG_DATA_HOME:-$HOME/.local/share}/loft-mobile/gradle-8.13/bin/gradle"
+fi
+if [[ ! -x "$loft_gradle_bin" ]]; then
+    printf '%s\n' 'Pinned Gradle 8.13 is missing. Run the repository toolchain setup or set LOFT_GRADLE_BIN.' >&2
+    exit 1
+fi
+exec "$loft_gradle_bin" -p "$loft_android_dir" "$@"

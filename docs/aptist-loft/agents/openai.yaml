@@ -1,0 +1,4 @@
+interface:
+  display_name: "APTIST LOFT"
+  short_description: "Develop and release the Rust LOFT Android framework"
+  default_prompt: "Use $aptist-loft to develop, review and release LOFT while preserving Rust ownership and resource limits."

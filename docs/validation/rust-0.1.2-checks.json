@@ -1,0 +1,72 @@
+{
+  "checks": [
+    {
+      "checked_at_utc": "2026-11-26T02:11:54.687429+00:00",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "loft-core-rust/Cargo.toml",
+        "--all",
+        "--check"
+      ],
+      "elapsed_seconds": 0.322,
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tool_versions": {
+        "cargo": "cargo 1.100.0 (3acc79c0c 2026-11-05)",
+        "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)"
+      }
+    },
+    {
+      "checked_at_utc": "2026-11-26T02:11:59.148977+00:00",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "loft-core-rust/Cargo.toml",
+        "--workspace",
+        "--locked"
+      ],
+      "elapsed_seconds": 4.461,
+      "failed": 0,
+      "ignored": 0,
+      "passed": 93,
+      "returncode": 0,
+      "stderr_sha256": "68f564c6ec75cbb68fa29cd0275bae47dcf2f9f7e5418b97cc678f0517ba6fec",
+      "stdout_sha256": "ef87e94dc8b12baae9deb1d7f9e042410aad1da6e61a002691dbebb2bc327ffa",
+      "tool_versions": {
+        "cargo": "cargo 1.100.0 (3acc79c0c 2026-11-05)",
+        "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)"
+      }
+    },
+    {
+      "checked_at_utc": "2026-11-26T02:11:59.823127+00:00",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "loft-core-rust/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "elapsed_seconds": 0.674,
+      "returncode": 0,
+      "stderr_sha256": "3e43b255d4b20a7b309afeb5012d5088aa471e53c75606d9df8a98bab335f40e",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tool_versions": {
+        "cargo": "cargo 1.100.0 (3acc79c0c 2026-11-05)",
+        "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)"
+      }
+    }
+  ],
+  "frozen_files_verified": 36,
+  "schema_version": 1,
+  "scope": "host Rust workspace, format and Clippy; not Android/device acceptance",
+  "source_inventory_sha256": "db5b0bc7a146af10f4c24a72ca3459252ae35e7d5a4e3f2a2aa228bb4beb58f3"
+}

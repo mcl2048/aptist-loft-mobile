@@ -1,0 +1,22 @@
+# LOFT v3.6 architecture context
+
+The Android MVP uses native Compose, stable welcome/vpn/shield/mail/audit/setting/account module IDs, four locales (en, zh, ja, de) and light/dark themes. A private service owns business state in Rust, generated UniFFI bindings cross the language boundary, and gomobile packages the actual source-pinned Go VPN adapter and its retained legacy controller. The runtime adapter supplies TUN/resource facts rather than business authority. Kotlin has no second authoritative state machine.
+
+The full plan additionally calls for SOCKS5/hyrakenx/hyraken-pro QR/link import, selected-app proxy with unselected apps direct, physical socket protection, encrypted storage, Shield software/attestation policies, optional Portal BFF login and own-user mail. They are staged P0–P5 work: a framework release must identify what is implemented, planned and unverified.
+
+The current framework implements session-local three-protocol link parsing, the200-node/50-row directory, actual VPN ownership/Stop, shared node-domain Fake-IP/RTC rules and native notification boundaries. QR, large FD imports, encrypted restart persistence, live TUN replacement/reconnect, BFF login/mail and Shield remain later adapters. Exact verified status belongs in the active Readme, requirements and task report; do not infer completion from the roadmap's desired UI.
+
+The source inputs on this server are:
+
+| Input | Exact path and pin |
+| --- | --- |
+| HyrakenX core | `/home/coder/Loft-Gateway/modules/hyrakenx`; Gateway `231f14813f2b45cb6f0bde984181c57cba1d02fd` |
+| Hyraken Pro core | `/home/coder/Loft-Gateway/pkg/hyrakenpro`; same Gateway pin |
+| Node DNS/Firewall/Hydra | `/home/coder/Loft-Gateway/modules/dns`, `/home/coder/Loft-Gateway/modules/firewall`, `/home/coder/Loft-Gateway/modules/firewall/hydra` |
+| Portal IDP/Mail | `/home/coder/aptist-portal/modules/idp`, `/home/coder/aptist-portal/modules/mail`; Portal `4ab2b37d08f9d7e304ae4d420d36d15c54dffa36` |
+
+GhostX protocol/config adapters and `class-loft-saas-gateway.php` provide the integration/share contract. Reproducible mobile builds use the owned Go snapshot and `loft-vpn-engine-go/third_party/SOURCE-LOCK.json`, without requiring those upstream checkouts. DNS/Firewall rule libraries remain gateway subsystems; do not put their full data into the APK or turn an HTTPS/mail link into a global block decision. Shared mobile DNS/RTC guards precede all transport adapters; Hydra shaping is independent/Disabled by default and QUBF remains a separate future transport.
+
+Portal provides `/api/idp`, exact issuer discovery, authorize, Basic token redemption, JWKS, UserInfo and mail list/detail/attachments. Confidential BFF credentials remain server-side. A pure Portal deployment does not yet provide LOFT's proposed `/.well-known/loft-app` or `/v1` endpoints. Public native OAuth requires a separately implemented and reviewed provider extension.
+
+Physical quotas, UDP payload boundaries, lifetime/half-close semantics and source-account authorization are source-derived constraints; SQLCipher/Keystore, identity registration and gateway enforcement remain later implementations. Actual protected-FD and routing execution, mobile resources and 72-hour battery acceptance need their own evidence even when the adapter source/host tests pass.

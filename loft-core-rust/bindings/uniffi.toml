@@ -1,0 +1,4 @@
+# UniFFI 0.32 CLI global configuration. Kotlin settings have one source in the crate-local file.
+# Explicit roots avoid ambient cargo metadata, working-directory and registry dependencies.
+[crate-roots]
+loft_ffi = "../crates/loft-ffi"

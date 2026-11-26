@@ -1,0 +1,97 @@
+name: Framework verification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: loft-framework-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  boundaries:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      CARGO_BUILD_JOBS: '2'
+      GOMAXPROCS: '2'
+      GOTOOLCHAIN: local
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: '1.27.4'
+          cache: false
+      - name: Install pinned Rust tools
+        run: rustup toolchain install 1.100.0 --profile minimal --component clippy --component rustfmt
+      - name: Python and Rust boundaries
+        run: |
+          python3 -m unittest discover -s tests -v
+          python3 scripts/verify_architecture.py
+          cargo +1.100.0 fmt --manifest-path loft-core-rust/Cargo.toml --all --check
+          cargo +1.100.0 test --manifest-path loft-core-rust/Cargo.toml --workspace --locked
+          cargo +1.100.0 clippy --manifest-path loft-core-rust/Cargo.toml --workspace --all-targets --locked -- -D warnings
+          python3 scripts/verify_secrets.py
+      - name: Go stack and race checks
+        working-directory: loft-vpn-engine-go
+        run: |
+          python3 tools/verify_owned_sources.py
+          python3 -m unittest discover -s tools -p 'test_*.py' -v
+          go test -tags=with_gvisor -p 2 ./...
+          go test -race -tags=with_gvisor -p 2 ./...
+          go vet -tags=with_gvisor ./...
+          go run golang.org/x/vuln/cmd/govulncheck@v1.10.0 -tags=with_gvisor ./...
+      - name: Rust dependency advisories
+        run: |
+          cargo +1.100.0 install cargo-audit --version 0.23.0 --locked --jobs 2
+          cargo audit --file loft-core-rust/Cargo.lock
+
+  native-apk:
+    needs: boundaries
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    env:
+      CARGO_BUILD_JOBS: '2'
+      GOMAXPROCS: '2'
+      GOTOOLCHAIN: local
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: '1.27.4'
+          cache: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install pinned native tools
+        run: |
+          rustup toolchain install 1.100.0 --profile minimal --target aarch64-linux-android
+          python3 - <<'PY'
+          import os, subprocess
+          sdk = os.environ['ANDROID_HOME']
+          tool = sdk + '/cmdline-tools/latest/bin/sdkmanager'
+          subprocess.run([tool, '--licenses'], input=b'y\n' * 100, check=True)
+          subprocess.run([tool, 'platform-tools', 'platforms;android-36', 'build-tools;36.0.0', 'ndk;28.2.13676358'], check=True)
+          PY
+          curl --fail --location --silent --show-error https://downloads.gradle.org/distributions/gradle-8.13-bin.zip --output "$RUNNER_TEMP/gradle-8.13-bin.zip"
+          printf '%s  %s\n' '20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78' "$RUNNER_TEMP/gradle-8.13-bin.zip" | sha256sum --check -
+          unzip -q "$RUNNER_TEMP/gradle-8.13-bin.zip" -d "$RUNNER_TEMP/loft-tools"
+          echo "LOFT_GRADLE_BIN=$RUNNER_TEMP/loft-tools/gradle-8.13/bin/gradle" >> "$GITHUB_ENV"
+          echo "LOFT_ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "LOFT_GO_BIN=$(dirname "$(command -v go)")" >> "$GITHUB_ENV"
+      - name: Build and verify ARM64 APK
+        run: |
+          bash scripts/build-native.sh
+          bash scripts/build-android.sh
+          python3 scripts/verify_apk.py loft-android/app/build/outputs/apk/release/app-release-unsigned.apk
+          python3 scripts/verify_secrets.py --apk loft-android/app/build/outputs/apk/release/app-release-unsigned.apk

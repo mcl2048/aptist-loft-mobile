@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "version": "0.1.2-LYNX",
+  "checked_at_utc": "2026-11-26T05:47:57.246283+00:00",
+  "command": [
+    "python3",
+    "scripts/run_gradle.py",
+    "-p",
+    "loft-android",
+    "-PloftTestAbi=x86_64",
+    "-PloftNativeGeneratedRoot=/home/coder/LOFT-mobile/tmp/native-0.1.2-x86",
+    ":app:assembleRelease",
+    "--no-daemon",
+    "--max-workers=1",
+    "-Dorg.gradle.jvmargs=-Xmx1536m",
+    "-Pkotlin.compiler.execution.strategy=in-process"
+  ],
+  "returncode": 0,
+  "host_elapsed_seconds": 394.44,
+  "log_sha256": "655ea41389ae315c9575006427ae56f8aefb271a19654c7dec1a27b0151fadef",
+  "native_inputs": [
+    {
+      "path": "tmp/native-0.1.2-x86/gomobile/loft-engine.aar",
+      "sha256": "b2fed78b8f5503544df594bf52202fdf3bf6f580fbee479ecb353b4161f3b919"
+    },
+    {
+      "path": "tmp/native-0.1.2-x86/jniLibs/x86_64/libloft_ffi.so",
+      "sha256": "5fea563df079bc14c8ca163c253d5873664eb012556a051d7459ada79209d0f9"
+    },
+    {
+      "path": "tmp/native-0.1.2-x86/uniffi/net/aptist/loft/core/generated/loft_ffi.kt",
+      "sha256": "656d7b78abac672575af6ef1ec3cec4bba324356eccbc8d0216d4681809ef853"
+    }
+  ],
+  "android_source_preflight_sha256": "205fb8df1fe2d49b2d32f1e47b4c17a4937f1f1401f0a57a7813d3e7827e6acc",
+  "canonical_sha256": "64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e",
+  "canonical_still_unchanged": true,
+  "preserved_current_debug_artifacts": [
+    {
+      "path": "tmp/verification/android-delivery-0.1.2/preserved-current-debug/app-debug.apk",
+      "sha256": "e6b575c29d3c3010656d5328e920bf217d20181f43dbc1d91318ada0ede40103",
+      "bytes": 50183475
+    },
+    {
+      "path": "tmp/verification/android-delivery-0.1.2/preserved-current-debug/app-debug-androidTest.apk",
+      "sha256": "5856a00671f7e4d7099d68a32208263aa4acbb1bc4e26717e95a9b59897d89db",
+      "bytes": 954276
+    }
+  ],
+  "scope": "Matching isolated x86 minified Release build for startup smoke; not canonical ARM64 replacement or physical-device acceptance",
+  "artifact": {
+    "path": "loft-android/app/build/test-x86_64/outputs/apk/release/app-release-unsigned.apk",
+    "bytes": 22728194,
+    "sha256": "8a1b4681178ad783034cd3b250dc269385831765a3fc97fa772aa2ea0f9b0655",
+    "signing": "unsigned"
+  },
+  "passed": true
+}

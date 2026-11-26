@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "version": "0.1.2-LYNX",
+  "checked_at_utc": "2026-11-26T04:51:22.170295+00:00",
+  "artifact_sha256": "e6b575c29d3c3010656d5328e920bf217d20181f43dbc1d91318ada0ede40103",
+  "png": "docs/validation/ui/loft-0.1.2-guest-vpn-673dp.png",
+  "png_sha256": "0245b1c490a6629a17cd2562ac94674e045301476e057222bb9f6d33d382870f",
+  "png_bytes": 107869,
+  "actual_pixels": [
+    673,
+    900
+  ],
+  "density_dpi": 160,
+  "width_dp": 673,
+  "page": "VPN_HOME",
+  "fresh_force_stopped_guest": true,
+  "no_private_node_imported": true,
+  "actual_disconnected_text_observed": true,
+  "visible_left_rail": [
+    {
+      "label": "Open account and server settings",
+      "bounds": [
+        18,
+        34,
+        54,
+        70
+      ]
+    },
+    {
+      "label": "Home",
+      "bounds": [
+        4,
+        84,
+        68,
+        140
+      ]
+    },
+    {
+      "label": "Network",
+      "bounds": [
+        4,
+        148,
+        68,
+        204
+      ]
+    },
+    {
+      "label": "Protection",
+      "bounds": [
+        4,
+        212,
+        68,
+        268
+      ]
+    },
+    {
+      "label": "Records",
+      "bounds": [
+        4,
+        276,
+        68,
+        332
+      ]
+    },
+    {
+      "label": "Settings",
+      "bounds": [
+        4,
+        792,
+        68,
+        848
+      ]
+    }
+  ],
+  "hierarchy_sha256": "8d07378cdc62044e1802135c5996d27e8cfcd5e55775730f60c00bbb88f3e1b5",
+  "private_scan_passed": true,
+  "host_elapsed_seconds": 136.186,
+  "scope": "Real Compose UI in API29 x86_64 software guest with actual display override; normal app UID",
+  "not_physical_fold_or_arm64_release_execution": true
+}

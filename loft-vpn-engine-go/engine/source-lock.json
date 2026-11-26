@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-11-25",
+  "gateway": {
+    "repository": "Loft-Gateway",
+    "review_root": "/home/coder/Loft-Gateway",
+    "version": "8.0.32-LYNX",
+    "commit": "231f14813f2b45cb6f0bde984181c57cba1d02fd",
+    "implementation_commit": "3ebec36e2270672e71427461ba1ad9334628a972",
+    "linked_into_mobile_data_plane": false,
+    "files": [
+      {
+        "path": "class-loft-saas-gateway.php",
+        "sha256": "45290e77eab3df95fd96e911b6231b25f0ed6f50472522a1cc660f1a24a6f682"
+      },
+      {
+        "path": "GhostX-core-main/go.mod",
+        "sha256": "d6c45c6fbe23d908f9d8495c221901978d340d4674dc5496debf5bb964a43504"
+      },
+      {
+        "path": "GhostX-core-main/protocol/socks/outbound.go",
+        "sha256": "a04db85ccc92b384c2f9e6669419a09d76161f1ebfd0f507bd020d1b90121487"
+      },
+      {
+        "path": "GhostX-core-main/protocol/hyrakenx/hyrakenx.go",
+        "sha256": "a15ce77cf73d20668574df7d3741d6363c9d73be1920629b153fb91e01a04c40"
+      },
+      {
+        "path": "GhostX-core-main/protocol/hyrakenpro/outbound.go",
+        "sha256": "f7dcea4907f6c9af5a5d8476d2d0f5651df207a96e4cbeb01dc78e5493505b36"
+      },
+      {
+        "path": "GhostX-core-main/experimental/libbox/platform.go",
+        "sha256": "66e71e94544590fbcb459f83e615d08cfcffb3bc5bf5ffb5fc9a0c76cc035c25"
+      },
+      {
+        "path": "GhostX-core-main/experimental/libbox/tun.go",
+        "sha256": "1a109c367096974005e9f3db7063f905c48e6e2b0a381b7a2e0fadd2caf818b0"
+      },
+      {
+        "path": "modules/hyrakenx/go.mod",
+        "sha256": "5eee6c8ee010d4a66bfa426404e6ba94c81183b6b4af709fe6e993bd358795da"
+      },
+      {
+        "path": "modules/hyrakenx/quic.go",
+        "sha256": "2b0e3f1fa7977c1a69d073358f726653f58254c5d3b3798fcc3e5c2c76731775"
+      },
+      {
+        "path": "modules/hyrakenx/gate.go",
+        "sha256": "06980000b8b5aeef78a447deb54d897ecc2dc8441bfd3ea258edac87e5a24319"
+      },
+      {
+        "path": "modules/hyrakenx/negotiation.go",
+        "sha256": "cc45bedb2d0ea254eaa95307bcb84642ee7d26a413062d4289b1e419065067b9"
+      },
+      {
+        "path": "modules/hyrakenx/packet.go",
+        "sha256": "93b8cb4c76d1cd607521f01d029c53ff38f8320384d5d20abab35a61aa26a8f1"
+      },
+      {
+        "path": "modules/hyrakenx/packetconn.go",
+        "sha256": "d74a6db2f111f2f5524b7ae6d11405a1ef24af428ddc8c86386456b8663a8372"
+      },
+      {
+        "path": "modules/hyrakenx/stream.go",
+        "sha256": "c1efa8c5985919ba1a582a854d881e1053dbf8337be6bd0a1fa159216de2495f"
+      },
+      {
+        "path": "modules/hyrakenx/socket_buffer_linux.go",
+        "sha256": "a027848d3fdb3706fcf3312ab86930cf16dc6460f62267a0e11e62ca75d9d0da"
+      },
+      {
+        "path": "modules/hyrakenx/socket_buffer_other.go",
+        "sha256": "acce1394f91ffd7face90f2d0404da5a971f09e8479344a264a3893526ab387e"
+      },
+      {
+        "path": "pkg/hyrakenquic/go.mod",
+        "sha256": "34b1c21ccffa98125b3f6c334d166f83a0820c8cc4bc88343ee4495fabd0ce0c"
+      },
+      {
+        "path": "modules/firewall/hydra/go.mod",
+        "sha256": "e0290d9a1f66bdc27201fbdea1910e0a8199c1fb30f37361e894ad9dae409bed"
+      },
+      {
+        "path": "pkg/trafficprofile/go.mod",
+        "sha256": "6b1771f9ab0914c440a1e2a77e70b54a5e9e867745b8dfc749b3f253707fc4a5"
+      },
+      {
+        "path": "pkg/hyrakenpro/transport.go",
+        "sha256": "9afadb1e036e6b0d24a8d4db69a80e0bfe221c229564dd216949f016b151cbae"
+      },
+      {
+        "path": "pkg/hyrakenpro/config.go",
+        "sha256": "e352caaac4f42034bc74f5599b665c6d485b7942250248b7d8efedac55006ad2"
+      },
+      {
+        "path": "pkg/hyrakenpro/carrier.go",
+        "sha256": "83283afa1b4acf989ca801c1b6325c068c486aec317474a8f22fac6ee3368a6e"
+      },
+      {
+        "path": "pkg/hyrakenpro/session.go",
+        "sha256": "1eb57df8c9606fb1675d4200d1312a013d3631acf5b6bcdcc3c1d31721e8808f"
+      },
+      {
+        "path": "pkg/hyrakenpro/stream.go",
+        "sha256": "debff70d0ebbb3b93c7a10bffc596c1d6ab27888ace0951cdbe7a9afa585df63"
+      },
+      {
+        "path": "pkg/hyrakenpro/xudp.go",
+        "sha256": "bb161e8a508155fe88e20bafa40855840a3833c654b9a387783189eec4161161"
+      },
+      {
+        "path": "pkg/hyrakenpro/tcp_profile.go",
+        "sha256": "358af1eb23dbd8206c2ab463869862c24a33d91b72fbc6b7332dec915213b89b"
+      },
+      {
+        "path": "pkg/hyrakenpro/tcp_profile_linux.go",
+        "sha256": "ed6089efe9660ce8820ce78cea3a2a416834e403c7e3d481eb0c6c729b62c078"
+      }
+    ]
+  },
+  "protocols": [
+    {
+      "id": "hyrakenx",
+      "core_path": "modules/hyrakenx",
+      "adapter_path": "GhostX-core-main/protocol/hyrakenx/hyrakenx.go",
+      "local_dependencies": [
+        "pkg/hyrakenquic",
+        "modules/firewall/hydra",
+        "pkg/trafficprofile"
+      ],
+      "outer_transport": "authenticated UDP gate, QUIC, TLS 1.3, mandatory mutual certificate verification",
+      "udp_adapter_path": "modules/hyrakenx/packetconn.go",
+      "udp_payload_min": 1,
+      "udp_payload_max": 1024,
+      "udp_transport": "fixed_target_reliable_stream",
+      "native_quic_datagram_is_a_different_api": true,
+      "close_semantics": "Outbound.Close retires admission and cancels undelivered owners; active Peer survives until final tracked reference release. No automatic drain deadline.",
+      "stream_close_semantics": "CloseWrite retains queued FIN; ForceClose cancels both directions.",
+      "owned_socket_queue_semantics": "Best effort requested maximum 1 MiB per direction on owned UDP socket before gate wrapping; Linux effective accounting may double this. This is not a mobile memory limit."
+    },
+    {
+      "id": "hyraken-pro",
+      "core_path": "pkg/hyrakenpro",
+      "adapter_path": "GhostX-core-main/protocol/hyrakenpro/outbound.go",
+      "outer_transport": "TLS 1.3 over TCP; raw TCP or custom bidirectional gRPC byte-stream carrier",
+      "authentication": "verified server TLS plus seed-authenticated X25519 and ML-KEM-768 hybrid session handshake and mutual key confirmation",
+      "udp_payload_min": 0,
+      "udp_payload_max": 65507,
+      "udp_envelope_max": 66023,
+      "udp_transport": "reliable_tcp_or_custom_grpc",
+      "empty_udp_is_valid": true,
+      "legacy_udp_pool": "ordinary pool shared with TCP",
+      "xudp_pool": "separate packetOnly pool, explicitly negotiated",
+      "pool_semantics": "Connections is a base pool target; ElasticMux=false does not establish a physical FD cap. Type/capacity growth and in-flight/address-race dials require mobile admission at resource creation.",
+      "close_semantics": "Client.Close and Outbound.Close terminate the owned pool and join workers; this is not Drain.",
+      "stream_close_semantics": "Stream.CloseWrite preserves half-close and reverse replies. Relay 30 second EOF drain applies only to its gateway bridge path.",
+      "release_path": "8.0.32 retains production carrier/record implementations; rejected private gRPC borrow candidate is not imported."
+    }
+  ],
+  "mobile": {
+    "transport_ready": false,
+    "tun_adapter_implemented": false,
+    "socket_protect_implemented": false,
+    "network_binding_implemented": false,
+    "physical_socket_hard_admission_implemented": false,
+    "protocols_linked": false,
+    "control_runtime_only": true,
+    "unavailable_code": "loft.engine.data_plane_unavailable",
+    "implemented_limits": {
+      "active_control_operations": 64,
+      "reserved_control_bytes": 8388608,
+      "operation_deadline_max_ms": 30000,
+      "drain_deadline_max_ms": 5000,
+      "control_description_max_bytes": 65536
+    },
+    "limits_scope": "Owned local operation slots, byte reservations, deadlines and bounded static descriptions only. No protocol queue, physical FD, TUN or network limit is asserted.",
+    "drain_abort_stop_scope": "Control operations only; actual VPN Drain/Abort/Stop need protocol, admission, TUN, FD and worker completion receipts at the owning adapters."
+  },
+  "build_tools": {
+    "go": "1.27.4",
+    "golang_org_x_mobile": "v0.0.0-20261117202452-47699113848a",
+    "golang_org_x_mobile_sum": "h1:jYIfLfiCY1/N6kWqBdUak4c1kMN0vKnoQypLZqbGqv4=",
+    "java_package_prefix": "net.aptist.loft",
+    "go_binding_package": "net.aptist.loft/loft-vpn-engine-go/engine"
+  },
+  "credentials_copied": false,
+  "verification_scope": "Read-only source pin/hash verification and mobile control-framework tests. No upstream protocol tests, real device VPN, production identity or network acceptance is claimed.",
+  "schema_scope": "legacy_control_api_review_manifest",
+  "scope_note": "Unlinked flags describe the preserved local Runtime controller only. VPNRuntimeInfo describes the real compiled VPN adapter; third_party/SOURCE-LOCK.json records all owned linked source bytes and explicit mobile patches."
+}

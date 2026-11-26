@@ -1,0 +1,89 @@
+{
+  "cargo_lock_sha256": "dc811b80791237566399467b9a6b59e59931c3bf058557c36ca666a3bacbfad8",
+  "checked_at_utc": "2026-11-26T02:38:34.003863+00:00",
+  "command": [
+    "cargo",
+    "audit",
+    "--file",
+    "loft-core-rust/Cargo.lock",
+    "--json"
+  ],
+  "elapsed_seconds": 4.89,
+  "result": {
+    "database": {
+      "advisory-count": 1568,
+      "last-commit": "b9b8a3c2cb1f2a3c76ab17a551193568c9f8b7a4",
+      "last-updated": "2026-11-25T12:10:30+01:00"
+    },
+    "lockfile": {
+      "dependency-count": 137
+    },
+    "settings": {
+      "ignore": [],
+      "informational_warnings": [
+        "unmaintained",
+        "unsound",
+        "notice"
+      ],
+      "severity": null,
+      "target_arch": [],
+      "target_os": []
+    },
+    "vulnerabilities": {
+      "count": 0,
+      "found": false,
+      "list": []
+    },
+    "warnings": {
+      "unmaintained": [
+        {
+          "advisory": {
+            "aliases": [],
+            "categories": [],
+            "collection": "crates",
+            "cvss": null,
+            "date": "2026-09-26",
+            "description": "The last release was on March 3, 2025, the day after the repository was archived and marked as unmaintained.\n\n## Possible alternatives\n\n- [toml](https://crates.io/crates/toml)",
+            "expect-deleted": false,
+            "id": "RUSTSEC-2026-0374",
+            "informational": "unmaintained",
+            "keywords": [],
+            "license": "CC0-1.0",
+            "package": "basic-toml",
+            "references": [],
+            "related": [],
+            "source": null,
+            "title": "`basic-toml` is unmaintained",
+            "url": "https://github.com/dtolnay/basic-toml/commit/dd2ea1df197f255a402b8990cb852ade3e37ea34",
+            "withdrawn": null
+          },
+          "affected": null,
+          "kind": "unmaintained",
+          "package": {
+            "checksum": "ba62675e8242a4c4e806d12f11d136e626e6c8361d6b829310732241652a178a",
+            "dependencies": [
+              {
+                "name": "serde",
+                "source": "registry+https://github.com/rust-lang/crates.io-index",
+                "version": "1.0.229"
+              }
+            ],
+            "name": "basic-toml",
+            "replace": null,
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "version": "0.1.10"
+          },
+          "versions": {
+            "patched": [],
+            "unaffected": []
+          }
+        }
+      ]
+    }
+  },
+  "returncode": 0,
+  "schema_version": 1,
+  "scope": "entire locked Rust workspace including host binding generator; not mobile certification",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "eaf31438a0bf67cb8ba20a0cf521e517bba70eee5f6be35e34b3301637d48a8d"
+}

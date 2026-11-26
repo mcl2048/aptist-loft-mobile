@@ -1,0 +1,3103 @@
+{
+  "schema_version": 1,
+  "gateway_commit": "231f14813f2b45cb6f0bde984181c57cba1d02fd",
+  "source_scope": "Pinned production Go/native sources, module/license files and explicit owned framed-I/O regression; deployment configurations, private inputs and credentials excluded.",
+  "sing_tun_version": "v0.9.6-0.20260924001923-ddaa4ca25e3b",
+  "sing_version": "v0.9.6-0.20260922013354-87c33f17688f",
+  "gvisor_version": "v0.0.0-20260727.0-sing-box-mod.1",
+  "files": [
+    {
+      "source_kind": "source_snapshot",
+      "source": "GhostX-core-main/LICENSE",
+      "destination": "third_party/Loft-Gateway/GhostX-core-main/LICENSE",
+      "source_sha256": "650d5e3b99a446fb38e820fa87a49562e0c79eab868fff58618ac487a58e554c",
+      "owned_sha256": "650d5e3b99a446fb38e820fa87a49562e0c79eab868fff58618ac487a58e554c"
+    },
+    {
+      "source_kind": "mobile_addition",
+      "source": "LOFT selected Beast sender module",
+      "destination": "third_party/Loft-Gateway/GhostX-core-main/go.mod",
+      "source_sha256": null,
+      "owned_sha256": "1f71ea23fcdd625c650e85386213e5cec0ec95d0270773b80f9e17a9ffda7c6b"
+    },
+    {
+      "source": "GhostX-core-main/transport/beastprofile/hyraken_legacy_flash.go",
+      "destination": "third_party/Loft-Gateway/GhostX-core-main/transport/beastprofile/hyraken_legacy_flash.go",
+      "source_sha256": "11b86f84cd136d015494f9045b2b26236ea55b07ac49a2adfcb850772a3aebc5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "11b86f84cd136d015494f9045b2b26236ea55b07ac49a2adfcb850772a3aebc5"
+    },
+    {
+      "source": "GhostX-core-main/transport/beastprofile/hyrakenx.go",
+      "destination": "third_party/Loft-Gateway/GhostX-core-main/transport/beastprofile/hyrakenx.go",
+      "source_sha256": "69263e1a9aa6ee87e22184a6b7ce22ac08b1fd72bf4b159d280fb0fc41866722",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "69263e1a9aa6ee87e22184a6b7ce22ac08b1fd72bf4b159d280fb0fc41866722"
+    },
+    {
+      "source": "GhostX-core-main/transport/beastprofile/pacer.go",
+      "destination": "third_party/Loft-Gateway/GhostX-core-main/transport/beastprofile/pacer.go",
+      "source_sha256": "f15e62582324549043c977617b3913150793032c9558074a4b76f3618ebb667b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f15e62582324549043c977617b3913150793032c9558074a4b76f3618ebb667b"
+    },
+    {
+      "source": "GhostX-core-main/transport/beastprofile/profile.go",
+      "destination": "third_party/Loft-Gateway/GhostX-core-main/transport/beastprofile/profile.go",
+      "source_sha256": "f796c54108a64f95849b20288f8fd3b7c020e5704c29ad45410f11a5d4b728ac",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f796c54108a64f95849b20288f8fd3b7c020e5704c29ad45410f11a5d4b728ac"
+    },
+    {
+      "source": "GhostX-core-main/transport/hyraken/THIRD_PARTY_NOTICES.md",
+      "destination": "third_party/Loft-Gateway/GhostX-core-main/transport/hyraken/THIRD_PARTY_NOTICES.md",
+      "source_sha256": "ffb73958317b716cf27df4a565113df24c86865320dffb30ae8a079456e7abce",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ffb73958317b716cf27df4a565113df24c86865320dffb30ae8a079456e7abce"
+    },
+    {
+      "source": "modules/firewall/hydra/adaptive.go",
+      "destination": "third_party/Loft-Gateway/modules/firewall/hydra/adaptive.go",
+      "source_sha256": "1019a63393a5f933941c0b1b7402b69dfc0d40a23928b9b59b9f393526afec37",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "1019a63393a5f933941c0b1b7402b69dfc0d40a23928b9b59b9f393526afec37"
+    },
+    {
+      "source": "modules/firewall/hydra/dynamic.go",
+      "destination": "third_party/Loft-Gateway/modules/firewall/hydra/dynamic.go",
+      "source_sha256": "d7dfeccc91b26ae2f1c49e0f3a0678431deb3b07abb3518043658476a6313d13",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d7dfeccc91b26ae2f1c49e0f3a0678431deb3b07abb3518043658476a6313d13"
+    },
+    {
+      "source": "modules/firewall/hydra/dynamic_v2.go",
+      "destination": "third_party/Loft-Gateway/modules/firewall/hydra/dynamic_v2.go",
+      "source_sha256": "eafb164eeaf7e45e4751f402e9df1a9ac4a6052e191e9db3d544a1218c559bfb",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "eafb164eeaf7e45e4751f402e9df1a9ac4a6052e191e9db3d544a1218c559bfb"
+    },
+    {
+      "source": "modules/firewall/hydra/enhanced.go",
+      "destination": "third_party/Loft-Gateway/modules/firewall/hydra/enhanced.go",
+      "source_sha256": "a14d504bcc2a59766831cd02ccf7b29dac7da1a95101815ca4dc9a7255b1d9c2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a14d504bcc2a59766831cd02ccf7b29dac7da1a95101815ca4dc9a7255b1d9c2"
+    },
+    {
+      "source": "modules/firewall/hydra/go.mod",
+      "destination": "third_party/Loft-Gateway/modules/firewall/hydra/go.mod",
+      "source_sha256": "e0290d9a1f66bdc27201fbdea1910e0a8199c1fb30f37361e894ad9dae409bed",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e0290d9a1f66bdc27201fbdea1910e0a8199c1fb30f37361e894ad9dae409bed"
+    },
+    {
+      "source": "modules/firewall/hydra/hydra.go",
+      "destination": "third_party/Loft-Gateway/modules/firewall/hydra/hydra.go",
+      "source_sha256": "280e60867b38d0ae95e27edd21d821edee0c571c59e5c4fc157091ad56204ad4",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "280e60867b38d0ae95e27edd21d821edee0c571c59e5c4fc157091ad56204ad4"
+    },
+    {
+      "source": "modules/firewall/hydra/traffic.go",
+      "destination": "third_party/Loft-Gateway/modules/firewall/hydra/traffic.go",
+      "source_sha256": "fa320a157caa9298790c00c7f98d8c15db09819880b349b2740e482476f6127f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "fa320a157caa9298790c00c7f98d8c15db09819880b349b2740e482476f6127f"
+    },
+    {
+      "source": "modules/hyrakenx/THIRD_PARTY_NOTICES.md",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/THIRD_PARTY_NOTICES.md",
+      "source_sha256": "4178564ac41cdba1b6d1cba938f6334a7dcd492bf390fed468d9159c2b1801b1",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "4178564ac41cdba1b6d1cba938f6334a7dcd492bf390fed468d9159c2b1801b1"
+    },
+    {
+      "source": "modules/hyrakenx/aead_buffer.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/aead_buffer.go",
+      "source_sha256": "f535cccfeb792eda7f249356bd9b10e6f8571b3ff9198f01a84124971ac72db9",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f535cccfeb792eda7f249356bd9b10e6f8571b3ff9198f01a84124971ac72db9"
+    },
+    {
+      "source": "modules/hyrakenx/cmd/managed-probe/main.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/cmd/managed-probe/main.go",
+      "source_sha256": "a84ce5b2539ba00ac9df556e1cc50a6638ae7ead3c950ccd3c66e9ca799b7813",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a84ce5b2539ba00ac9df556e1cc50a6638ae7ead3c950ccd3c66e9ca799b7813"
+    },
+    {
+      "source": "modules/hyrakenx/gate.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/gate.go",
+      "source_sha256": "06980000b8b5aeef78a447deb54d897ecc2dc8441bfd3ea258edac87e5a24319",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "06980000b8b5aeef78a447deb54d897ecc2dc8441bfd3ea258edac87e5a24319"
+    },
+    {
+      "source": "modules/hyrakenx/gcm_amd64.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/gcm_amd64.go",
+      "source_sha256": "a73231a37192426bb77cf94db85a08e56ccf4e41272ff575c03cb82116390c96",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a73231a37192426bb77cf94db85a08e56ccf4e41272ff575c03cb82116390c96"
+    },
+    {
+      "source": "modules/hyrakenx/gcm_other.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/gcm_other.go",
+      "source_sha256": "8ff1b7a3c0411c49c5f81a97b1ce5887f59c553ff42a34cbf646e98516b6c5ff",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8ff1b7a3c0411c49c5f81a97b1ce5887f59c553ff42a34cbf646e98516b6c5ff"
+    },
+    {
+      "source": "modules/hyrakenx/go.mod",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/go.mod",
+      "source_sha256": "5eee6c8ee010d4a66bfa426404e6ba94c81183b6b4af709fe6e993bd358795da",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5eee6c8ee010d4a66bfa426404e6ba94c81183b6b4af709fe6e993bd358795da"
+    },
+    {
+      "source": "modules/hyrakenx/go.sum",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/go.sum",
+      "source_sha256": "41789bd6c52f01a554f32dcd80ee146527d327b13508ed17bebaa2cb25dec0a6",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "41789bd6c52f01a554f32dcd80ee146527d327b13508ed17bebaa2cb25dec0a6"
+    },
+    {
+      "source": "modules/hyrakenx/negotiation.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/negotiation.go",
+      "source_sha256": "cc45bedb2d0ea254eaa95307bcb84642ee7d26a413062d4289b1e419065067b9",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "cc45bedb2d0ea254eaa95307bcb84642ee7d26a413062d4289b1e419065067b9"
+    },
+    {
+      "source": "modules/hyrakenx/packet.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/packet.go",
+      "source_sha256": "93b8cb4c76d1cd607521f01d029c53ff38f8320384d5d20abab35a61aa26a8f1",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "93b8cb4c76d1cd607521f01d029c53ff38f8320384d5d20abab35a61aa26a8f1"
+    },
+    {
+      "source": "modules/hyrakenx/packetconn.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/packetconn.go",
+      "source_sha256": "d74a6db2f111f2f5524b7ae6d11405a1ef24af428ddc8c86386456b8663a8372",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d74a6db2f111f2f5524b7ae6d11405a1ef24af428ddc8c86386456b8663a8372"
+    },
+    {
+      "source": "modules/hyrakenx/quic.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/quic.go",
+      "source_sha256": "2b0e3f1fa7977c1a69d073358f726653f58254c5d3b3798fcc3e5c2c76731775",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ef57de2bf805ccccc13e667ba82a0eb1c284d0af4a2bd207e1162afd68ba89e9"
+    },
+    {
+      "source": "modules/hyrakenx/rocca_s.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/rocca_s.go",
+      "source_sha256": "45cebdc1d3fe6a55b591d746244258a0c5e4b23c7a2fc8c56f469bafa973842b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "45cebdc1d3fe6a55b591d746244258a0c5e4b23c7a2fc8c56f469bafa973842b"
+    },
+    {
+      "source": "modules/hyrakenx/rocca_s_amd64.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/rocca_s_amd64.go",
+      "source_sha256": "114d34866eced7626ae14273cc794fd19c2af986d7f6c125c2758943c1e53445",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "114d34866eced7626ae14273cc794fd19c2af986d7f6c125c2758943c1e53445"
+    },
+    {
+      "source": "modules/hyrakenx/rocca_s_amd64.s",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/rocca_s_amd64.s",
+      "source_sha256": "19c0a6f54c579e405ef99b4e097ee6877ef08939faa58514a6cf950c1ba13c69",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "19c0a6f54c579e405ef99b4e097ee6877ef08939faa58514a6cf950c1ba13c69"
+    },
+    {
+      "source": "modules/hyrakenx/rocca_s_noasm.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/rocca_s_noasm.go",
+      "source_sha256": "4334dbcb39158b78626af7513e3dffccdac6fa7c593d17dea72259e78bb80b42",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "4334dbcb39158b78626af7513e3dffccdac6fa7c593d17dea72259e78bb80b42"
+    },
+    {
+      "source": "modules/hyrakenx/socket_buffer_linux.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/socket_buffer_linux.go",
+      "source_sha256": "a027848d3fdb3706fcf3312ab86930cf16dc6460f62267a0e11e62ca75d9d0da",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a027848d3fdb3706fcf3312ab86930cf16dc6460f62267a0e11e62ca75d9d0da"
+    },
+    {
+      "source": "modules/hyrakenx/socket_buffer_other.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/socket_buffer_other.go",
+      "source_sha256": "acce1394f91ffd7face90f2d0404da5a971f09e8479344a264a3893526ab387e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "acce1394f91ffd7face90f2d0404da5a971f09e8479344a264a3893526ab387e"
+    },
+    {
+      "source": "modules/hyrakenx/stream.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/stream.go",
+      "source_sha256": "c1efa8c5985919ba1a582a854d881e1053dbf8337be6bd0a1fa159216de2495f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "06bab053aa15d559592bdc5ad2de8b11b4947f3e82676856d06ae0f39e4bd5e8"
+    },
+    {
+      "source": "pkg/hyrakenpro/THIRD_PARTY_NOTICES.md",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/THIRD_PARTY_NOTICES.md",
+      "source_sha256": "8bb6d43a2aebec663cfb67f95f9b99b497bae117f2c3a4da67c26a7af3890f2d",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8bb6d43a2aebec663cfb67f95f9b99b497bae117f2c3a4da67c26a7af3890f2d"
+    },
+    {
+      "source": "pkg/hyrakenpro/aead_buffer.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/aead_buffer.go",
+      "source_sha256": "f7192d1d690533bb22ade34b601f3e5fd6d4da30afe9d4792a3dac779be8ce52",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f7192d1d690533bb22ade34b601f3e5fd6d4da30afe9d4792a3dac779be8ce52"
+    },
+    {
+      "source": "pkg/hyrakenpro/ascon.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/ascon.go",
+      "source_sha256": "973df9c7f4d550eb4fbaa68d5668cc57d985f00e48b160b3bacdbe12e1778b24",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "973df9c7f4d550eb4fbaa68d5668cc57d985f00e48b160b3bacdbe12e1778b24"
+    },
+    {
+      "source": "pkg/hyrakenpro/budget.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/budget.go",
+      "source_sha256": "03dc75a04c7dd73c56f0475e39b585c57370ba5484edf0f6752b0da7d302cc15",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "03dc75a04c7dd73c56f0475e39b585c57370ba5484edf0f6752b0da7d302cc15"
+    },
+    {
+      "source": "pkg/hyrakenpro/bulk_tx.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/bulk_tx.go",
+      "source_sha256": "b79740357070614390f3a2aa266b4c4506f703a71b5a033de588166799918f33",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b79740357070614390f3a2aa266b4c4506f703a71b5a033de588166799918f33"
+    },
+    {
+      "source": "pkg/hyrakenpro/carrier.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/carrier.go",
+      "source_sha256": "83283afa1b4acf989ca801c1b6325c068c486aec317474a8f22fac6ee3368a6e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "83283afa1b4acf989ca801c1b6325c068c486aec317474a8f22fac6ee3368a6e"
+    },
+    {
+      "source": "pkg/hyrakenpro/chameleon.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/chameleon.go",
+      "source_sha256": "6c90a8036e106f13ab057795ec4872581b7ccd4ebc1e6f15415643780a380eb2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6c90a8036e106f13ab057795ec4872581b7ccd4ebc1e6f15415643780a380eb2"
+    },
+    {
+      "source": "pkg/hyrakenpro/config.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/config.go",
+      "source_sha256": "e352caaac4f42034bc74f5599b665c6d485b7942250248b7d8efedac55006ad2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "655a21deca9957221deff86b950d53edbd35cdbbfcd779661be669a2399ced94"
+    },
+    {
+      "source": "pkg/hyrakenpro/copy.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/copy.go",
+      "source_sha256": "90e0ef41b34f4d4e14389db4a0a9438929857809b341cf490b5173d5a08f9f32",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "90e0ef41b34f4d4e14389db4a0a9438929857809b341cf490b5173d5a08f9f32"
+    },
+    {
+      "source": "pkg/hyrakenpro/crypto.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/crypto.go",
+      "source_sha256": "0d7a0a10d95d2213c9b2fea499f71353c77273acc197952e6e027f10ce8393d3",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "0d7a0a10d95d2213c9b2fea499f71353c77273acc197952e6e027f10ce8393d3"
+    },
+    {
+      "source": "pkg/hyrakenpro/go.mod",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/go.mod",
+      "source_sha256": "0218a03ba0a0a346f1cfdb3fb12f54759e5e9baf37b152d2134cfd89e127cb69",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "0218a03ba0a0a346f1cfdb3fb12f54759e5e9baf37b152d2134cfd89e127cb69"
+    },
+    {
+      "source": "pkg/hyrakenpro/go.sum",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/go.sum",
+      "source_sha256": "90c0f0b933dfdaca52a0f065ee6f7d8cb929ab1789348fd56118dd49d3bc3c86",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "90c0f0b933dfdaca52a0f065ee6f7d8cb929ab1789348fd56118dd49d3bc3c86"
+    },
+    {
+      "source": "LOFT producer-completion framed socket regression",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/metrics_test.go",
+      "source_kind": "mobile_addition",
+      "source_sha256": null,
+      "owned_sha256": "7168af593fc1ab214996af762a9444369b2a813791d90ebe0f500bad2d9c2420"
+    },
+    {
+      "source": "pkg/hyrakenpro/rocca_s.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/rocca_s.go",
+      "source_sha256": "a563a3755f77e7d3672e7471989929425898fce2be02834f69cd87266e9422e8",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a563a3755f77e7d3672e7471989929425898fce2be02834f69cd87266e9422e8"
+    },
+    {
+      "source": "pkg/hyrakenpro/rocca_s_amd64.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/rocca_s_amd64.go",
+      "source_sha256": "834edc1ba6caaba8ac558ee6ec66d79e58663741b61047f7a15e0260f9a50520",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "834edc1ba6caaba8ac558ee6ec66d79e58663741b61047f7a15e0260f9a50520"
+    },
+    {
+      "source": "pkg/hyrakenpro/rocca_s_amd64.s",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/rocca_s_amd64.s",
+      "source_sha256": "19c0a6f54c579e405ef99b4e097ee6877ef08939faa58514a6cf950c1ba13c69",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "19c0a6f54c579e405ef99b4e097ee6877ef08939faa58514a6cf950c1ba13c69"
+    },
+    {
+      "source": "pkg/hyrakenpro/rocca_s_noasm.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/rocca_s_noasm.go",
+      "source_sha256": "70bac7aa710071149c8401f5622bd19bb06edc140eab763168fe87d293a8ec5f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "70bac7aa710071149c8401f5622bd19bb06edc140eab763168fe87d293a8ec5f"
+    },
+    {
+      "source": "pkg/hyrakenpro/session.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/session.go",
+      "source_sha256": "1eb57df8c9606fb1675d4200d1312a013d3631acf5b6bcdcc3c1d31721e8808f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "01b50889deb16ea3569b327b92c876a040f2fa9b656823b60103741a6315283e"
+    },
+    {
+      "source": "pkg/hyrakenpro/stream.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/stream.go",
+      "source_sha256": "debff70d0ebbb3b93c7a10bffc596c1d6ab27888ace0951cdbe7a9afa585df63",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "debff70d0ebbb3b93c7a10bffc596c1d6ab27888ace0951cdbe7a9afa585df63"
+    },
+    {
+      "source": "pkg/hyrakenpro/tcp_profile.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/tcp_profile.go",
+      "source_sha256": "358af1eb23dbd8206c2ab463869862c24a33d91b72fbc6b7332dec915213b89b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "358af1eb23dbd8206c2ab463869862c24a33d91b72fbc6b7332dec915213b89b"
+    },
+    {
+      "source": "pkg/hyrakenpro/tcp_profile_linux.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/tcp_profile_linux.go",
+      "source_sha256": "ed6089efe9660ce8820ce78cea3a2a416834e403c7e3d481eb0c6c729b62c078",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ed6089efe9660ce8820ce78cea3a2a416834e403c7e3d481eb0c6c729b62c078"
+    },
+    {
+      "source": "pkg/hyrakenpro/tcp_profile_other.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/tcp_profile_other.go",
+      "source_sha256": "a9a61e98d2b62b169dafeee5e4209a746f3bbb6c834156ce3b0adf5359c66fcd",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a9a61e98d2b62b169dafeee5e4209a746f3bbb6c834156ce3b0adf5359c66fcd"
+    },
+    {
+      "source": "pkg/hyrakenpro/testdata/ASCON-LICENSE",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/testdata/ASCON-LICENSE",
+      "source_sha256": "5537d4d10b76b81b6e8dfd8b644480a4b1efa332fbb0cdb61126c5be781ef7b4",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5537d4d10b76b81b6e8dfd8b644480a4b1efa332fbb0cdb61126c5be781ef7b4"
+    },
+    {
+      "source": "pkg/hyrakenpro/tls.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/tls.go",
+      "source_sha256": "8386cbcb90d5b687e8cb557b39000de6a5bcdfc9d7e79a817cd8892d3dd23fe7",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8386cbcb90d5b687e8cb557b39000de6a5bcdfc9d7e79a817cd8892d3dd23fe7"
+    },
+    {
+      "source": "pkg/hyrakenpro/transport.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/transport.go",
+      "source_sha256": "9afadb1e036e6b0d24a8d4db69a80e0bfe221c229564dd216949f016b151cbae",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a13e748097117ec2182786875d1d35f8b62a43c1519e02c7fcd1a56dde62f522"
+    },
+    {
+      "source": "pkg/hyrakenpro/window_return.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/window_return.go",
+      "source_sha256": "9b204ae4b3a6d5362b0bfda09a2b6df537ef1640c145b7bf0e4a32cf9fb7f282",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9b204ae4b3a6d5362b0bfda09a2b6df537ef1640c145b7bf0e4a32cf9fb7f282"
+    },
+    {
+      "source": "pkg/hyrakenpro/xudp.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/xudp.go",
+      "source_sha256": "bb161e8a508155fe88e20bafa40855840a3833c654b9a387783189eec4161161",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "bb161e8a508155fe88e20bafa40855840a3833c654b9a387783189eec4161161"
+    },
+    {
+      "source": "pkg/hyrakenpro/xudp_bridge.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/xudp_bridge.go",
+      "source_sha256": "b01bf59bdae07b0978b93cd94d3f73c5c01f49ffac958bbabb0275033badd306",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b01bf59bdae07b0978b93cd94d3f73c5c01f49ffac958bbabb0275033badd306"
+    },
+    {
+      "source": "pkg/hyrakenquic/LICENSE",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/LICENSE",
+      "source_sha256": "77d0b7b53e8abb84cf4dd3f9945a7fdf27044240d2e8023966a721a9a46fe96e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "77d0b7b53e8abb84cf4dd3f9945a7fdf27044240d2e8023966a721a9a46fe96e"
+    },
+    {
+      "source": "pkg/hyrakenquic/README.loft.md",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/README.loft.md",
+      "source_sha256": "c7fba13d57f96abe81d1c189079cc7143e1005269f300f3ca5d5d225d02e1456",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "c7fba13d57f96abe81d1c189079cc7143e1005269f300f3ca5d5d225d02e1456"
+    },
+    {
+      "source": "pkg/hyrakenquic/UPSTREAM-SHA256SUMS",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/UPSTREAM-SHA256SUMS",
+      "source_sha256": "6dc3b34586e733782a222f49b3a05d3f961587c4694e57242381eb27ec77eccc",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6dc3b34586e733782a222f49b3a05d3f961587c4694e57242381eb27ec77eccc"
+    },
+    {
+      "source": "pkg/hyrakenquic/assets/LICENSE.md",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/assets/LICENSE.md",
+      "source_sha256": "2c8d4ff4244edf09d99dcd428d278e47a059d24f0030b38c1ab38e93b1c8030c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2c8d4ff4244edf09d99dcd428d278e47a059d24f0030b38c1ab38e93b1c8030c"
+    },
+    {
+      "source": "pkg/hyrakenquic/buffer_pool.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/buffer_pool.go",
+      "source_sha256": "bce4a6426eb11ac416ae23b6fe9fe1f3893328b7a4ba10a185bfc592b39837c9",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "bce4a6426eb11ac416ae23b6fe9fe1f3893328b7a4ba10a185bfc592b39837c9"
+    },
+    {
+      "source": "pkg/hyrakenquic/chrome_parrot.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/chrome_parrot.go",
+      "source_sha256": "320700d01f1a463ba598b5def31127c58bbdddf66f760fe273c20f2cfad7fee9",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "320700d01f1a463ba598b5def31127c58bbdddf66f760fe273c20f2cfad7fee9"
+    },
+    {
+      "source": "pkg/hyrakenquic/client.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/client.go",
+      "source_sha256": "4b14d86104383eada582022596fff56256e26b67b19196c5bc4f39bf679c975e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "4b14d86104383eada582022596fff56256e26b67b19196c5bc4f39bf679c975e"
+    },
+    {
+      "source": "pkg/hyrakenquic/closed_conn.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/closed_conn.go",
+      "source_sha256": "bcbac3057a796a1b87c4080ae21446dffc53776498f27b3055b72580c843fae0",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "bcbac3057a796a1b87c4080ae21446dffc53776498f27b3055b72580c843fae0"
+    },
+    {
+      "source": "pkg/hyrakenquic/config.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/config.go",
+      "source_sha256": "77d6696d7e9b7d7db2fce462ef6f3b0426cfc3ec176fe465d03417861d6b8b65",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "77d6696d7e9b7d7db2fce462ef6f3b0426cfc3ec176fe465d03417861d6b8b65"
+    },
+    {
+      "source": "pkg/hyrakenquic/congestion/interface.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/congestion/interface.go",
+      "source_sha256": "2cfdfd5850cd4617e237132cc2024537c4443a0d24337e794f8e44e9726eff10",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2cfdfd5850cd4617e237132cc2024537c4443a0d24337e794f8e44e9726eff10"
+    },
+    {
+      "source": "pkg/hyrakenquic/conn_id_generator.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/conn_id_generator.go",
+      "source_sha256": "3e993e33a753eb23326c276a09678b333b75689afaded626b5480210d8a41877",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "3e993e33a753eb23326c276a09678b333b75689afaded626b5480210d8a41877"
+    },
+    {
+      "source": "pkg/hyrakenquic/conn_id_manager.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/conn_id_manager.go",
+      "source_sha256": "aa689809abaa0a334d57a4c183bd80ea73c2f7b65d77b34b084a4cf26372fd12",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "aa689809abaa0a334d57a4c183bd80ea73c2f7b65d77b34b084a4cf26372fd12"
+    },
+    {
+      "source": "pkg/hyrakenquic/connection.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/connection.go",
+      "source_sha256": "ea04a69072551c3a0abf877517b5c40593df9295a7e87027f3e2ed22cb328ad8",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ea04a69072551c3a0abf877517b5c40593df9295a7e87027f3e2ed22cb328ad8"
+    },
+    {
+      "source": "pkg/hyrakenquic/connection_logging.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/connection_logging.go",
+      "source_sha256": "602061802e1d0cea9dbed808aebee346cb92804f66f0cb3447a51633b4c7a51f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "602061802e1d0cea9dbed808aebee346cb92804f66f0cb3447a51633b4c7a51f"
+    },
+    {
+      "source": "pkg/hyrakenquic/crypto_stream.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/crypto_stream.go",
+      "source_sha256": "cc9c8dda3502c2e89f0ae64a065e2fd3af607c4a5835d4c5b0c76a02e12a3dcc",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "cc9c8dda3502c2e89f0ae64a065e2fd3af607c4a5835d4c5b0c76a02e12a3dcc"
+    },
+    {
+      "source": "pkg/hyrakenquic/crypto_stream_manager.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/crypto_stream_manager.go",
+      "source_sha256": "131d0652100623da6ee1c2bcbf3d54e26c7bfc0538b77e8c9536de6639943dd9",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "131d0652100623da6ee1c2bcbf3d54e26c7bfc0538b77e8c9536de6639943dd9"
+    },
+    {
+      "source": "pkg/hyrakenquic/datagram_queue.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/datagram_queue.go",
+      "source_sha256": "f2e504fe6a12373037d39880f0803d2dc5a9531b90460127453305585fe54e62",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f2e504fe6a12373037d39880f0803d2dc5a9531b90460127453305585fe54e62"
+    },
+    {
+      "source": "pkg/hyrakenquic/errors.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/errors.go",
+      "source_sha256": "2e6248f62316702ea11e30144944aeb9bcdb6da10e14eb82226612844b104d49",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2e6248f62316702ea11e30144944aeb9bcdb6da10e14eb82226612844b104d49"
+    },
+    {
+      "source": "pkg/hyrakenquic/flow_controller_base.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/flow_controller_base.go",
+      "source_sha256": "09f694474ec3ad0a9d5451bd334bb94e6f1b8e18116feaa5272da11f80e6598c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "09f694474ec3ad0a9d5451bd334bb94e6f1b8e18116feaa5272da11f80e6598c"
+    },
+    {
+      "source": "pkg/hyrakenquic/flow_controller_connection.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/flow_controller_connection.go",
+      "source_sha256": "f8871caceb755e88319e36c4a59ee0dfd7eb7d73fbdf8e350c9f99d0a8b66117",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f8871caceb755e88319e36c4a59ee0dfd7eb7d73fbdf8e350c9f99d0a8b66117"
+    },
+    {
+      "source": "pkg/hyrakenquic/flow_controller_stream.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/flow_controller_stream.go",
+      "source_sha256": "567563c457fa7556136eb9c0f1a9cd3715b3a826798ad21cdc7fd65e6ce4098e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "567563c457fa7556136eb9c0f1a9cd3715b3a826798ad21cdc7fd65e6ce4098e"
+    },
+    {
+      "source": "pkg/hyrakenquic/frame_sorter.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/frame_sorter.go",
+      "source_sha256": "f3e626db9874a21d3507f3b277ee286df726e4035d7fc5b1cae639f22c516b74",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f3e626db9874a21d3507f3b277ee286df726e4035d7fc5b1cae639f22c516b74"
+    },
+    {
+      "source": "pkg/hyrakenquic/framer.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/framer.go",
+      "source_sha256": "a1c90b03c8fa8058f939e189b38c9f4a25ff0e75646e6224d711ee75715e6209",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a1c90b03c8fa8058f939e189b38c9f4a25ff0e75646e6224d711ee75715e6209"
+    },
+    {
+      "source": "pkg/hyrakenquic/go.mod",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/go.mod",
+      "source_sha256": "34b1c21ccffa98125b3f6c334d166f83a0820c8cc4bc88343ee4495fabd0ce0c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "34b1c21ccffa98125b3f6c334d166f83a0820c8cc4bc88343ee4495fabd0ce0c"
+    },
+    {
+      "source": "pkg/hyrakenquic/go.sum",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/go.sum",
+      "source_sha256": "9a77043926b907b9eea2a4a221a46d9e601eaa87182d9e43fd04542e10a94eeb",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9a77043926b907b9eea2a4a221a46d9e601eaa87182d9e43fd04542e10a94eeb"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/body.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/body.go",
+      "source_sha256": "053498a87589590ed39fe3ad686a081b1e10fc4b9ae994f71a481514d966e52e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "053498a87589590ed39fe3ad686a081b1e10fc4b9ae994f71a481514d966e52e"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/capsule.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/capsule.go",
+      "source_sha256": "f6345277809eaa2f40c4bd603774113dd21546c1dced448d2c6b498b9aaa1629",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f6345277809eaa2f40c4bd603774113dd21546c1dced448d2c6b498b9aaa1629"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/client.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/client.go",
+      "source_sha256": "81188d5077943ff1ff080e7dbc4e9bcde33e8aea8112748db3f164f77524c070",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "81188d5077943ff1ff080e7dbc4e9bcde33e8aea8112748db3f164f77524c070"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/conn.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/conn.go",
+      "source_sha256": "340459cd5b5c35f6f92662ca1c559157563cdef7f23e34f653fe216f949a7f15",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "340459cd5b5c35f6f92662ca1c559157563cdef7f23e34f653fe216f949a7f15"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/error.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/error.go",
+      "source_sha256": "a579721a55fca747b6539a3479ded2a62daef300827ec40cdc25563f8e39197c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a579721a55fca747b6539a3479ded2a62daef300827ec40cdc25563f8e39197c"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/error_codes.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/error_codes.go",
+      "source_sha256": "804badcb2f4e74b3d4e6f17251740d16780127e17915b950b02e02d7c621e32e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "804badcb2f4e74b3d4e6f17251740d16780127e17915b950b02e02d7c621e32e"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/frames.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/frames.go",
+      "source_sha256": "74fe6f82bcc279e576c3a5130ede516eaf06fb6d93db56478fd7f32cdd7fdc67",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "74fe6f82bcc279e576c3a5130ede516eaf06fb6d93db56478fd7f32cdd7fdc67"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/gzip_reader.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/gzip_reader.go",
+      "source_sha256": "3f04c17a52e67a6a3cfb8bf75f93d9a5c90cd863192d313d3bd75c8c797a12ab",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "3f04c17a52e67a6a3cfb8bf75f93d9a5c90cd863192d313d3bd75c8c797a12ab"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/headers.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/headers.go",
+      "source_sha256": "7cff939ef7462c0809c647661bc5a561e68ab49535e42fc55ffff71faf57f4e5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "7cff939ef7462c0809c647661bc5a561e68ab49535e42fc55ffff71faf57f4e5"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/ip_addr.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/ip_addr.go",
+      "source_sha256": "5b59944b122a0c4f7330c318423b6a26645dff2a0f73d4ef1233273712bee948",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5b59944b122a0c4f7330c318423b6a26645dff2a0f73d4ef1233273712bee948"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/mockgen.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/mockgen.go",
+      "source_sha256": "3f6caa9c07626629fb36fd306575702c091dbd319eb3d985809e9affa0c8827f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "3f6caa9c07626629fb36fd306575702c091dbd319eb3d985809e9affa0c8827f"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/qlog.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/qlog.go",
+      "source_sha256": "51316674eca3676063030aabdc66be548ab98504871e90fec1bc8a3f98f092d5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "51316674eca3676063030aabdc66be548ab98504871e90fec1bc8a3f98f092d5"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/qlog/event.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/qlog/event.go",
+      "source_sha256": "6f6856579cb390631e27b507d9220fdc16dc01bf5585de9e1e8015ad308fa9d1",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6f6856579cb390631e27b507d9220fdc16dc01bf5585de9e1e8015ad308fa9d1"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/qlog/frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/qlog/frame.go",
+      "source_sha256": "6c50449cd7ad0108ead7f73cd945dbcba6a6c865d20f1e947b0e533f9d23e275",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6c50449cd7ad0108ead7f73cd945dbcba6a6c865d20f1e947b0e533f9d23e275"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/qlog/qlog_dir.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/qlog/qlog_dir.go",
+      "source_sha256": "6a4736f7951a13739f008a00412defdf752410ac209638dc6c5e0f66e48d74b7",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6a4736f7951a13739f008a00412defdf752410ac209638dc6c5e0f66e48d74b7"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/request_writer.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/request_writer.go",
+      "source_sha256": "88500af140e07cf14aeb3d0c01f0351479750f6b922f4150f9a168023ee39234",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "88500af140e07cf14aeb3d0c01f0351479750f6b922f4150f9a168023ee39234"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/response_writer.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/response_writer.go",
+      "source_sha256": "6736de2f270adfb271a82fb3db64316effdddf4707ed658e57e6339fca66377b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6736de2f270adfb271a82fb3db64316effdddf4707ed658e57e6339fca66377b"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/server.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/server.go",
+      "source_sha256": "7e1c77b6e62ccab929c124d31e5af488301241174cb805072c7374a227bfdf44",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "7e1c77b6e62ccab929c124d31e5af488301241174cb805072c7374a227bfdf44"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/server_conn.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/server_conn.go",
+      "source_sha256": "8fd88c57e99b306ef82f964df60176aaf19a560c434369bb46a59258bf71939b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8fd88c57e99b306ef82f964df60176aaf19a560c434369bb46a59258bf71939b"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/state_tracking_stream.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/state_tracking_stream.go",
+      "source_sha256": "e066b85c777d0fdd80ae83ec44b30f947c3e91ec549562e5a725fb9db7c78544",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e066b85c777d0fdd80ae83ec44b30f947c3e91ec549562e5a725fb9db7c78544"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/stream.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/stream.go",
+      "source_sha256": "d5dbb1803f4a2780ca2869280bd060deb1c82b0c1efbfe680164be9e52c22f3d",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d5dbb1803f4a2780ca2869280bd060deb1c82b0c1efbfe680164be9e52c22f3d"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/trace.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/trace.go",
+      "source_sha256": "d3d8f61ef6e9084145003e6ccaab24218a09f80930351580c8b198f6c6386d0e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d3d8f61ef6e9084145003e6ccaab24218a09f80930351580c8b198f6c6386d0e"
+    },
+    {
+      "source": "pkg/hyrakenquic/http3/transport.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/http3/transport.go",
+      "source_sha256": "110fc8c2e9a1fdcb2996d28782a25b108db41bec9c6a116300ea8a2c4815a3d0",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "110fc8c2e9a1fdcb2996d28782a25b108db41bec9c6a116300ea8a2c4815a3d0"
+    },
+    {
+      "source": "pkg/hyrakenquic/interface.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/interface.go",
+      "source_sha256": "2846e1d5dcd5d3226e305de306b13ddf234fc3ba42374a79f2ed627f98764c83",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2846e1d5dcd5d3226e305de306b13ddf234fc3ba42374a79f2ed627f98764c83"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/ack_eliciting.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/ack_eliciting.go",
+      "source_sha256": "c51785ce2b7bbc0ca85729345f926a2ffdd0ed7d4e2404c334f6f91eb88cf5dc",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "c51785ce2b7bbc0ca85729345f926a2ffdd0ed7d4e2404c334f6f91eb88cf5dc"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/cc_adapter.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/cc_adapter.go",
+      "source_sha256": "f6f2e2133f881c2f51c12a31d705dc70aa3f4bddc77e721d35acdf82a8c2a0ca",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f6f2e2133f881c2f51c12a31d705dc70aa3f4bddc77e721d35acdf82a8c2a0ca"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/cc_adapter_ex.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/cc_adapter_ex.go",
+      "source_sha256": "77ba7da8555b50182a30fdbdfa7cf2fb254c4611ff7c832a706980a5b3bac42d",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "77ba7da8555b50182a30fdbdfa7cf2fb254c4611ff7c832a706980a5b3bac42d"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/ecn.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/ecn.go",
+      "source_sha256": "e6fdb5528a573bc85963c063357332d9609791017e1e41f8ee3798bf65cfe760",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e6fdb5528a573bc85963c063357332d9609791017e1e41f8ee3798bf65cfe760"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/frame.go",
+      "source_sha256": "e8751481ff3394c799dcfd00d3d2e46ccc62d1ec1918fd1604ae6ed3694dcd20",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e8751481ff3394c799dcfd00d3d2e46ccc62d1ec1918fd1604ae6ed3694dcd20"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/interfaces.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/interfaces.go",
+      "source_sha256": "8a9dc33624d315c8def70f5f8e6632062fbc3efa65950a51cd59084f920a3919",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8a9dc33624d315c8def70f5f8e6632062fbc3efa65950a51cd59084f920a3919"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/lost_packet_tracker.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/lost_packet_tracker.go",
+      "source_sha256": "d4957ed988a2bbcc45d6e4a0f927b15f3e3c273247d269f22bb7fa7b87aa5aec",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d4957ed988a2bbcc45d6e4a0f927b15f3e3c273247d269f22bb7fa7b87aa5aec"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/mockgen.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/mockgen.go",
+      "source_sha256": "9b93cc8840a60e42ee4cce11d9ecaff20b9525c3605c4f3706c23c06f9cd4791",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9b93cc8840a60e42ee4cce11d9ecaff20b9525c3605c4f3706c23c06f9cd4791"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/packet.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/packet.go",
+      "source_sha256": "6d7dbb619ac19afd865ea29d6c0065e597ee82934a59f781f7bf059159bbe1ca",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6d7dbb619ac19afd865ea29d6c0065e597ee82934a59f781f7bf059159bbe1ca"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/packet_number_generator.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/packet_number_generator.go",
+      "source_sha256": "46edb61e4fcdb2cd779647336dfbeeb67f887dfcecb6892d24cba0a5fc3f596a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "46edb61e4fcdb2cd779647336dfbeeb67f887dfcecb6892d24cba0a5fc3f596a"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/received_packet_handler.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/received_packet_handler.go",
+      "source_sha256": "c36c31190e8c5cb892403ccf208cead4e6f9006daf516d5af4eb4d5c70ebb614",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "c36c31190e8c5cb892403ccf208cead4e6f9006daf516d5af4eb4d5c70ebb614"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/received_packet_history.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/received_packet_history.go",
+      "source_sha256": "2f4e13ac727248632c19fbd397f97b3a2f7d1a5f7bc8007815084cbdc11b1eab",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2f4e13ac727248632c19fbd397f97b3a2f7d1a5f7bc8007815084cbdc11b1eab"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/received_packet_tracker.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/received_packet_tracker.go",
+      "source_sha256": "d223e72f002ac8210594349b4f758571214b7edcd21d0cd2a6cd6f4429d848bc",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d223e72f002ac8210594349b4f758571214b7edcd21d0cd2a6cd6f4429d848bc"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/send_mode.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/send_mode.go",
+      "source_sha256": "8462f416bd9eb88bd70d82ae07ee147a4bf0c4af4ec11bc429e0e17706691ef5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8462f416bd9eb88bd70d82ae07ee147a4bf0c4af4ec11bc429e0e17706691ef5"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/sent_packet_handler.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/sent_packet_handler.go",
+      "source_sha256": "8057c573d70cd20e9380baad417388d3cc102de7f5a175a4ba5450d1f4404b75",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8057c573d70cd20e9380baad417388d3cc102de7f5a175a4ba5450d1f4404b75"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/ackhandler/sent_packet_history.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/ackhandler/sent_packet_history.go",
+      "source_sha256": "ed6a0a5ba77ef0958003e5822e215f65ea7f74a03678ed75dda9e0a4532f5a3e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ed6a0a5ba77ef0958003e5822e215f65ea7f74a03678ed75dda9e0a4532f5a3e"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/congestion/bandwidth.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/congestion/bandwidth.go",
+      "source_sha256": "96fcd4bc0630ef05b951fcb8a6ea7e2e7f0f7f0c4a90d2887f20209969f996f8",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "96fcd4bc0630ef05b951fcb8a6ea7e2e7f0f7f0c4a90d2887f20209969f996f8"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/congestion/clock.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/congestion/clock.go",
+      "source_sha256": "6de125638f09ecc13df935093249c0556f6e8586c5ca8806272d863f2f421cea",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6de125638f09ecc13df935093249c0556f6e8586c5ca8806272d863f2f421cea"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/congestion/cubic.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/congestion/cubic.go",
+      "source_sha256": "b7ab532885ed71b350e293ded6b6e983dc9d4376a513210ce5ca38808aea324e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b7ab532885ed71b350e293ded6b6e983dc9d4376a513210ce5ca38808aea324e"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/congestion/cubic_sender.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/congestion/cubic_sender.go",
+      "source_sha256": "3f8c2ebaf5499573cf57142fa22f5c8f710de9e4128c6bcf83590325c5399798",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "3f8c2ebaf5499573cf57142fa22f5c8f710de9e4128c6bcf83590325c5399798"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/congestion/hybrid_slow_start.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/congestion/hybrid_slow_start.go",
+      "source_sha256": "068a1eb7ee5f405ac063b5f1e928295565a4325580d4013405dd7971206d72b1",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "068a1eb7ee5f405ac063b5f1e928295565a4325580d4013405dd7971206d72b1"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/congestion/interface.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/congestion/interface.go",
+      "source_sha256": "6fa9116f783d3b028e1493d6f37159476984da8b8ab2b55c4055dda4908033b7",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6fa9116f783d3b028e1493d6f37159476984da8b8ab2b55c4055dda4908033b7"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/congestion/pacer.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/congestion/pacer.go",
+      "source_sha256": "84b92abe2766d9b6c31222332e1e6c358db49ae4566b6e2ae315ae8084b69245",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "84b92abe2766d9b6c31222332e1e6c358db49ae4566b6e2ae315ae8084b69245"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/aead.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/aead.go",
+      "source_sha256": "7d6429f4ebd04d2b2840df0cc74a4fe8dd36cec2e134dfad7f31284b2567194e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "7d6429f4ebd04d2b2840df0cc74a4fe8dd36cec2e134dfad7f31284b2567194e"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/chrome_client_hello.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/chrome_client_hello.go",
+      "source_sha256": "947d6d145ed18a433fdae057e60bfdc39b3d2c60b8e8a18a5d708ee5a3f1c25a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "947d6d145ed18a433fdae057e60bfdc39b3d2c60b8e8a18a5d708ee5a3f1c25a"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/cipher_suite.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/cipher_suite.go",
+      "source_sha256": "ce8bc028081b0baf41abf91bc64bd8a848947dc044c06e1185a324d1fdd06db1",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ce8bc028081b0baf41abf91bc64bd8a848947dc044c06e1185a324d1fdd06db1"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/cipher_suite_fips140.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/cipher_suite_fips140.go",
+      "source_sha256": "84fd6fd6a39f70a07b78314dd487d9811230d635456be1b95206568397720c13",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "84fd6fd6a39f70a07b78314dd487d9811230d635456be1b95206568397720c13"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/crypto_setup.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/crypto_setup.go",
+      "source_sha256": "79a3233a6be1742d4aab700eed548ade9f987ec2ec497f807d5488f6b022333f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "79a3233a6be1742d4aab700eed548ade9f987ec2ec497f807d5488f6b022333f"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/fake_conn.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/fake_conn.go",
+      "source_sha256": "2d5b7495d3766beba62d585f5d438ea3be16b9e61f3474eb7c76f3c5a03544a1",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2d5b7495d3766beba62d585f5d438ea3be16b9e61f3474eb7c76f3c5a03544a1"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/fips140_go126.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/fips140_go126.go",
+      "source_sha256": "2656e22bcc180ce6881d964d2c3974f7b543f6323917bb9f99c9e95b6f1e3a1f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2656e22bcc180ce6881d964d2c3974f7b543f6323917bb9f99c9e95b6f1e3a1f"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/fips140_legacy.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/fips140_legacy.go",
+      "source_sha256": "122a768dcdaf9c2e58a4e7e3fd174e34cf5008c6250c89d8090a0c37317d0ad6",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "122a768dcdaf9c2e58a4e7e3fd174e34cf5008c6250c89d8090a0c37317d0ad6"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/header_protector.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/header_protector.go",
+      "source_sha256": "6fc6f862bd826fc1b878e011eec8176d81952ca23a854bb690a0bb0fda341e73",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6fc6f862bd826fc1b878e011eec8176d81952ca23a854bb690a0bb0fda341e73"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/hkdf.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/hkdf.go",
+      "source_sha256": "228413cc31413026c51774ebde0c0b66a00e6e43faeac57e77e3adde51886696",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "228413cc31413026c51774ebde0c0b66a00e6e43faeac57e77e3adde51886696"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/initial_aead.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/initial_aead.go",
+      "source_sha256": "467fc051d5e5069825418af5f2facc760ce70d14bec34c40791f89cea1e34373",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "467fc051d5e5069825418af5f2facc760ce70d14bec34c40791f89cea1e34373"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/interface.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/interface.go",
+      "source_sha256": "7ea8ee54f1d47887a39c0e69e1932a461bcaaf20c4b7ad5bf59078231f6a1cc7",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "7ea8ee54f1d47887a39c0e69e1932a461bcaaf20c4b7ad5bf59078231f6a1cc7"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/quic_event_go125.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/quic_event_go125.go",
+      "source_sha256": "03309c9420e4d76dac2fa0bd855ffac28d048626b0c2305fe56c896f8172ae6d",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "03309c9420e4d76dac2fa0bd855ffac28d048626b0c2305fe56c896f8172ae6d"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/quic_event_go126.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/quic_event_go126.go",
+      "source_sha256": "02a80c57aa496d57556ff058417102581c8467a7accc50ecdf9aac433f42dfa8",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "02a80c57aa496d57556ff058417102581c8467a7accc50ecdf9aac433f42dfa8"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/retry_go125.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/retry_go125.go",
+      "source_sha256": "1ea2e80c4a4b2ab0fdd7994c28e075eb4eebc32e032e868acf0cbf43b00bf57f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "1ea2e80c4a4b2ab0fdd7994c28e075eb4eebc32e032e868acf0cbf43b00bf57f"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/retry_go126.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/retry_go126.go",
+      "source_sha256": "f1625da270b131b3c59c6a0617dac08ca9692bf60cd27f84f1727ea0918baa8e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f1625da270b131b3c59c6a0617dac08ca9692bf60cd27f84f1727ea0918baa8e"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/session_ticket.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/session_ticket.go",
+      "source_sha256": "ff7148c1238a2482078198bc9a67e6b806f8025bdd9ed2b8261d2cf02a695c6a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ff7148c1238a2482078198bc9a67e6b806f8025bdd9ed2b8261d2cf02a695c6a"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/tls_config_go126.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/tls_config_go126.go",
+      "source_sha256": "54ed394cb3bed29ee61aafa65728b261546c56977fe6185e28074e4594178b77",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "54ed394cb3bed29ee61aafa65728b261546c56977fe6185e28074e4594178b77"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/tls_config_go127.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/tls_config_go127.go",
+      "source_sha256": "e58666520ae19e9138ecb96cd2f158523cd0dffec776c9484694b7762db349e9",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e58666520ae19e9138ecb96cd2f158523cd0dffec776c9484694b7762db349e9"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/tls_conn.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/tls_conn.go",
+      "source_sha256": "78c02a7dc15da045309a7299d7da89b554317c7a46861f3fc1d7b6eea361b2f5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "78c02a7dc15da045309a7299d7da89b554317c7a46861f3fc1d7b6eea361b2f5"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/tls_conn_utls.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/tls_conn_utls.go",
+      "source_sha256": "60eceb5fdd99e64e914479a78cd87c4d9e1c7cce223da935c314afba7a698df5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "60eceb5fdd99e64e914479a78cd87c4d9e1c7cce223da935c314afba7a698df5"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/token_generator.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/token_generator.go",
+      "source_sha256": "245d1be5d71341702a2b21a61de60e35fe832d07e014e0a1a7aafce61aa1cca4",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "245d1be5d71341702a2b21a61de60e35fe832d07e014e0a1a7aafce61aa1cca4"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/token_protector.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/token_protector.go",
+      "source_sha256": "6e3a43d00c2ba9ba828857bfcd9d89d6fc348b92f07d0ca9e292c8e025b4e723",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6e3a43d00c2ba9ba828857bfcd9d89d6fc348b92f07d0ca9e292c8e025b4e723"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/handshake/updatable_aead.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/handshake/updatable_aead.go",
+      "source_sha256": "f166a59fc9b079b6fa873a2de771656b5f4753276819aa3a9023ca7ae40d3e68",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f166a59fc9b079b6fa873a2de771656b5f4753276819aa3a9023ca7ae40d3e68"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/monotime/time.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/monotime/time.go",
+      "source_sha256": "a9957ea88956b8c5139e4a57d7efcdc3a3a7ae703b92774c524bf52eadfdd13d",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a9957ea88956b8c5139e4a57d7efcdc3a3a7ae703b92774c524bf52eadfdd13d"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/protocol/connection_id.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/protocol/connection_id.go",
+      "source_sha256": "9fcb1792db9896f847ee979634add94b70497b627ecba5df84af3ba75b8f4f9e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9fcb1792db9896f847ee979634add94b70497b627ecba5df84af3ba75b8f4f9e"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/protocol/encryption_level.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/protocol/encryption_level.go",
+      "source_sha256": "55a0c139f7b68f145708aff331a0bef887a3d5d1b38d3a0330253d26a117e3ae",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "55a0c139f7b68f145708aff331a0bef887a3d5d1b38d3a0330253d26a117e3ae"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/protocol/key_phase.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/protocol/key_phase.go",
+      "source_sha256": "b947d8facee6dc359e677a195d28f0be028d0b61bf20f6a10fc8bb6d076da8c0",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b947d8facee6dc359e677a195d28f0be028d0b61bf20f6a10fc8bb6d076da8c0"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/protocol/packet_number.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/protocol/packet_number.go",
+      "source_sha256": "77ecc48d85a4ee0a03f73cc4a8504e50fe40c019a1c31ea82ce94c6252cc4b14",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "77ecc48d85a4ee0a03f73cc4a8504e50fe40c019a1c31ea82ce94c6252cc4b14"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/protocol/params.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/protocol/params.go",
+      "source_sha256": "b7c0961f569e7b9c9ee9504d04163cef1e5b0eb4bafd5b8a827810f31f62dacc",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b7c0961f569e7b9c9ee9504d04163cef1e5b0eb4bafd5b8a827810f31f62dacc"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/protocol/perspective.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/protocol/perspective.go",
+      "source_sha256": "a32a059de3589b10ab73c807f5dd98b2520ecedc1895da1914d00cea39b6a251",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a32a059de3589b10ab73c807f5dd98b2520ecedc1895da1914d00cea39b6a251"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/protocol/protocol.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/protocol/protocol.go",
+      "source_sha256": "a8da00928e939f35f4ddefb5cfd57f6e2b57f767cd41abea8f75bf73282ee886",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a8da00928e939f35f4ddefb5cfd57f6e2b57f767cd41abea8f75bf73282ee886"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/protocol/stream.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/protocol/stream.go",
+      "source_sha256": "2877e621f4e539f346918ec4b0a0dd1f82e9e86317ca675d8b9a7f64d8fc37be",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2877e621f4e539f346918ec4b0a0dd1f82e9e86317ca675d8b9a7f64d8fc37be"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/protocol/version.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/protocol/version.go",
+      "source_sha256": "535fa4e2c3c6437c2a34e2c1a1c3ea54b172826062ea81f20498fd9f340d6ca0",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "535fa4e2c3c6437c2a34e2c1a1c3ea54b172826062ea81f20498fd9f340d6ca0"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/qerr/error_codes.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/qerr/error_codes.go",
+      "source_sha256": "74310c5087458983e4150e4896f77ec66b8b2a2f25c2d75a85f78f745bc321d2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "74310c5087458983e4150e4896f77ec66b8b2a2f25c2d75a85f78f745bc321d2"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/qerr/errors.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/qerr/errors.go",
+      "source_sha256": "1fed06e3f8ce5e59fd7283f341325550a9cef385c1ff4b03ea5536c95f2e22a6",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "1fed06e3f8ce5e59fd7283f341325550a9cef385c1ff4b03ea5536c95f2e22a6"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/qtls/cipher_suite.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/qtls/cipher_suite.go",
+      "source_sha256": "ab19fd785a163ba4c0e334a747b08f0c68dd8b9079cef0da56fe9b307e7150a0",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ab19fd785a163ba4c0e334a747b08f0c68dd8b9079cef0da56fe9b307e7150a0"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/utils/buffered_write_closer.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/utils/buffered_write_closer.go",
+      "source_sha256": "906b25481e2c4b98617906a6e85b9c157daed902490a2cc243d7cfd575774b3d",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "906b25481e2c4b98617906a6e85b9c157daed902490a2cc243d7cfd575774b3d"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/utils/connstats.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/utils/connstats.go",
+      "source_sha256": "9e6dc956f1d0be628ba4789474e6573a6cc7f6bd9e306ae7a7457b26e537f0d2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9e6dc956f1d0be628ba4789474e6573a6cc7f6bd9e306ae7a7457b26e537f0d2"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/utils/linkedlist/linkedlist.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/utils/linkedlist/linkedlist.go",
+      "source_sha256": "4007b540adc3819bb26e198c9a21e5821436f9d943d8e3e9fcbb93e04823f451",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "4007b540adc3819bb26e198c9a21e5821436f9d943d8e3e9fcbb93e04823f451"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/utils/log.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/utils/log.go",
+      "source_sha256": "ead1ae4ef0fb496ddea4eed0c416187fd96ad8fcd8d6befe2b71c98cdb1bdf5e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ead1ae4ef0fb496ddea4eed0c416187fd96ad8fcd8d6befe2b71c98cdb1bdf5e"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/utils/rand.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/utils/rand.go",
+      "source_sha256": "eaf964cd724f7f59bb3f5114d7e38a2755804d151c98ed9c0bf5c6b0579cd301",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "eaf964cd724f7f59bb3f5114d7e38a2755804d151c98ed9c0bf5c6b0579cd301"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/utils/ringbuffer/ringbuffer.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/utils/ringbuffer/ringbuffer.go",
+      "source_sha256": "7f38df564fd81b28e92e0bb8417df40c5c2f3fcd8c0d1a5b67f6184239ac22fa",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "7f38df564fd81b28e92e0bb8417df40c5c2f3fcd8c0d1a5b67f6184239ac22fa"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/utils/rtt_stats.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/utils/rtt_stats.go",
+      "source_sha256": "48d8abdb3d7e4b92552179ce76fb03a9f1c13fd42763e49b6d1a7e339ca4c97b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "48d8abdb3d7e4b92552179ce76fb03a9f1c13fd42763e49b6d1a7e339ca4c97b"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/utils/streamframe_interval.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/utils/streamframe_interval.go",
+      "source_sha256": "13f691feaa6c9a5fab050ba7ccc2e830cb3d7c38d1a493bb74c73668972b3faa",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "13f691feaa6c9a5fab050ba7ccc2e830cb3d7c38d1a493bb74c73668972b3faa"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/utils/tree/tree.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/utils/tree/tree.go",
+      "source_sha256": "9d92a4001171a6dd83529973972713ca1f9caec9db550ae1c9054682c04080be",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9d92a4001171a6dd83529973972713ca1f9caec9db550ae1c9054682c04080be"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/ack_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/ack_frame.go",
+      "source_sha256": "5adf08b2e0ec0175c555ee5480293ee289074e370d3a2e581ab12abeb553e053",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5adf08b2e0ec0175c555ee5480293ee289074e370d3a2e581ab12abeb553e053"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/ack_frequency_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/ack_frequency_frame.go",
+      "source_sha256": "1298b7a8959c4c887f13214599270d2d881b063d91751b3f8224948282ae2d6a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "1298b7a8959c4c887f13214599270d2d881b063d91751b3f8224948282ae2d6a"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/ack_range.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/ack_range.go",
+      "source_sha256": "3cbfda90e0723b60103c8423dc99251f7f646e3d41030813dfaae7174ad5a3bd",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "3cbfda90e0723b60103c8423dc99251f7f646e3d41030813dfaae7174ad5a3bd"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/connection_close_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/connection_close_frame.go",
+      "source_sha256": "e15d1c497fcf553b77ff31be3ac4fa77fa8def74f56f22536e364b1851db3e1d",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e15d1c497fcf553b77ff31be3ac4fa77fa8def74f56f22536e364b1851db3e1d"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/crypto_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/crypto_frame.go",
+      "source_sha256": "1c80e03a94378bb93e1e240711c5b48e051f07462fa9e194bd892ba9a46f8b06",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "1c80e03a94378bb93e1e240711c5b48e051f07462fa9e194bd892ba9a46f8b06"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/data_blocked_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/data_blocked_frame.go",
+      "source_sha256": "b74ee8a6c9fd537d95c7799cae68716b4c193b224c28eebc64089e75de71f2bb",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b74ee8a6c9fd537d95c7799cae68716b4c193b224c28eebc64089e75de71f2bb"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/datagram_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/datagram_frame.go",
+      "source_sha256": "3eb791c69178c46ab887ad1a0e070938ac214a65caea0bd2d317bcf4f4dabead",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "3eb791c69178c46ab887ad1a0e070938ac214a65caea0bd2d317bcf4f4dabead"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/extended_header.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/extended_header.go",
+      "source_sha256": "61d472b338557908c5cdd908b3e1df2e22aa0c0f637167fdf66d12d65ba4e7a2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "61d472b338557908c5cdd908b3e1df2e22aa0c0f637167fdf66d12d65ba4e7a2"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/frame.go",
+      "source_sha256": "62eae3613042ec9bfb29268c269c68d43e85823824ea3fe28994b4e3236cd695",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "62eae3613042ec9bfb29268c269c68d43e85823824ea3fe28994b4e3236cd695"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/frame_parser.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/frame_parser.go",
+      "source_sha256": "4b26ab07f1addf09c0a7208c92b0ce1734caea671a60eca3a815799ef25201b9",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "4b26ab07f1addf09c0a7208c92b0ce1734caea671a60eca3a815799ef25201b9"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/frame_type.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/frame_type.go",
+      "source_sha256": "2f1b0ba1980d353489e8f82147a721bbd6dba5facc0d6b8f57bfa02a408236a7",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2f1b0ba1980d353489e8f82147a721bbd6dba5facc0d6b8f57bfa02a408236a7"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/handshake_done_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/handshake_done_frame.go",
+      "source_sha256": "37b38f229a6b3ca08f0b87a0706caa574d591b35a7c7e099160cd9940aba8c5f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "37b38f229a6b3ca08f0b87a0706caa574d591b35a7c7e099160cd9940aba8c5f"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/header.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/header.go",
+      "source_sha256": "81659e9c675cbbbfc48b7366d6f51707d08db02a10e7783b4c320b51d267edd2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "81659e9c675cbbbfc48b7366d6f51707d08db02a10e7783b4c320b51d267edd2"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/immediate_ack_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/immediate_ack_frame.go",
+      "source_sha256": "631e7ec224a07d8e3cc29aeef63ac5195de50e3dac7e35a9cc82f7caa47bf9b1",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "631e7ec224a07d8e3cc29aeef63ac5195de50e3dac7e35a9cc82f7caa47bf9b1"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/log.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/log.go",
+      "source_sha256": "08a958fb76733bd19b65d5f5ea3cad396ca1ab76822b4bc2138e2fad140d451d",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "08a958fb76733bd19b65d5f5ea3cad396ca1ab76822b4bc2138e2fad140d451d"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/max_data_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/max_data_frame.go",
+      "source_sha256": "30e4b688cf3cd59dcd86e1f217fce7fa2baef51f5d2fc3b1917408c3bb41c5c9",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "30e4b688cf3cd59dcd86e1f217fce7fa2baef51f5d2fc3b1917408c3bb41c5c9"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/max_stream_data_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/max_stream_data_frame.go",
+      "source_sha256": "556ee058839bda4fed65006261eb369b6089e9636a6b78747750bb28c1fab94e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "556ee058839bda4fed65006261eb369b6089e9636a6b78747750bb28c1fab94e"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/max_streams_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/max_streams_frame.go",
+      "source_sha256": "b4df08833ec319b773b9f6f5a98dfc5f4aeb2517a9102795801c62e59f6f904c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b4df08833ec319b773b9f6f5a98dfc5f4aeb2517a9102795801c62e59f6f904c"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/new_connection_id_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/new_connection_id_frame.go",
+      "source_sha256": "efce1b63cb664a32c73fb75d7b68e6c6878900ab6cfb1b5ab913302abf13c163",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "efce1b63cb664a32c73fb75d7b68e6c6878900ab6cfb1b5ab913302abf13c163"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/new_token_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/new_token_frame.go",
+      "source_sha256": "f47a31f00a66c777736137814a5712f2c502f58ca45269aa4c05c4f00924f767",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f47a31f00a66c777736137814a5712f2c502f58ca45269aa4c05c4f00924f767"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/path_challenge_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/path_challenge_frame.go",
+      "source_sha256": "abba7ac1ede382526641fa07597618705afd5517986afb804a2482b1a6ef482f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "abba7ac1ede382526641fa07597618705afd5517986afb804a2482b1a6ef482f"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/path_response_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/path_response_frame.go",
+      "source_sha256": "66accc004ab4cc816c26e4dfa6b6f47571a059b6594f074f83f4dcac9112f2f0",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "66accc004ab4cc816c26e4dfa6b6f47571a059b6594f074f83f4dcac9112f2f0"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/ping_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/ping_frame.go",
+      "source_sha256": "19b1848b14f7a85be2c2bc95915fdeb7111090baec2d049273c535a727baea77",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "19b1848b14f7a85be2c2bc95915fdeb7111090baec2d049273c535a727baea77"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/pool.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/pool.go",
+      "source_sha256": "41b2a5400a4e0cc5de8451713909c914e4c039001332b6d3504e6a3afe067676",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "41b2a5400a4e0cc5de8451713909c914e4c039001332b6d3504e6a3afe067676"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/reset_stream_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/reset_stream_frame.go",
+      "source_sha256": "6ae1046b31804a36b9d7888d961a74e6f186ec87f7d1ba8032d343be3384707d",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6ae1046b31804a36b9d7888d961a74e6f186ec87f7d1ba8032d343be3384707d"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/retire_connection_id_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/retire_connection_id_frame.go",
+      "source_sha256": "f12b9aad9fce372b74b465a1b681f031e4112b8b9eb834ee69a6550d7bc7486a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f12b9aad9fce372b74b465a1b681f031e4112b8b9eb834ee69a6550d7bc7486a"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/short_header.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/short_header.go",
+      "source_sha256": "be5fbfd6a25afd345698b92532cd9999c20c21b5a151d777a2cbe9bbebd2e5d9",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "be5fbfd6a25afd345698b92532cd9999c20c21b5a151d777a2cbe9bbebd2e5d9"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/stop_sending_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/stop_sending_frame.go",
+      "source_sha256": "164a7538ed43376cbcff3c234475145e33bca77675a20a1b29358c73a1be62fd",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "164a7538ed43376cbcff3c234475145e33bca77675a20a1b29358c73a1be62fd"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/stream_data_blocked_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/stream_data_blocked_frame.go",
+      "source_sha256": "62290ed51efdc591b689aa69d8e651678b348af6612c4a64497b3c01e3aec80f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "62290ed51efdc591b689aa69d8e651678b348af6612c4a64497b3c01e3aec80f"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/stream_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/stream_frame.go",
+      "source_sha256": "981364cc599969c7f2d2da06c1f96b93d26f4503daf245941e858d97039cbc59",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "981364cc599969c7f2d2da06c1f96b93d26f4503daf245941e858d97039cbc59"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/streams_blocked_frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/streams_blocked_frame.go",
+      "source_sha256": "ebcb6ed0f94f9bc1a18cc415bc612e91272a416e9cb02a10222b7fe881e77dae",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ebcb6ed0f94f9bc1a18cc415bc612e91272a416e9cb02a10222b7fe881e77dae"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/transport_parameters.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/transport_parameters.go",
+      "source_sha256": "d032d35a36eb33ad6f1242e1954632d007c99081cab1e6c530794c2e703cfe9f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d032d35a36eb33ad6f1242e1954632d007c99081cab1e6c530794c2e703cfe9f"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/transport_parameters_chrome.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/transport_parameters_chrome.go",
+      "source_sha256": "423a7650d86fd9adc9fa759cd949af1c60e4c38b25382c20eab3328a16367d26",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "423a7650d86fd9adc9fa759cd949af1c60e4c38b25382c20eab3328a16367d26"
+    },
+    {
+      "source": "pkg/hyrakenquic/internal/wire/version_negotiation.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/internal/wire/version_negotiation.go",
+      "source_sha256": "8f2d2fe1d3968c628fdf71882ffb888dfed282edeb33bf94c483f179a1ca0366",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8f2d2fe1d3968c628fdf71882ffb888dfed282edeb33bf94c483f179a1ca0366"
+    },
+    {
+      "source": "pkg/hyrakenquic/monotime/time.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/monotime/time.go",
+      "source_sha256": "298ec71e277eabae8b7ec22130cf8275eb8a4c99229187042c1716d65823ac0b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "298ec71e277eabae8b7ec22130cf8275eb8a4c99229187042c1716d65823ac0b"
+    },
+    {
+      "source": "pkg/hyrakenquic/mtu_discoverer.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/mtu_discoverer.go",
+      "source_sha256": "b18a249e00ad6e8ac673116c302667d2ae02aca7d57326c6fe73f8d1cb0412c5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b18a249e00ad6e8ac673116c302667d2ae02aca7d57326c6fe73f8d1cb0412c5"
+    },
+    {
+      "source": "pkg/hyrakenquic/packet_packer.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/packet_packer.go",
+      "source_sha256": "0e56a9100b919922a86044445dcf951dc91d0f2a9e77e430299aad1508b76f68",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "0e56a9100b919922a86044445dcf951dc91d0f2a9e77e430299aad1508b76f68"
+    },
+    {
+      "source": "pkg/hyrakenquic/packet_packer_chaos.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/packet_packer_chaos.go",
+      "source_sha256": "da180e8c87316ea1ce8767137ab5f1ae8e0b8f77842d97b245f4a5bd07e402fc",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "da180e8c87316ea1ce8767137ab5f1ae8e0b8f77842d97b245f4a5bd07e402fc"
+    },
+    {
+      "source": "pkg/hyrakenquic/packet_unpacker.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/packet_unpacker.go",
+      "source_sha256": "e6e164646791720aebee1503306ce1674755a3194ecbbaaf816a9d5b53e7bfa0",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e6e164646791720aebee1503306ce1674755a3194ecbbaaf816a9d5b53e7bfa0"
+    },
+    {
+      "source": "pkg/hyrakenquic/path_manager.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/path_manager.go",
+      "source_sha256": "9c2162226d32ca9894fea76a362ff893969153b16ab6309de047e3e4d20928c6",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9c2162226d32ca9894fea76a362ff893969153b16ab6309de047e3e4d20928c6"
+    },
+    {
+      "source": "pkg/hyrakenquic/path_manager_outgoing.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/path_manager_outgoing.go",
+      "source_sha256": "68998396d39678e6796ce46a7d74e22145a1d6cc2f4e24b317d0f8ec5afab6da",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "68998396d39678e6796ce46a7d74e22145a1d6cc2f4e24b317d0f8ec5afab6da"
+    },
+    {
+      "source": "pkg/hyrakenquic/qlog/event.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/qlog/event.go",
+      "source_sha256": "a88c0eae5962184fd00dfb1e0e1a37b900649001a12d99dc55c5109f9e8737de",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a88c0eae5962184fd00dfb1e0e1a37b900649001a12d99dc55c5109f9e8737de"
+    },
+    {
+      "source": "pkg/hyrakenquic/qlog/frame.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/qlog/frame.go",
+      "source_sha256": "66405cc7ed719dff5c36aa6317a255ef8e4d0bfcf93a7be38f4b2be70d979f29",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "66405cc7ed719dff5c36aa6317a255ef8e4d0bfcf93a7be38f4b2be70d979f29"
+    },
+    {
+      "source": "pkg/hyrakenquic/qlog/packet_header.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/qlog/packet_header.go",
+      "source_sha256": "9865894b55396fd7dd9930c8679411a8d70126bde0bc1d3c44516a7f427c2918",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9865894b55396fd7dd9930c8679411a8d70126bde0bc1d3c44516a7f427c2918"
+    },
+    {
+      "source": "pkg/hyrakenquic/qlog/qlog_dir.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/qlog/qlog_dir.go",
+      "source_sha256": "3380b06007be915f6715111df5bee39de01850be8aab224e2ed834115ef35d6a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "3380b06007be915f6715111df5bee39de01850be8aab224e2ed834115ef35d6a"
+    },
+    {
+      "source": "pkg/hyrakenquic/qlog/types.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/qlog/types.go",
+      "source_sha256": "a570fe824432ee581318f32d097d7dd8f2b1597ae1522fcba9af755cfe05fdc2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a570fe824432ee581318f32d097d7dd8f2b1597ae1522fcba9af755cfe05fdc2"
+    },
+    {
+      "source": "pkg/hyrakenquic/qlogwriter/jsontext/encoder.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/qlogwriter/jsontext/encoder.go",
+      "source_sha256": "6a4243da4a643ce41d2df45e321177c5c63f901629a787869fdcfb95e7151c9c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6a4243da4a643ce41d2df45e321177c5c63f901629a787869fdcfb95e7151c9c"
+    },
+    {
+      "source": "pkg/hyrakenquic/qlogwriter/trace.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/qlogwriter/trace.go",
+      "source_sha256": "7f86bbf7bcc15766e0cf3d3627c7db0f57577cc63173070247bd650eba3bdee0",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "7f86bbf7bcc15766e0cf3d3627c7db0f57577cc63173070247bd650eba3bdee0"
+    },
+    {
+      "source": "pkg/hyrakenquic/qlogwriter/writer.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/qlogwriter/writer.go",
+      "source_sha256": "98867e8d2f1d35a542b7536955602bdec20e0b2da7836f11442af3bd50b0d189",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "98867e8d2f1d35a542b7536955602bdec20e0b2da7836f11442af3bd50b0d189"
+    },
+    {
+      "source": "pkg/hyrakenquic/quicvarint/io.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/quicvarint/io.go",
+      "source_sha256": "b49ba0718ad54ea0e69e8b1686e0c2a3882d0a5d085b03e27f147ef0936e2445",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b49ba0718ad54ea0e69e8b1686e0c2a3882d0a5d085b03e27f147ef0936e2445"
+    },
+    {
+      "source": "pkg/hyrakenquic/quicvarint/varint.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/quicvarint/varint.go",
+      "source_sha256": "35302b39932b182248198d3a994dcd92e4b4c9932367b0451a13a85d3ca4986a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "35302b39932b182248198d3a994dcd92e4b4c9932367b0451a13a85d3ca4986a"
+    },
+    {
+      "source": "pkg/hyrakenquic/receive_stream.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/receive_stream.go",
+      "source_sha256": "8623383038a33ae766dc225a97eedd863f65ea5d6832ac27a4eebb28e92f6128",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8623383038a33ae766dc225a97eedd863f65ea5d6832ac27a4eebb28e92f6128"
+    },
+    {
+      "source": "pkg/hyrakenquic/retransmission_queue.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/retransmission_queue.go",
+      "source_sha256": "015262d13b3e81de1f8122862062788130366db4754e06ecdf4ed1625224cfca",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "015262d13b3e81de1f8122862062788130366db4754e06ecdf4ed1625224cfca"
+    },
+    {
+      "source": "pkg/hyrakenquic/send_conn.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/send_conn.go",
+      "source_sha256": "94aba7b370184a0af24f40ecbdb2a49d16a19c7b3407fabc7fc77688d295ac40",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "94aba7b370184a0af24f40ecbdb2a49d16a19c7b3407fabc7fc77688d295ac40"
+    },
+    {
+      "source": "pkg/hyrakenquic/send_queue.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/send_queue.go",
+      "source_sha256": "2fda734df8e16a76ad2c5cefe24defd742bee851a79a4b46628dbb698fd10a0b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2fda734df8e16a76ad2c5cefe24defd742bee851a79a4b46628dbb698fd10a0b"
+    },
+    {
+      "source": "pkg/hyrakenquic/send_stream.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/send_stream.go",
+      "source_sha256": "025ebe0f6ea14b817054e97db6d3fb6079eb6902d99dc567abb3f8c93ec9af16",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "025ebe0f6ea14b817054e97db6d3fb6079eb6902d99dc567abb3f8c93ec9af16"
+    },
+    {
+      "source": "pkg/hyrakenquic/server.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/server.go",
+      "source_sha256": "b26d73dad11dd3f92ad3d66e0ef9f9e3561484a67cbe49d8e95cc0b234dcfbae",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b26d73dad11dd3f92ad3d66e0ef9f9e3561484a67cbe49d8e95cc0b234dcfbae"
+    },
+    {
+      "source": "pkg/hyrakenquic/sni.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sni.go",
+      "source_sha256": "f64d71ab44b1a6a99d56abb50688e64536a2b919b35f070dece12dd258d59fda",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f64d71ab44b1a6a99d56abb50688e64536a2b919b35f070dece12dd258d59fda"
+    },
+    {
+      "source": "pkg/hyrakenquic/stateless_reset.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/stateless_reset.go",
+      "source_sha256": "cdcfef73e8b5c14caf434b9c677c41b84098442056a1472f284f02f4f0b55f7a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "cdcfef73e8b5c14caf434b9c677c41b84098442056a1472f284f02f4f0b55f7a"
+    },
+    {
+      "source": "pkg/hyrakenquic/stream.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/stream.go",
+      "source_sha256": "ab0bd0e073e9c37cb4b6a973e6292f9009a1231440b08ed0af73e671557889db",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ab0bd0e073e9c37cb4b6a973e6292f9009a1231440b08ed0af73e671557889db"
+    },
+    {
+      "source": "pkg/hyrakenquic/streams_map.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/streams_map.go",
+      "source_sha256": "07a1f2bfc0caf29483d4998d7715a41404122b08e8f5827c889c4ca21cec3fff",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "07a1f2bfc0caf29483d4998d7715a41404122b08e8f5827c889c4ca21cec3fff"
+    },
+    {
+      "source": "pkg/hyrakenquic/streams_map_incoming.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/streams_map_incoming.go",
+      "source_sha256": "3bfc945e6d85e77ce292c067783e96fdf656f50738d97dbccc1f234294534018",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "3bfc945e6d85e77ce292c067783e96fdf656f50738d97dbccc1f234294534018"
+    },
+    {
+      "source": "pkg/hyrakenquic/streams_map_outgoing.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/streams_map_outgoing.go",
+      "source_sha256": "b944f1bbae266dfe72f727bdc52ef38aacbb256fbeddc1e234793fef3289cd99",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b944f1bbae266dfe72f727bdc52ef38aacbb256fbeddc1e234793fef3289cd99"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn.go",
+      "source_sha256": "a3066d6c45d54f28429185f1a2e394c22d3576b9feab1812ab715972fe3fb6fb",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a3066d6c45d54f28429185f1a2e394c22d3576b9feab1812ab715972fe3fb6fb"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_buffers.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_buffers.go",
+      "source_sha256": "65b08b3c041b6d2e7dc00d8a5e8c9534b93c64845251d8575f987cfc528557ac",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "65b08b3c041b6d2e7dc00d8a5e8c9534b93c64845251d8575f987cfc528557ac"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_buffers_write.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_buffers_write.go",
+      "source_sha256": "c423a27a82ac0247dfb065cfb5a8f9b2d16fb9c4ba0cad3693b9ed920ef73512",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "c423a27a82ac0247dfb065cfb5a8f9b2d16fb9c4ba0cad3693b9ed920ef73512"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_df.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_df.go",
+      "source_sha256": "5a7954431a2ab54662ac707e1c497cc47055abb163e70911bd05280d39a16d69",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5a7954431a2ab54662ac707e1c497cc47055abb163e70911bd05280d39a16d69"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_df_darwin.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_df_darwin.go",
+      "source_sha256": "02f23b2752490a1098c9ed676be4d9a9d2907ed4b6ab2486df5131e3d2977b40",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "02f23b2752490a1098c9ed676be4d9a9d2907ed4b6ab2486df5131e3d2977b40"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_df_linux.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_df_linux.go",
+      "source_sha256": "b61272555c8b1a2aa0f138d7c8595b2b0b94e7d851a3a8725aaaa39adee6e426",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b61272555c8b1a2aa0f138d7c8595b2b0b94e7d851a3a8725aaaa39adee6e426"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_df_windows.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_df_windows.go",
+      "source_sha256": "a88e6ca3ba59ca074b046c112b4a5cbbbc25c71271db268ae8653c6efce82b9a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a88e6ca3ba59ca074b046c112b4a5cbbbc25c71271db268ae8653c6efce82b9a"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_helper_darwin.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_helper_darwin.go",
+      "source_sha256": "e6427982c50a6314634bd6aee7ca4ac408b1835c043b61cbca1d313f8d7cd598",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e6427982c50a6314634bd6aee7ca4ac408b1835c043b61cbca1d313f8d7cd598"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_helper_freebsd.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_helper_freebsd.go",
+      "source_sha256": "cb589631c4dd902b9585d44d8aa93c2bf720728bc4068e6967015570d719b06b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "cb589631c4dd902b9585d44d8aa93c2bf720728bc4068e6967015570d719b06b"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_helper_linux.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_helper_linux.go",
+      "source_sha256": "d0046b44c76456ebb351615ccc7ada3ee75eebfe990b20325683f8d52d7db1b6",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d0046b44c76456ebb351615ccc7ada3ee75eebfe990b20325683f8d52d7db1b6"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_helper_nonlinux.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_helper_nonlinux.go",
+      "source_sha256": "4239fd611f7e941ad93f6137f1d37f8f7d2a629482ae53d08321801e13b3d046",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "4239fd611f7e941ad93f6137f1d37f8f7d2a629482ae53d08321801e13b3d046"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_msgx_darwin.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_msgx_darwin.go",
+      "source_sha256": "b9088adc5e9b1465496c56ca119dd48c5d60a01fefd1e9109d1cd83bc9ad4805",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b9088adc5e9b1465496c56ca119dd48c5d60a01fefd1e9109d1cd83bc9ad4805"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_msgx_ios.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_msgx_ios.go",
+      "source_sha256": "bfde4d2f71c196541cd9f26ae1ef9127487086ea39440f06fb279093b846dacb",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "bfde4d2f71c196541cd9f26ae1ef9127487086ea39440f06fb279093b846dacb"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_msgx_macos.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_msgx_macos.go",
+      "source_sha256": "41b7b98128ad199b691d582f4a1356cc69ee396c5d5dbf90a12c866d0142f88f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "41b7b98128ad199b691d582f4a1356cc69ee396c5d5dbf90a12c866d0142f88f"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_msgx_other.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_msgx_other.go",
+      "source_sha256": "254d69467594fa7cfe04628113964b0ea0293a5b045aba536816a9fcfa81def2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "254d69467594fa7cfe04628113964b0ea0293a5b045aba536816a9fcfa81def2"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_no_oob.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_no_oob.go",
+      "source_sha256": "7197f1a4861597c314a610dccea30a7d1a4470bb351265f9a462af1f01689c36",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "7197f1a4861597c314a610dccea30a7d1a4470bb351265f9a462af1f01689c36"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_nobufs_other.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_nobufs_other.go",
+      "source_sha256": "5d02f7eb5e4fab0135c5e7e0f35f87b9b4aa78c5ae7b634b91abc964ede054c9",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5d02f7eb5e4fab0135c5e7e0f35f87b9b4aa78c5ae7b634b91abc964ede054c9"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_nobufs_unix.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_nobufs_unix.go",
+      "source_sha256": "fcf379d48fefc70dd277e0c68ec44f01b772c18ce5a1716eb2298815a38829c4",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "fcf379d48fefc70dd277e0c68ec44f01b772c18ce5a1716eb2298815a38829c4"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_nobufs_windows.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_nobufs_windows.go",
+      "source_sha256": "9ea08b65d0562b7b153fd53a9d5f4b6a08affd863f1c6e13ade7fbc230f14f5d",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9ea08b65d0562b7b153fd53a9d5f4b6a08affd863f1c6e13ade7fbc230f14f5d"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_oob.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_oob.go",
+      "source_sha256": "2a13164b872a74303c8245ea77aadde10243adecd505f5d3ec2dd74edaf2efc8",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2a13164b872a74303c8245ea77aadde10243adecd505f5d3ec2dd74edaf2efc8"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_windows.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_windows.go",
+      "source_sha256": "362fb5e4cfe2bd1d9cbf4a7de08fc580248d4e6c5ff9cfc39b1eda53a9b076d0",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "362fb5e4cfe2bd1d9cbf4a7de08fc580248d4e6c5ff9cfc39b1eda53a9b076d0"
+    },
+    {
+      "source": "pkg/hyrakenquic/token_store.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/token_store.go",
+      "source_sha256": "68b9ba2e7c021b7cffcccdc4d832e592311a493256a9306e5ab788ca6ac285ba",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "68b9ba2e7c021b7cffcccdc4d832e592311a493256a9306e5ab788ca6ac285ba"
+    },
+    {
+      "source": "pkg/hyrakenquic/transport.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/transport.go",
+      "source_sha256": "ba7eea131dc6687767f0da6e890078b26cf050e0dda3788ba1dcda6c308840cd",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ba7eea131dc6687767f0da6e890078b26cf050e0dda3788ba1dcda6c308840cd"
+    },
+    {
+      "source": "pkg/trafficprofile/coverhttp/budget.go",
+      "destination": "third_party/Loft-Gateway/pkg/trafficprofile/coverhttp/budget.go",
+      "source_sha256": "e4b6db865faa9f39ce86aa62f3ac6c26a9a7e7460b89f548c700d479288217d1",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e4b6db865faa9f39ce86aa62f3ac6c26a9a7e7460b89f548c700d479288217d1"
+    },
+    {
+      "source": "pkg/trafficprofile/coverhttp/cover.go",
+      "destination": "third_party/Loft-Gateway/pkg/trafficprofile/coverhttp/cover.go",
+      "source_sha256": "5052f67f64d5386526b8784df027cec123a55f1e6e51bca4e8aa8f3fd051f65a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5052f67f64d5386526b8784df027cec123a55f1e6e51bca4e8aa8f3fd051f65a"
+    },
+    {
+      "source": "pkg/trafficprofile/coverhttp/finance.go",
+      "destination": "third_party/Loft-Gateway/pkg/trafficprofile/coverhttp/finance.go",
+      "source_sha256": "07975d457ecdfcc66c4f78d8e119aaff35d5f6a73b6b9717be475509965313c0",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "07975d457ecdfcc66c4f78d8e119aaff35d5f6a73b6b9717be475509965313c0"
+    },
+    {
+      "source": "pkg/trafficprofile/go.mod",
+      "destination": "third_party/Loft-Gateway/pkg/trafficprofile/go.mod",
+      "source_sha256": "6b1771f9ab0914c440a1e2a77e70b54a5e9e867745b8dfc749b3f253707fc4a5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6b1771f9ab0914c440a1e2a77e70b54a5e9e867745b8dfc749b3f253707fc4a5"
+    },
+    {
+      "source": "pkg/trafficprofile/identity.go",
+      "destination": "third_party/Loft-Gateway/pkg/trafficprofile/identity.go",
+      "source_sha256": "0b6772a91d21d816a02db5838b35a0bcc1e043e0f33e2b1339f0c99e2cf891b2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "0b6772a91d21d816a02db5838b35a0bcc1e043e0f33e2b1339f0c99e2cf891b2"
+    },
+    {
+      "source": "pkg/trafficprofile/tcp.go",
+      "destination": "third_party/Loft-Gateway/pkg/trafficprofile/tcp.go",
+      "source_sha256": "880e37c42488de70ec040041c9c81426bc0b729622c3aff0288edf70795dede0",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "880e37c42488de70ec040041c9c81426bc0b729622c3aff0288edf70795dede0"
+    },
+    {
+      "source": "pkg/trafficprofile/timing.go",
+      "destination": "third_party/Loft-Gateway/pkg/trafficprofile/timing.go",
+      "source_sha256": "bbae12cc21f3fc51e40e6ba8c456d0c5099cd22ee02bcf642db88dc981f5ebb8",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "bbae12cc21f3fc51e40e6ba8c456d0c5099cd22ee02bcf642db88dc981f5ebb8"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/LICENSE",
+      "destination": "third_party/sing-tun/LICENSE",
+      "source_sha256": "2f02b7486bcfa90d115c71a20437f3906b6fd5bef81c5dc0efd341399e89d0fd",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2f02b7486bcfa90d115c71a20437f3906b6fd5bef81c5dc0efd341399e89d0fd"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/flow.go",
+      "destination": "third_party/sing-tun/flow.go",
+      "source_sha256": "7688c7846778d0d1d1e28accdf874e56af6c839f753cd2c60baeb48567d27ed5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "7688c7846778d0d1d1e28accdf874e56af6c839f753cd2c60baeb48567d27ed5"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/flow_dispatch.go",
+      "destination": "third_party/sing-tun/flow_dispatch.go",
+      "source_sha256": "bdfc3bac4b20749310d9c61ce758fbd3c98ed2dff0fc613205f1d0319dded09e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "bdfc3bac4b20749310d9c61ce758fbd3c98ed2dff0fc613205f1d0319dded09e"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/flow_dns.go",
+      "destination": "third_party/sing-tun/flow_dns.go",
+      "source_sha256": "05d34ab60d7c821f2ff5242ec7d5bd836b0118a70794ed7c561ae20630ee3dab",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "05d34ab60d7c821f2ff5242ec7d5bd836b0118a70794ed7c561ae20630ee3dab"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/flow_mtu.go",
+      "destination": "third_party/sing-tun/flow_mtu.go",
+      "source_sha256": "6956fa25ad7b4a9e559e3e498448b6df8c21185d3bd97c0b7da42e4c2109f42d",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6956fa25ad7b4a9e559e3e498448b6df8c21185d3bd97c0b7da42e4c2109f42d"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/flow_nat.go",
+      "destination": "third_party/sing-tun/flow_nat.go",
+      "source_sha256": "55f38abaaffacef2d3c9da453994a9869759fcd8809b87b009e8b36afb371b4f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "55f38abaaffacef2d3c9da453994a9869759fcd8809b87b009e8b36afb371b4f"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/flow_parse.go",
+      "destination": "third_party/sing-tun/flow_parse.go",
+      "source_sha256": "70b2c032b5eec44b1cd74a5b840121d9a7bbc191f0a6b533e90fd5e56dd5cb4b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "70b2c032b5eec44b1cd74a5b840121d9a7bbc191f0a6b533e90fd5e56dd5cb4b"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/flow_reject.go",
+      "destination": "third_party/sing-tun/flow_reject.go",
+      "source_sha256": "a9519964d8daefdcbbc8a93fbb2ab12357b36d1ef7a54081b32cdff8ff52ad36",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a9519964d8daefdcbbc8a93fbb2ab12357b36d1ef7a54081b32cdff8ff52ad36"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/flow_rewrite.go",
+      "destination": "third_party/sing-tun/flow_rewrite.go",
+      "source_sha256": "cbea392b9f86ec5fcd2848e2c2e4c507251474894f102c093d5c92607b8cd9f2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "cbea392b9f86ec5fcd2848e2c2e4c507251474894f102c093d5c92607b8cd9f2"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/go.mod",
+      "destination": "third_party/sing-tun/go.mod",
+      "source_sha256": "8a0c0b76e272b6432c31bbf792e91c108018dcb631ad027c50f50e0d54997bc2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8a0c0b76e272b6432c31bbf792e91c108018dcb631ad027c50f50e0d54997bc2"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/go.sum",
+      "destination": "third_party/sing-tun/go.sum",
+      "source_sha256": "0490ed3b4ebe26baa3eb38e3dffaa8ef624a32889afbb3b88bbcd46a0745a9e5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "0490ed3b4ebe26baa3eb38e3dffaa8ef624a32889afbb3b88bbcd46a0745a9e5"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/checksum/checksum.go",
+      "destination": "third_party/sing-tun/gtcpip/checksum/checksum.go",
+      "source_sha256": "f67d8bb25a5042f7bef916e9b55e9ae8744c02da955e458adaf6189986eb9312",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f67d8bb25a5042f7bef916e9b55e9ae8744c02da955e458adaf6189986eb9312"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/checksum/checksum_default.go",
+      "destination": "third_party/sing-tun/gtcpip/checksum/checksum_default.go",
+      "source_sha256": "13ef62e984c80216741e4243cd047495656b0a9f1edefa2cd14aa10c6383a131",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "13ef62e984c80216741e4243cd047495656b0a9f1edefa2cd14aa10c6383a131"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/checksum/checksum_ts.go",
+      "destination": "third_party/sing-tun/gtcpip/checksum/checksum_ts.go",
+      "source_sha256": "860a1a3376ecfc3028a755f1f1e843ceb2de5f54641e6c85ec6f02fca936bfe2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "860a1a3376ecfc3028a755f1f1e843ceb2de5f54641e6c85ec6f02fca936bfe2"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/checksum/checksum_unsafe.go",
+      "destination": "third_party/sing-tun/gtcpip/checksum/checksum_unsafe.go",
+      "source_sha256": "eb2727c336dedcf62af474ec8a1b77710116680e2de92532745bfafcad5a0f4c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "eb2727c336dedcf62af474ec8a1b77710116680e2de92532745bfafcad5a0f4c"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/errors.go",
+      "destination": "third_party/sing-tun/gtcpip/errors.go",
+      "source_sha256": "1154569a5846b43d1e8f77c9df30b98a361fc8ff78b5895a889ee82b9fe3250e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "1154569a5846b43d1e8f77c9df30b98a361fc8ff78b5895a889ee82b9fe3250e"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/checksum.go",
+      "destination": "third_party/sing-tun/gtcpip/header/checksum.go",
+      "source_sha256": "1115ae106041167ca888b4031e63b1fb769ccf3cc2533f311cbc515974ed9b4f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "1115ae106041167ca888b4031e63b1fb769ccf3cc2533f311cbc515974ed9b4f"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/eth.go",
+      "destination": "third_party/sing-tun/gtcpip/header/eth.go",
+      "source_sha256": "3a82fe5ed289f7056e5be35a0ba6a0c5d8d17eaace9afe91a8befa67060d1cf1",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "3a82fe5ed289f7056e5be35a0ba6a0c5d8d17eaace9afe91a8befa67060d1cf1"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/icmpv4.go",
+      "destination": "third_party/sing-tun/gtcpip/header/icmpv4.go",
+      "source_sha256": "69d0b0a2a0a4cd8db66c94943709cd796cfd2fcda1e79cb247ab34004a759d42",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "69d0b0a2a0a4cd8db66c94943709cd796cfd2fcda1e79cb247ab34004a759d42"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/icmpv6.go",
+      "destination": "third_party/sing-tun/gtcpip/header/icmpv6.go",
+      "source_sha256": "8642da4450643d8cbd3058c97634149105d7d6279cfc8ea03c9eeec234ac172a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8642da4450643d8cbd3058c97634149105d7d6279cfc8ea03c9eeec234ac172a"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/interfaces.go",
+      "destination": "third_party/sing-tun/gtcpip/header/interfaces.go",
+      "source_sha256": "b28e81f9c8ff2a687d1b3f1523304d5570111f4b0b93712bc8af79870ca6cd60",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b28e81f9c8ff2a687d1b3f1523304d5570111f4b0b93712bc8af79870ca6cd60"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/ipv4.go",
+      "destination": "third_party/sing-tun/gtcpip/header/ipv4.go",
+      "source_sha256": "7243c58625269745280e45619f07d1ec63c50ed708be66f2d274298a19938381",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "7243c58625269745280e45619f07d1ec63c50ed708be66f2d274298a19938381"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/ipv6.go",
+      "destination": "third_party/sing-tun/gtcpip/header/ipv6.go",
+      "source_sha256": "a24b7cf8cbb066338837988e2cb209c15a87051a5ecd0b2aca8a3ad57f07f2fe",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a24b7cf8cbb066338837988e2cb209c15a87051a5ecd0b2aca8a3ad57f07f2fe"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/ipv6_extension_headers.go",
+      "destination": "third_party/sing-tun/gtcpip/header/ipv6_extension_headers.go",
+      "source_sha256": "7477112680ad8b0ababb2135c11816815cbae72b3b0718313fffe65dd94bff22",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "7477112680ad8b0ababb2135c11816815cbae72b3b0718313fffe65dd94bff22"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/ipv6_fragment.go",
+      "destination": "third_party/sing-tun/gtcpip/header/ipv6_fragment.go",
+      "source_sha256": "55a5c5c5bef25a0d2bc826af867142069fa4094006b3a42241ff5c4591fce974",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "55a5c5c5bef25a0d2bc826af867142069fa4094006b3a42241ff5c4591fce974"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/ndp_neighbor_advert.go",
+      "destination": "third_party/sing-tun/gtcpip/header/ndp_neighbor_advert.go",
+      "source_sha256": "c8ae232427824d6c40592e2b957acf3e2bd74fa7abbde23cba86ffae2c298a73",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "c8ae232427824d6c40592e2b957acf3e2bd74fa7abbde23cba86ffae2c298a73"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/ndp_neighbor_solicit.go",
+      "destination": "third_party/sing-tun/gtcpip/header/ndp_neighbor_solicit.go",
+      "source_sha256": "a3f213b5963bda5bdbfe26e4e6511240d51b9e820f86895180c7105b9d010453",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a3f213b5963bda5bdbfe26e4e6511240d51b9e820f86895180c7105b9d010453"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/ndp_options.go",
+      "destination": "third_party/sing-tun/gtcpip/header/ndp_options.go",
+      "source_sha256": "399c5bdea45563ad26f58a78ba7b7e92f4e4a943ea840460d4356045904913d4",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "399c5bdea45563ad26f58a78ba7b7e92f4e4a943ea840460d4356045904913d4"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/ndp_router_advert.go",
+      "destination": "third_party/sing-tun/gtcpip/header/ndp_router_advert.go",
+      "source_sha256": "49a57987673a430a212fb8eef02f8087ff2d019b2e53712b18e214b2338403b7",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "49a57987673a430a212fb8eef02f8087ff2d019b2e53712b18e214b2338403b7"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/ndp_router_solicit.go",
+      "destination": "third_party/sing-tun/gtcpip/header/ndp_router_solicit.go",
+      "source_sha256": "0c5d8bc8fa62dc70ab4cae6adf1f7435fa8dcab4109fdb99dd3911eb211e075b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "0c5d8bc8fa62dc70ab4cae6adf1f7435fa8dcab4109fdb99dd3911eb211e075b"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/ndpoptionidentifier_string.go",
+      "destination": "third_party/sing-tun/gtcpip/header/ndpoptionidentifier_string.go",
+      "source_sha256": "279d5a33f5ab06a784385be2aef49677e90fbf86d307adf484d44b584bae0a97",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "279d5a33f5ab06a784385be2aef49677e90fbf86d307adf484d44b584bae0a97"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/netip.go",
+      "destination": "third_party/sing-tun/gtcpip/header/netip.go",
+      "source_sha256": "c95cd2e687db58fd4b001a7373e8ed44694d75aab2a46e2f25df42aab366c896",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "c95cd2e687db58fd4b001a7373e8ed44694d75aab2a46e2f25df42aab366c896"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/tcp.go",
+      "destination": "third_party/sing-tun/gtcpip/header/tcp.go",
+      "source_sha256": "629b331d94154fefee1a7072bd31166fa6c8d99c142ca7b96f9850103249a971",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "629b331d94154fefee1a7072bd31166fa6c8d99c142ca7b96f9850103249a971"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/header/udp.go",
+      "destination": "third_party/sing-tun/gtcpip/header/udp.go",
+      "source_sha256": "31013256e6569f4a014fc803f5dd9a8b32bb7632ea91f99d37aa92b4c50430e9",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "31013256e6569f4a014fc803f5dd9a8b32bb7632ea91f99d37aa92b4c50430e9"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/seqnum/seqnum.go",
+      "destination": "third_party/sing-tun/gtcpip/seqnum/seqnum.go",
+      "source_sha256": "b9c830adb9cb3aebc470d0039a59bcbab03b7bfa926d3b779630f48c2a15cc62",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b9c830adb9cb3aebc470d0039a59bcbab03b7bfa926d3b779630f48c2a15cc62"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/gtcpip/tcpip.go",
+      "destination": "third_party/sing-tun/gtcpip/tcpip.go",
+      "source_sha256": "4e0a8add07c62ac796653f9e429e06950ec8f9faec61aea1720385917e48467a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "4e0a8add07c62ac796653f9e429e06950ec8f9faec61aea1720385917e48467a"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/fdbased_darwin/endpoint.go",
+      "destination": "third_party/sing-tun/internal/fdbased_darwin/endpoint.go",
+      "source_sha256": "dbf1e8011df6a145f187016a3db040049a30e4a9f69500f47b389c860a6ee493",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "dbf1e8011df6a145f187016a3db040049a30e4a9f69500f47b389c860a6ee493"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/fdbased_darwin/endpoint_mutex.go",
+      "destination": "third_party/sing-tun/internal/fdbased_darwin/endpoint_mutex.go",
+      "source_sha256": "8e15ab9a957d90d522869504502e5149c799e175793d867c7235c52f7839d93d",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8e15ab9a957d90d522869504502e5149c799e175793d867c7235c52f7839d93d"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/fdbased_darwin/errno.go",
+      "destination": "third_party/sing-tun/internal/fdbased_darwin/errno.go",
+      "source_sha256": "e0c9e2d093a297be026c087aca6713b3d5dfd6b9f6b4f301d361bf2639ebf06e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e0c9e2d093a297be026c087aca6713b3d5dfd6b9f6b4f301d361bf2639ebf06e"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/fdbased_darwin/packet_dispatchers.go",
+      "destination": "third_party/sing-tun/internal/fdbased_darwin/packet_dispatchers.go",
+      "source_sha256": "728a15e0704eb99e98b9f32931d673a1ab015c0a8af92a9f4247efc97c450fa6",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "728a15e0704eb99e98b9f32931d673a1ab015c0a8af92a9f4247efc97c450fa6"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/fdbased_darwin/processor_mutex.go",
+      "destination": "third_party/sing-tun/internal/fdbased_darwin/processor_mutex.go",
+      "source_sha256": "67497f7518e06eb4c60ae6f8b90d7cea78a9e33365a3bc69527286a586caec78",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "67497f7518e06eb4c60ae6f8b90d7cea78a9e33365a3bc69527286a586caec78"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/fdbased_darwin/processors.go",
+      "destination": "third_party/sing-tun/internal/fdbased_darwin/processors.go",
+      "source_sha256": "555935cf6d92c74403a3842f62bdbebbeec64433685ddca046ac08283dfc9af1",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "555935cf6d92c74403a3842f62bdbebbeec64433685ddca046ac08283dfc9af1"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/rawfile_darwin/rawfile.go",
+      "destination": "third_party/sing-tun/internal/rawfile_darwin/rawfile.go",
+      "source_sha256": "280b6a629bbb576215ff850520afdea18ea5d9fab0fb43b6f36ddcd68412739e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "280b6a629bbb576215ff850520afdea18ea5d9fab0fb43b6f36ddcd68412739e"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/stopfd_darwin/stopfd.go",
+      "destination": "third_party/sing-tun/internal/stopfd_darwin/stopfd.go",
+      "source_sha256": "d247fbeb89b8df99b5736d5d597c42e37734e14f145daa8620336356f0604d00",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d247fbeb89b8df99b5736d5d597c42e37734e14f145daa8620336356f0604d00"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/tschecksum/checksum.go",
+      "destination": "third_party/sing-tun/internal/tschecksum/checksum.go",
+      "source_sha256": "538309634de7d39288641785c22c2d15f3ba9d043b1b27f967ffe1128049a482",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "538309634de7d39288641785c22c2d15f3ba9d043b1b27f967ffe1128049a482"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/tschecksum/checksum_amd64.go",
+      "destination": "third_party/sing-tun/internal/tschecksum/checksum_amd64.go",
+      "source_sha256": "d2a7424900e38d1dae028505ae8811706c9ec6b604b7f02b5b8d53253d34b03f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d2a7424900e38d1dae028505ae8811706c9ec6b604b7f02b5b8d53253d34b03f"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/tschecksum/checksum_generated_amd64.go",
+      "destination": "third_party/sing-tun/internal/tschecksum/checksum_generated_amd64.go",
+      "source_sha256": "9dfcdd96fa6064085e0cb4f9eb7c45379371539a8e2a6f0577724855e6249efa",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9dfcdd96fa6064085e0cb4f9eb7c45379371539a8e2a6f0577724855e6249efa"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/tschecksum/checksum_generated_amd64.s",
+      "destination": "third_party/sing-tun/internal/tschecksum/checksum_generated_amd64.s",
+      "source_sha256": "983e4f30fb0170c8956cdaa1443c7851157dab763a81c9ec43eeca770d945744",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "983e4f30fb0170c8956cdaa1443c7851157dab763a81c9ec43eeca770d945744"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/tschecksum/checksum_generic.go",
+      "destination": "third_party/sing-tun/internal/tschecksum/checksum_generic.go",
+      "source_sha256": "0ab14ab42cf18b66bd90a873ee58fe71eb0401b098fc2d3a8105dc2170945251",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "0ab14ab42cf18b66bd90a873ee58fe71eb0401b098fc2d3a8105dc2170945251"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/tschecksum/generate_amd64.go",
+      "destination": "third_party/sing-tun/internal/tschecksum/generate_amd64.go",
+      "source_sha256": "80d5b2c917c967500c01ed8e6e0579bfcbe24008b70f3c19ec10e79af55ec76f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "80d5b2c917c967500c01ed8e6e0579bfcbe24008b70f3c19ec10e79af55ec76f"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winfw/winfw.go",
+      "destination": "third_party/sing-tun/internal/winfw/winfw.go",
+      "source_sha256": "56d30ce74e3e8d6696fb45896929c8ddd6c6ca7f79f5f789fa885dd965eb9cc5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "56d30ce74e3e8d6696fb45896929c8ddd6c6ca7f79f5f789fa885dd965eb9cc5"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winipcfg/interface_change_handler.go",
+      "destination": "third_party/sing-tun/internal/winipcfg/interface_change_handler.go",
+      "source_sha256": "f1ae39a34050df34f70b3c847d436d1371e3a2d979ae2b65e5df7463a4c1a801",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f1ae39a34050df34f70b3c847d436d1371e3a2d979ae2b65e5df7463a4c1a801"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winipcfg/luid.go",
+      "destination": "third_party/sing-tun/internal/winipcfg/luid.go",
+      "source_sha256": "86c54c2acb15b3bbf8b22d06bfbbf59afc58d4cf2d62ceb880cf24317ffa4291",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "86c54c2acb15b3bbf8b22d06bfbbf59afc58d4cf2d62ceb880cf24317ffa4291"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winipcfg/mksyscall.go",
+      "destination": "third_party/sing-tun/internal/winipcfg/mksyscall.go",
+      "source_sha256": "2a9430884b06d680693b99dbd85416884b6afed8ddf6597fe5304556424b791e",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2a9430884b06d680693b99dbd85416884b6afed8ddf6597fe5304556424b791e"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winipcfg/netsh.go",
+      "destination": "third_party/sing-tun/internal/winipcfg/netsh.go",
+      "source_sha256": "9c26e3850de7192b212d614cd1391128e0d889a981c99d472cab1ae48e3ba69f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9c26e3850de7192b212d614cd1391128e0d889a981c99d472cab1ae48e3ba69f"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winipcfg/route_change_handler.go",
+      "destination": "third_party/sing-tun/internal/winipcfg/route_change_handler.go",
+      "source_sha256": "a5f440b0cce7d3d0c6bd1f03dc1664af9f4941b13d08c4942198c162f7b24dc6",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "a5f440b0cce7d3d0c6bd1f03dc1664af9f4941b13d08c4942198c162f7b24dc6"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winipcfg/types.go",
+      "destination": "third_party/sing-tun/internal/winipcfg/types.go",
+      "source_sha256": "93a5a7011091f2f041e55f188640e990ed6fd8ff01484ae00170e1a725a55424",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "93a5a7011091f2f041e55f188640e990ed6fd8ff01484ae00170e1a725a55424"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winipcfg/types_32.go",
+      "destination": "third_party/sing-tun/internal/winipcfg/types_32.go",
+      "source_sha256": "ae1c4552eb963b1e2deeaa04c7a185c612ed5aa4d5de36419082c20678439a22",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ae1c4552eb963b1e2deeaa04c7a185c612ed5aa4d5de36419082c20678439a22"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winipcfg/types_64.go",
+      "destination": "third_party/sing-tun/internal/winipcfg/types_64.go",
+      "source_sha256": "99435f61f7e78bd3d5bae247c6e79c25b66f61d2a12d59151064577f3ac57269",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "99435f61f7e78bd3d5bae247c6e79c25b66f61d2a12d59151064577f3ac57269"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winipcfg/types_test_32.go",
+      "destination": "third_party/sing-tun/internal/winipcfg/types_test_32.go",
+      "source_sha256": "37f31364b249ad5d596936b03669ddde45cbf0c13263b86f0c0dfebbacc646ac",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "37f31364b249ad5d596936b03669ddde45cbf0c13263b86f0c0dfebbacc646ac"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winipcfg/types_test_64.go",
+      "destination": "third_party/sing-tun/internal/winipcfg/types_test_64.go",
+      "source_sha256": "2f4c3ef57ef42430a8d1b5fab9cad73e7ebdfbff0976298437da62151fd73c64",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2f4c3ef57ef42430a8d1b5fab9cad73e7ebdfbff0976298437da62151fd73c64"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winipcfg/unicast_address_change_handler.go",
+      "destination": "third_party/sing-tun/internal/winipcfg/unicast_address_change_handler.go",
+      "source_sha256": "b39e86092744a32c36a7380ca74b74d9b38c1634043b73bbe8681a25acfd5015",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b39e86092744a32c36a7380ca74b74d9b38c1634043b73bbe8681a25acfd5015"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winipcfg/winipcfg.go",
+      "destination": "third_party/sing-tun/internal/winipcfg/winipcfg.go",
+      "source_sha256": "5c675714824841a4363b34b8186f9f4330096f4547fa5b70bee4cb51dd869a71",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5c675714824841a4363b34b8186f9f4330096f4547fa5b70bee4cb51dd869a71"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winipcfg/zwinipcfg_windows.go",
+      "destination": "third_party/sing-tun/internal/winipcfg/zwinipcfg_windows.go",
+      "source_sha256": "9ecf455c964bf43a7965c561646ec785a63eb399f87b0726c7dd8c17504b57e2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9ecf455c964bf43a7965c561646ec785a63eb399f87b0726c7dd8c17504b57e2"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winsys/constants.go",
+      "destination": "third_party/sing-tun/internal/winsys/constants.go",
+      "source_sha256": "4de19a31c9edc3f7f41827525d1392f97ba96ae26cb0cfd9fd36642a7e11eafb",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "4de19a31c9edc3f7f41827525d1392f97ba96ae26cb0cfd9fd36642a7e11eafb"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winsys/helper.go",
+      "destination": "third_party/sing-tun/internal/winsys/helper.go",
+      "source_sha256": "fbbb4bbc84935f501edece384373d5787a46d84459dd5ab30e7f1b1e5f15d378",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "fbbb4bbc84935f501edece384373d5787a46d84459dd5ab30e7f1b1e5f15d378"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winsys/mksyscall.go",
+      "destination": "third_party/sing-tun/internal/winsys/mksyscall.go",
+      "source_sha256": "d11e2d7a9534e53abb05cf4e78a7920664e51806c9024cd76c5eb03dda5afbb5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d11e2d7a9534e53abb05cf4e78a7920664e51806c9024cd76c5eb03dda5afbb5"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winsys/syscall_windows.go",
+      "destination": "third_party/sing-tun/internal/winsys/syscall_windows.go",
+      "source_sha256": "498c6d2c681c6cbc1b91c9e1857c2060fedc06097b19bb0aae87c71145b942f2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "498c6d2c681c6cbc1b91c9e1857c2060fedc06097b19bb0aae87c71145b942f2"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winsys/types_windows.go",
+      "destination": "third_party/sing-tun/internal/winsys/types_windows.go",
+      "source_sha256": "98cc8a50e663cbad07586acfc00429a843a5b1aaeb500a5e98bf22c915f67ecb",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "98cc8a50e663cbad07586acfc00429a843a5b1aaeb500a5e98bf22c915f67ecb"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/winsys/zsyscall_windows.go",
+      "destination": "third_party/sing-tun/internal/winsys/zsyscall_windows.go",
+      "source_sha256": "d7ce5bd3d764319862b6a6f2686233c76f1eeda5c78a5f3d1a5a867c8a5b9260",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d7ce5bd3d764319862b6a6f2686233c76f1eeda5c78a5f3d1a5a867c8a5b9260"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/dll_windows.go",
+      "destination": "third_party/sing-tun/internal/wintun/dll_windows.go",
+      "source_sha256": "1a332593019fe17c3d929672cd1e37236c1be88efbafe2cbdcbfcf8e3e615c36",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "1a332593019fe17c3d929672cd1e37236c1be88efbafe2cbdcbfcf8e3e615c36"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/dll_windows_386.go",
+      "destination": "third_party/sing-tun/internal/wintun/dll_windows_386.go",
+      "source_sha256": "cffa15ebcb0265a1cfbbaf2a16f9ae433e18647283e20f922feea6a9372301d5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "cffa15ebcb0265a1cfbbaf2a16f9ae433e18647283e20f922feea6a9372301d5"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/dll_windows_amd64.go",
+      "destination": "third_party/sing-tun/internal/wintun/dll_windows_amd64.go",
+      "source_sha256": "2510bebfe4eabfdbeddaeece4ed91b53d84950108af6432b8e1c39cef33d1c83",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2510bebfe4eabfdbeddaeece4ed91b53d84950108af6432b8e1c39cef33d1c83"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/dll_windows_arm.go",
+      "destination": "third_party/sing-tun/internal/wintun/dll_windows_arm.go",
+      "source_sha256": "49ea1b2157c7f577f0a3648afaaae4d34dccf66849cfb1135ece82b78f62c656",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "49ea1b2157c7f577f0a3648afaaae4d34dccf66849cfb1135ece82b78f62c656"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/dll_windows_arm64.go",
+      "destination": "third_party/sing-tun/internal/wintun/dll_windows_arm64.go",
+      "source_sha256": "48597e59944801a0bdb22cf919253b0bf5833963915503907ab7434fdb6bb2a1",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "48597e59944801a0bdb22cf919253b0bf5833963915503907ab7434fdb6bb2a1"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/memmod/memmod_windows.go",
+      "destination": "third_party/sing-tun/internal/wintun/memmod/memmod_windows.go",
+      "source_sha256": "9a44e7e4023f7a9c8a08b3f8a215f5c267619d5be7f66d4799ebad0dc9ccb3b3",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9a44e7e4023f7a9c8a08b3f8a215f5c267619d5be7f66d4799ebad0dc9ccb3b3"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/memmod/memmod_windows_32.go",
+      "destination": "third_party/sing-tun/internal/wintun/memmod/memmod_windows_32.go",
+      "source_sha256": "f5dfbda39decda2491edc0075d0b2f68d24946e2519bbeb7f414d454556b94bc",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f5dfbda39decda2491edc0075d0b2f68d24946e2519bbeb7f414d454556b94bc"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/memmod/memmod_windows_386.go",
+      "destination": "third_party/sing-tun/internal/wintun/memmod/memmod_windows_386.go",
+      "source_sha256": "5ecf7a033d81a78866b24e4fc5eea8a38bb8184fa7e28fe927a8868920eb8857",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5ecf7a033d81a78866b24e4fc5eea8a38bb8184fa7e28fe927a8868920eb8857"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/memmod/memmod_windows_64.go",
+      "destination": "third_party/sing-tun/internal/wintun/memmod/memmod_windows_64.go",
+      "source_sha256": "3a193bd70b491fddaf151eb9627fb6fe860599f4697277a63f6a098be3bcb91c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "3a193bd70b491fddaf151eb9627fb6fe860599f4697277a63f6a098be3bcb91c"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/memmod/memmod_windows_amd64.go",
+      "destination": "third_party/sing-tun/internal/wintun/memmod/memmod_windows_amd64.go",
+      "source_sha256": "0e8e4864a554a907e7f28916796ad3bac915a032bfc1391686d16b57f32e86f3",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "0e8e4864a554a907e7f28916796ad3bac915a032bfc1391686d16b57f32e86f3"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/memmod/memmod_windows_arm.go",
+      "destination": "third_party/sing-tun/internal/wintun/memmod/memmod_windows_arm.go",
+      "source_sha256": "07fa0e4cc17688f40b39ab85350e0cf4112a777c759e73eb7f0197fb9121f601",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "07fa0e4cc17688f40b39ab85350e0cf4112a777c759e73eb7f0197fb9121f601"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/memmod/memmod_windows_arm64.go",
+      "destination": "third_party/sing-tun/internal/wintun/memmod/memmod_windows_arm64.go",
+      "source_sha256": "9669c70c1890fa9316f1bd0c51fbe43c87b1f36adeeff220d6390fce9fe2276a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9669c70c1890fa9316f1bd0c51fbe43c87b1f36adeeff220d6390fce9fe2276a"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/memmod/syscall_windows.go",
+      "destination": "third_party/sing-tun/internal/wintun/memmod/syscall_windows.go",
+      "source_sha256": "ff7efcacc5f32d3f5d97252379e28fd74c6777a7518dfab157b10c967fc14a1f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ff7efcacc5f32d3f5d97252379e28fd74c6777a7518dfab157b10c967fc14a1f"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/memmod/syscall_windows_32.go",
+      "destination": "third_party/sing-tun/internal/wintun/memmod/syscall_windows_32.go",
+      "source_sha256": "0161982002d9f2ce65f6b07b0f56e6685da9f182b896d4c31e1569371cce25bc",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "0161982002d9f2ce65f6b07b0f56e6685da9f182b896d4c31e1569371cce25bc"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/memmod/syscall_windows_64.go",
+      "destination": "third_party/sing-tun/internal/wintun/memmod/syscall_windows_64.go",
+      "source_sha256": "236d97e309a2f99d6d328af648908eba85b81018dd4f248536e6d8467eaf2a6a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "236d97e309a2f99d6d328af648908eba85b81018dd4f248536e6d8467eaf2a6a"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/session_windows.go",
+      "destination": "third_party/sing-tun/internal/wintun/session_windows.go",
+      "source_sha256": "35af35b9f56f424da72b67f7ad03532ce87c3441d39067dc879033df09b91282",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "35af35b9f56f424da72b67f7ad03532ce87c3441d39067dc879033df09b91282"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/internal/wintun/wintun_windows.go",
+      "destination": "third_party/sing-tun/internal/wintun/wintun_windows.go",
+      "source_sha256": "b20c036332f305d8a6e207becd05b9763a8868e78682101922e388111cceb985",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b20c036332f305d8a6e207becd05b9763a8868e78682101922e388111cceb985"
+    },
+    {
+      "source_kind": "mobile_addition",
+      "source": "LOFT rounded mobile UDP allocation accounting",
+      "destination": "third_party/sing-tun/mobile_packet_budget.go",
+      "source_sha256": null,
+      "owned_sha256": "2e6edcc28b00d0a92082ebb50dd4a2a806a96b2e6492d4fb4ce341bc73009474"
+    },
+    {
+      "source_kind": "mobile_addition",
+      "source": "LOFT bounded mobile TCP commitments and pending handshakes",
+      "destination": "third_party/sing-tun/mobile_stack.go",
+      "source_sha256": null,
+      "owned_sha256": "f6f206454a90ba61e63bddfcfbee2ad69233e33662509430cdac73fc2a5efc31"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/monitor.go",
+      "destination": "third_party/sing-tun/monitor.go",
+      "source_sha256": "6b5667eb5ea0124e40fa37ffda1c09a46cd8eaf44bd9610e22dce7edee45f764",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6b5667eb5ea0124e40fa37ffda1c09a46cd8eaf44bd9610e22dce7edee45f764"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/monitor_android.go",
+      "destination": "third_party/sing-tun/monitor_android.go",
+      "source_sha256": "e31377ff47bed8bc0bfd9f60fa3921c3b1797784236ffc0b1f919735a5119502",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e31377ff47bed8bc0bfd9f60fa3921c3b1797784236ffc0b1f919735a5119502"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/monitor_darwin.go",
+      "destination": "third_party/sing-tun/monitor_darwin.go",
+      "source_sha256": "110cfa1ad91d2c69beb66da8b50da8306b9b1c383426c589adcff5b2f8a3606a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "110cfa1ad91d2c69beb66da8b50da8306b9b1c383426c589adcff5b2f8a3606a"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/monitor_linux.go",
+      "destination": "third_party/sing-tun/monitor_linux.go",
+      "source_sha256": "f157fc55282bfea8bf9fb47d4ecf53484bf5883876c267d4c7b7c29b0af30550",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f157fc55282bfea8bf9fb47d4ecf53484bf5883876c267d4c7b7c29b0af30550"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/monitor_linux_default.go",
+      "destination": "third_party/sing-tun/monitor_linux_default.go",
+      "source_sha256": "96552c190a65ccf3e1659a725fe9c9cf42c01fc8e911026722f68eb50994e10b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "96552c190a65ccf3e1659a725fe9c9cf42c01fc8e911026722f68eb50994e10b"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/monitor_other.go",
+      "destination": "third_party/sing-tun/monitor_other.go",
+      "source_sha256": "072dc462e924991d0adfc32b476982353791af17f89fdf451d2ae58299ca076b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "072dc462e924991d0adfc32b476982353791af17f89fdf451d2ae58299ca076b"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/monitor_shared.go",
+      "destination": "third_party/sing-tun/monitor_shared.go",
+      "source_sha256": "04a2fb77d467b60ed514fc33186091adec6e179f265560632bcef56c7b224b10",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "04a2fb77d467b60ed514fc33186091adec6e179f265560632bcef56c7b224b10"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/monitor_windows.go",
+      "destination": "third_party/sing-tun/monitor_windows.go",
+      "source_sha256": "5bff7e436c26849dee272229d86341c8476a970e4bdd29dd815172afd9ce8255",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5bff7e436c26849dee272229d86341c8476a970e4bdd29dd815172afd9ce8255"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/netns_linux.go",
+      "destination": "third_party/sing-tun/netns_linux.go",
+      "source_sha256": "22281a10ef370dd0094c135c729cebc07bed3c777ec83e6f865dca92b70c39b4",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "22281a10ef370dd0094c135c729cebc07bed3c777ec83e6f865dca92b70c39b4"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/netns_other.go",
+      "destination": "third_party/sing-tun/netns_other.go",
+      "source_sha256": "d264c9c481511698e91b8f45b53be6f2425025668eabb3e14bfff83ec77e91f2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d264c9c481511698e91b8f45b53be6f2425025668eabb3e14bfff83ec77e91f2"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/nfqueue_linux.go",
+      "destination": "third_party/sing-tun/nfqueue_linux.go",
+      "source_sha256": "6d3181974a9c01e796e96d2574ed4985bc186bb2bfa977a038215464575b6363",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "6d3181974a9c01e796e96d2574ed4985bc186bb2bfa977a038215464575b6363"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/packages.go",
+      "destination": "third_party/sing-tun/packages.go",
+      "source_sha256": "12f238cd7c2f37fcf5b90f67263fdfdbd3bb98cce4e87bac0e61a7025d1fc0d7",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "12f238cd7c2f37fcf5b90f67263fdfdbd3bb98cce4e87bac0e61a7025d1fc0d7"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/packages_android.go",
+      "destination": "third_party/sing-tun/packages_android.go",
+      "source_sha256": "dc774ff8c5e709517df134e3661ea2e9e3f53448072e20db550c6b2bebbd8a83",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "dc774ff8c5e709517df134e3661ea2e9e3f53448072e20db550c6b2bebbd8a83"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/packages_stub.go",
+      "destination": "third_party/sing-tun/packages_stub.go",
+      "source_sha256": "e5c353974404abc63750acf289791f38d9c364d9c43a2b865ece5e73e6dadb6c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e5c353974404abc63750acf289791f38d9c364d9c43a2b865ece5e73e6dadb6c"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/ping/cmsg_unix.go",
+      "destination": "third_party/sing-tun/ping/cmsg_unix.go",
+      "source_sha256": "b84f329026f29ef25156f42c3f198cf407260e7052e76531b75d8a81b67442a5",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b84f329026f29ef25156f42c3f198cf407260e7052e76531b75d8a81b67442a5"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/ping/cmsg_windows.go",
+      "destination": "third_party/sing-tun/ping/cmsg_windows.go",
+      "source_sha256": "c8f044d44aa51f50bf189833dfc34e4f7c6b0f8c074ae23e3fc888edd583c07b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "c8f044d44aa51f50bf189833dfc34e4f7c6b0f8c074ae23e3fc888edd583c07b"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/ping/destination.go",
+      "destination": "third_party/sing-tun/ping/destination.go",
+      "source_sha256": "d9af54ea7ddc220f1c7bfbed597010eb86882883030ab1d967df47abd21ee788",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d9af54ea7ddc220f1c7bfbed597010eb86882883030ab1d967df47abd21ee788"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/ping/filter_linux.go",
+      "destination": "third_party/sing-tun/ping/filter_linux.go",
+      "source_sha256": "f417ba796882502dccfb1dd4a1fd50d07e0ab2f3e337141b38b5bd54c98937fb",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f417ba796882502dccfb1dd4a1fd50d07e0ab2f3e337141b38b5bd54c98937fb"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/ping/filter_other.go",
+      "destination": "third_party/sing-tun/ping/filter_other.go",
+      "source_sha256": "73b8667ee4e9009a487a5045bbf69332d7a5549c2606b42f6ea267a2263eb77a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "73b8667ee4e9009a487a5045bbf69332d7a5549c2606b42f6ea267a2263eb77a"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/ping/ping.go",
+      "destination": "third_party/sing-tun/ping/ping.go",
+      "source_sha256": "590694e7adb576b6aea5bf44909180c7f68b1accb225298f43b5852c6e5cb25a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "590694e7adb576b6aea5bf44909180c7f68b1accb225298f43b5852c6e5cb25a"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/ping/port.go",
+      "destination": "third_party/sing-tun/ping/port.go",
+      "source_sha256": "f085b25c2b9d00d2e9bc35656276924c403f138698b11479e0c5a4d0d8ea711a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "f085b25c2b9d00d2e9bc35656276924c403f138698b11479e0c5a4d0d8ea711a"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/ping/socket_linux_unprivileged.go",
+      "destination": "third_party/sing-tun/ping/socket_linux_unprivileged.go",
+      "source_sha256": "2cc7e16dfd9fe31470dd6342fbb983e38903ee42e89d65fecb3da8a0da5fdb0a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2cc7e16dfd9fe31470dd6342fbb983e38903ee42e89d65fecb3da8a0da5fdb0a"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/ping/socket_unix.go",
+      "destination": "third_party/sing-tun/ping/socket_unix.go",
+      "source_sha256": "e8b69bed02332c757ca435b79a473939ead35d3552a0465cb643a5debc16a99f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e8b69bed02332c757ca435b79a473939ead35d3552a0465cb643a5debc16a99f"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/ping/socket_windows.go",
+      "destination": "third_party/sing-tun/ping/socket_windows.go",
+      "source_sha256": "c5829fd6e599cb6e2130cc22176d8c9b1a045209630dea5dcee760347072235b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "c5829fd6e599cb6e2130cc22176d8c9b1a045209630dea5dcee760347072235b"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/redirect.go",
+      "destination": "third_party/sing-tun/redirect.go",
+      "source_sha256": "9d5ffc67feceb6415ca2ff3ccb92f4d50f09c746e43af04d760cf93807940462",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9d5ffc67feceb6415ca2ff3ccb92f4d50f09c746e43af04d760cf93807940462"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/redirect_iptables.go",
+      "destination": "third_party/sing-tun/redirect_iptables.go",
+      "source_sha256": "30daa9ead57a4e2e0618fb650711a381287d86ea5a391e07ac115f1aafc66104",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "30daa9ead57a4e2e0618fb650711a381287d86ea5a391e07ac115f1aafc66104"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/redirect_linux.go",
+      "destination": "third_party/sing-tun/redirect_linux.go",
+      "source_sha256": "d555ee6dd11f23571b562009910da061c7a2e8aaa305b161046959ae595728ec",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "d555ee6dd11f23571b562009910da061c7a2e8aaa305b161046959ae595728ec"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/redirect_nftables.go",
+      "destination": "third_party/sing-tun/redirect_nftables.go",
+      "source_sha256": "3e8fd58e2d820f41085ecc2e11e08a559ffe5b8b60fbe7c4632e37fe48e6bfdf",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "3e8fd58e2d820f41085ecc2e11e08a559ffe5b8b60fbe7c4632e37fe48e6bfdf"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/redirect_nftables_docker.go",
+      "destination": "third_party/sing-tun/redirect_nftables_docker.go",
+      "source_sha256": "febefefd584c168263277a7a26c6313661b37a4338b156d6561e3ae1ee86c87c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "febefefd584c168263277a7a26c6313661b37a4338b156d6561e3ae1ee86c87c"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/redirect_nftables_exprs.go",
+      "destination": "third_party/sing-tun/redirect_nftables_exprs.go",
+      "source_sha256": "ced41eecbe47213987d96dfb018aba5f74432d74e379891b422088b929280524",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ced41eecbe47213987d96dfb018aba5f74432d74e379891b422088b929280524"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/redirect_nftables_rules.go",
+      "destination": "third_party/sing-tun/redirect_nftables_rules.go",
+      "source_sha256": "99bad59ffc33d65127208bcf4c0bcee518928b58c13bfef679f6a9b3d35048a6",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "99bad59ffc33d65127208bcf4c0bcee518928b58c13bfef679f6a9b3d35048a6"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/redirect_nftables_rules_openwrt.go",
+      "destination": "third_party/sing-tun/redirect_nftables_rules_openwrt.go",
+      "source_sha256": "cd8543955c68288f518f00d4503fbfb1cbb18f90ccd52c5b28317696fb2fa41a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "cd8543955c68288f518f00d4503fbfb1cbb18f90ccd52c5b28317696fb2fa41a"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/redirect_route_linux.go",
+      "destination": "third_party/sing-tun/redirect_route_linux.go",
+      "source_sha256": "4066602dade4e4cd83f3222ff98836d348052167d286342153a271a62b74077c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "4066602dade4e4cd83f3222ff98836d348052167d286342153a271a62b74077c"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/redirect_server.go",
+      "destination": "third_party/sing-tun/redirect_server.go",
+      "source_sha256": "c94b28bb3370c9364adaf3928f503ef4779188afb9256216d7b8919f4e9f04c2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "c94b28bb3370c9364adaf3928f503ef4779188afb9256216d7b8919f4e9f04c2"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/redirect_stub.go",
+      "destination": "third_party/sing-tun/redirect_stub.go",
+      "source_sha256": "c4918d2884e057a6df2bf50ff63d7dd8ade0cab9f128a8a74ba9f169dadef1eb",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "c4918d2884e057a6df2bf50ff63d7dd8ade0cab9f128a8a74ba9f169dadef1eb"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack.go",
+      "destination": "third_party/sing-tun/stack.go",
+      "source_sha256": "224e070822a7c07c1addb535903d7e59d4ea2f1e0cbb8e046cc162068cb6d8ad",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "0b059d068a871bce5f43179b1210cf26f42963144230af92c251bb03c9ed9f97"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_gvisor.go",
+      "destination": "third_party/sing-tun/stack_gvisor.go",
+      "source_sha256": "8ecfeec6d2d45ee1400bdd0ed7bee0c18485e2f38a3ba45d3a3474ed9871b394",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "9db3e6afb69d8c7d20627ff7ef59dc00e7d24dea2cb2998541900d9736a6d696"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_gvisor_filter.go",
+      "destination": "third_party/sing-tun/stack_gvisor_filter.go",
+      "source_sha256": "2aa39fcc404ee028b27b64831eb6ec2065f14388a85b4dc1055d72c98fffe3e0",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2aa39fcc404ee028b27b64831eb6ec2065f14388a85b4dc1055d72c98fffe3e0"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_gvisor_icmp.go",
+      "destination": "third_party/sing-tun/stack_gvisor_icmp.go",
+      "source_sha256": "8aef45cc66a5b773063f27a49afe2ac650d4505adc185c681e53174b9d1ce47c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8aef45cc66a5b773063f27a49afe2ac650d4505adc185c681e53174b9d1ce47c"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_gvisor_lazy.go",
+      "destination": "third_party/sing-tun/stack_gvisor_lazy.go",
+      "source_sha256": "0c571fe42ed50872b9ad07de165820cae7f1931803c5d3476f1153c43d859899",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "0c571fe42ed50872b9ad07de165820cae7f1931803c5d3476f1153c43d859899"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_gvisor_log.go",
+      "destination": "third_party/sing-tun/stack_gvisor_log.go",
+      "source_sha256": "13f6781d0aa3e73623ccad185f873ebbdbf5ea297e491973c3b61f3b1b5c3937",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "13f6781d0aa3e73623ccad185f873ebbdbf5ea297e491973c3b61f3b1b5c3937"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_gvisor_stub.go",
+      "destination": "third_party/sing-tun/stack_gvisor_stub.go",
+      "source_sha256": "2019c48ed36efd83b7becc2a95d9ba1658f0a85c6304b75b0ceb13f34a59b7e0",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2019c48ed36efd83b7becc2a95d9ba1658f0a85c6304b75b0ceb13f34a59b7e0"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_gvisor_tcp.go",
+      "destination": "third_party/sing-tun/stack_gvisor_tcp.go",
+      "source_sha256": "418df41fb175d37e7dc8eccea85b5e75052dee29c39c527f6be58a837982e955",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "418df41fb175d37e7dc8eccea85b5e75052dee29c39c527f6be58a837982e955"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_gvisor_tcp_conn.go",
+      "destination": "third_party/sing-tun/stack_gvisor_tcp_conn.go",
+      "source_sha256": "5c7e6fbd9e8c164ce0694677ff3c08262b578583a2300a50945661474976bf93",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5c7e6fbd9e8c164ce0694677ff3c08262b578583a2300a50945661474976bf93"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_gvisor_tcpbuf_default.go",
+      "destination": "third_party/sing-tun/stack_gvisor_tcpbuf_default.go",
+      "source_sha256": "3f355daa293370a3f349fe7573b4533e2760e4ba150a1dd33d259f2025a4ee05",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "3f355daa293370a3f349fe7573b4533e2760e4ba150a1dd33d259f2025a4ee05"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_gvisor_tcpbuf_ios.go",
+      "destination": "third_party/sing-tun/stack_gvisor_tcpbuf_ios.go",
+      "source_sha256": "eb51fdd6eafcfbf4354e2b8090f3075b5b427a341b48dbb7530ec9e4186d0e52",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "eb51fdd6eafcfbf4354e2b8090f3075b5b427a341b48dbb7530ec9e4186d0e52"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_gvisor_udp.go",
+      "destination": "third_party/sing-tun/stack_gvisor_udp.go",
+      "source_sha256": "97761855b0b91918f32c3c869897e9602a292ec8d29b4f694744e0d7854753ff",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "97761855b0b91918f32c3c869897e9602a292ec8d29b4f694744e0d7854753ff"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_mixed.go",
+      "destination": "third_party/sing-tun/stack_mixed.go",
+      "source_sha256": "356c4ec1ff962a65af9d5995aafbb14523c75eec0ddd9f25ab4a5af54501c43c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "356c4ec1ff962a65af9d5995aafbb14523c75eec0ddd9f25ab4a5af54501c43c"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_system.go",
+      "destination": "third_party/sing-tun/stack_system.go",
+      "source_sha256": "5b915066560e6e904f99c14c422947020b8447f36e20d5e205124ffa8c32b316",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5b915066560e6e904f99c14c422947020b8447f36e20d5e205124ffa8c32b316"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_system_nat.go",
+      "destination": "third_party/sing-tun/stack_system_nat.go",
+      "source_sha256": "386e938c2e73820b3ff9ffb99929538a65650a5d397b768379420d09127c4884",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "386e938c2e73820b3ff9ffb99929538a65650a5d397b768379420d09127c4884"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_system_nonwindows.go",
+      "destination": "third_party/sing-tun/stack_system_nonwindows.go",
+      "source_sha256": "e24d0c9323d26d1ea07c13ee956864cb9f8893b9e6080f93bc341614a86dd789",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e24d0c9323d26d1ea07c13ee956864cb9f8893b9e6080f93bc341614a86dd789"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_system_packet.go",
+      "destination": "third_party/sing-tun/stack_system_packet.go",
+      "source_sha256": "ca071a43807379b5e46126168e3dbbb175d2058e3351e463569277e9b39ba5e6",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ca071a43807379b5e46126168e3dbbb175d2058e3351e463569277e9b39ba5e6"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/stack_system_windows.go",
+      "destination": "third_party/sing-tun/stack_system_windows.go",
+      "source_sha256": "8f63d402e70818c288a54b8cfe23986fcb45bc2f1516e99052eb1ab65cb5e45b",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "8f63d402e70818c288a54b8cfe23986fcb45bc2f1516e99052eb1ab65cb5e45b"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun.go",
+      "destination": "third_party/sing-tun/tun.go",
+      "source_sha256": "031cb6351ac6d203849cc90594703ca962978a49a656666dac241d195de3c5ce",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "031cb6351ac6d203849cc90594703ca962978a49a656666dac241d195de3c5ce"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_darwin.go",
+      "destination": "third_party/sing-tun/tun_darwin.go",
+      "source_sha256": "0676cdec64934d98461e87b625675f5b0d3d2281f3f4126005df5473f19bde61",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "0676cdec64934d98461e87b625675f5b0d3d2281f3f4126005df5473f19bde61"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_darwin_gvisor.go",
+      "destination": "third_party/sing-tun/tun_darwin_gvisor.go",
+      "source_sha256": "db0a417d6a076ef683bc43faa5885e139bff47da4b569ad44d60ab8e70f347ed",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "db0a417d6a076ef683bc43faa5885e139bff47da4b569ad44d60ab8e70f347ed"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_linux.go",
+      "destination": "third_party/sing-tun/tun_linux.go",
+      "source_sha256": "973f65c941221491edc3ecd514065cf6c5b2823f6569f580c7c7b2b541ae2721",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "973f65c941221491edc3ecd514065cf6c5b2823f6569f580c7c7b2b541ae2721"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_linux_flags.go",
+      "destination": "third_party/sing-tun/tun_linux_flags.go",
+      "source_sha256": "e35951b7715b8cd10edbda0b619bd88f9a3a86d03979619899ac3bbc2183bd4f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e35951b7715b8cd10edbda0b619bd88f9a3a86d03979619899ac3bbc2183bd4f"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_linux_gvisor.go",
+      "destination": "third_party/sing-tun/tun_linux_gvisor.go",
+      "source_sha256": "35613c249dba5c75dce8d7ead3e823ee243bb107f9daec7c23fc0f9c9ed37130",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "35613c249dba5c75dce8d7ead3e823ee243bb107f9daec7c23fc0f9c9ed37130"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_nondarwin.go",
+      "destination": "third_party/sing-tun/tun_nondarwin.go",
+      "source_sha256": "ebb610db1e5c27e2a130b4076ed10264b4d94df7b29a4ce1be7297f77cf0b760",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ebb610db1e5c27e2a130b4076ed10264b4d94df7b29a4ce1be7297f77cf0b760"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_nonlinux.go",
+      "destination": "third_party/sing-tun/tun_nonlinux.go",
+      "source_sha256": "cd7b781add95c0322bb09b0f2e51b7cf39a00a4e5202f161400cf8c9c75fdc72",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "cd7b781add95c0322bb09b0f2e51b7cf39a00a4e5202f161400cf8c9c75fdc72"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_offload.go",
+      "destination": "third_party/sing-tun/tun_offload.go",
+      "source_sha256": "5cc9994ddfe8a4900658aa2e766ce1b55330221a0b307c8328814ca6334f3a0a",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5cc9994ddfe8a4900658aa2e766ce1b55330221a0b307c8328814ca6334f3a0a"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_offload_errors.go",
+      "destination": "third_party/sing-tun/tun_offload_errors.go",
+      "source_sha256": "cccc752b9ab03799786550b791eeb57617a347d459feafa4fedf4ea4ca962fad",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "cccc752b9ab03799786550b791eeb57617a347d459feafa4fedf4ea4ca962fad"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_offload_linux.go",
+      "destination": "third_party/sing-tun/tun_offload_linux.go",
+      "source_sha256": "e139e10f9614be93c41795b298545850c46acf82d20f986690ccc180454e29df",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "e139e10f9614be93c41795b298545850c46acf82d20f986690ccc180454e29df"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_other.go",
+      "destination": "third_party/sing-tun/tun_other.go",
+      "source_sha256": "fe35108b0b1f86d2a4a01ab3a29b1b0b9a3a4dca26d344c2589b430407356820",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "fe35108b0b1f86d2a4a01ab3a29b1b0b9a3a4dca26d344c2589b430407356820"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_read_error.go",
+      "destination": "third_party/sing-tun/tun_read_error.go",
+      "source_sha256": "097e567d0c65775b769f1f1b4c290bcf12f97a745f7d110eef281ff73da2f5c2",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "097e567d0c65775b769f1f1b4c290bcf12f97a745f7d110eef281ff73da2f5c2"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_rules.go",
+      "destination": "third_party/sing-tun/tun_rules.go",
+      "source_sha256": "4a6bb9baab420a57293669a2a51d779fcd3b0a7fb02e14388bebfbe1b9ba25d9",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "4a6bb9baab420a57293669a2a51d779fcd3b0a7fb02e14388bebfbe1b9ba25d9"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_windows.go",
+      "destination": "third_party/sing-tun/tun_windows.go",
+      "source_sha256": "998d7e712c3d830055c106397f80e797d412a13d1e7d0766b3326d47051ae010",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "998d7e712c3d830055c106397f80e797d412a13d1e7d0766b3326d47051ae010"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/tun_windows_gvisor.go",
+      "destination": "third_party/sing-tun/tun_windows_gvisor.go",
+      "source_sha256": "49274d0d90b92a98086a19e366618f8d54571b996c68ef7c73a2c4b08054f874",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "49274d0d90b92a98086a19e366618f8d54571b996c68ef7c73a2c4b08054f874"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/udp_egress.go",
+      "destination": "third_party/sing-tun/udp_egress.go",
+      "source_sha256": "ed66cf7d3cc518db9455fabef55430900bd78fe9986e97156ff2e539ec47d2f9",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ed66cf7d3cc518db9455fabef55430900bd78fe9986e97156ff2e539ec47d2f9"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/udp_egress_conn.go",
+      "destination": "third_party/sing-tun/udp_egress_conn.go",
+      "source_sha256": "0a8d64ac841c20040d363fc329723653852ab53d7d2a05dbf79aba131614e417",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "0a8d64ac841c20040d363fc329723653852ab53d7d2a05dbf79aba131614e417"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/udp_nat.go",
+      "destination": "third_party/sing-tun/udp_nat.go",
+      "source_sha256": "06bbac684d1c96bf203f4e7dfe6a948ef73432b514838608bff0d69b500efb7c",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "5a65c1dbf70c6355c55d88aa639f84555c1a92afa65bbb3c5b191c4ff8fece1c"
+    },
+    {
+      "source": "github.com/sagernet/sing-tun@v0.9.6-0.20260924001923-ddaa4ca25e3b/udp_nat_cleanup.go",
+      "destination": "third_party/sing-tun/udp_nat_cleanup.go",
+      "source_sha256": "164700195acce6a43e352dcad61c3e34b8eaefabff5444d445e1aff1fb56681f",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "164700195acce6a43e352dcad61c3e34b8eaefabff5444d445e1aff1fb56681f"
+    }
+  ],
+  "mobile_patches": [
+    {
+      "id": "hyrakenx_protected_packet_factory",
+      "files": [
+        "third_party/Loft-Gateway/modules/hyrakenx/quic.go"
+      ],
+      "reason": "Use the Android protected socket factory before QUIC connect while preserving existing TLS, seed, gate and wire cryptography."
+    },
+    {
+      "id": "hyrakenpro_authentication_warmup",
+      "files": [
+        "third_party/Loft-Gateway/pkg/hyrakenpro/transport.go"
+      ],
+      "reason": "Authenticate one ordinary session through the existing TLS/ALPN/seed path before TUN startup, using the existing dial gate and pool owner."
+    },
+    {
+      "id": "selected_beast_sender_module",
+      "files": [
+        "third_party/Loft-Gateway/GhostX-core-main/go.mod"
+      ],
+      "reason": "Own a standalone module for the selected unmodified Beast sender package instead of importing the upstream source tree."
+    },
+    {
+      "id": "sing_tun_mobile_packet_ownership",
+      "files": [
+        "third_party/sing-tun/stack.go",
+        "third_party/sing-tun/udp_nat.go",
+        "third_party/sing-tun/mobile_packet_budget.go"
+      ],
+      "reason": "Bound UDP queue slots and round buffer plus metadata byte admission before copying; preserve zero-length datagrams and release every queued owner once."
+    },
+    {
+      "id": "sing_tun_tcp_and_worker_limits",
+      "files": [
+        "third_party/sing-tun/stack.go",
+        "third_party/sing-tun/stack_gvisor.go",
+        "third_party/sing-tun/mobile_stack.go"
+      ],
+      "reason": "Use TCP default16KiB/max32KiB commitments and 64 pending forwarder admission; expose real gVisor worker Wait and safe failed-start cleanup."
+    },
+    {
+      "id": "hydra_selected_sender_completion_metrics",
+      "files": [
+        "third_party/Loft-Gateway/modules/hyrakenx/quic.go",
+        "third_party/Loft-Gateway/modules/hyrakenx/stream.go",
+        "third_party/Loft-Gateway/pkg/hyrakenpro/config.go",
+        "third_party/Loft-Gateway/pkg/hyrakenpro/transport.go",
+        "third_party/Loft-Gateway/pkg/hyrakenpro/session.go",
+        "third_party/Loft-Gateway/pkg/hyrakenpro/stream.go",
+        "third_party/Loft-Gateway/pkg/hyrakenpro/metrics_test.go"
+      ],
+      "reason": "Install existing Hydra before X logical streams and Pro ordinary sessions; record only fully accepted shaped DATA/PAD at actual producer completion, with full/partial framed-socket regressions. No wire version, authentication, encryption, timing delay or packet-only Pro shaping change."
+    }
+  ],
+  "owned_verification": "tools/verify_owned_sources.py verifies owned_sha256 and complete file/patch coverage; source paths and source_sha256 are informational provenance and are never read by the clean-checkout verifier."
+}

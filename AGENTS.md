@@ -1,0 +1,23 @@
+# LOFT mobile engineering
+
+Read `docs/aptist-loft/SKILL.md` (installed copy: `/home/coder/.codex/skills/aptist-loft/SKILL.md`) and applicable contracts. The design inputs are local `guide/guide.md` v3.6 and `guide/ui-design.md`, deliberately excluded from delivery. Read `Prompt/Task-Now.txt` only through a redactor: it can contain credentials. Never output tokens, use token-bearing Git URLs, or copy task credentials into fixtures/logs.
+
+Rust owns client business state and new server logic. Android/Kotlin implements UI, Binder and system capabilities; Go provides the engine adapter. The private `:vpn` service owns one Rust core and one Go control runtime. UI snapshots are immutable, routing edits are drafts until actual engine receipts, and stopped/unavailable engines must never appear connected.
+
+Initial task `loftmobile-1125-01` delivers a compiled application framework, native bindings, resource/validation foundations, tests and release review. The complete guide P0–P5 capabilities are not all implemented by a framework. Report precise feature/verification status. No fabricated VPN, login, inbox, malware verdict or device acceptance.
+
+Owners are assigned explicitly: Rust core/FFI under `loft-core-rust/`; native Android under `loft-android/`; Go SDK under `loft-vpn-engine-go/`; root integrator owns scripts/docs/report/version/Git/toolchain and server framework. Ask the owning agent before changing another subtree. Do not modify Gateway/Portal sources or other projects' caches.
+
+Use TDD for validation, state/admission, lifecycle and error behavior; avoid mock-only or source-text tests. Two build workers initially, with large native/Gradle builds coordinated. Every external call is user-initiated and bound to profile/issuer/generation. Anonymous startup is local. No administrator clientSecret or Portal bearer in the current BFF APK path. Credentials stay memory-only until encrypted storage exists and snapshots are redacted/paginated.
+
+Supported locales en/zh/ja/de are complete for visible text/errors/accessibility. Persistent module rail uses stable IDs and native assets; no WebView main UI, runtime plugin, automatic cloud poll or hidden timer that simulates connection.
+
+Delivery excludes `guide/`, `Prompt/`, `tmp/`, caches, local keys and compiled artifacts. Preserve remote history and only push after final checks. Record source pins, tools, actual commands, failed attempts and remaining real-device/production prerequisites in Readme/report; update VERSION and skill after verified changes. The task file is not a development log.
+
+Run from the root with `source scripts/env.sh`: `python3 -m unittest discover -s tests -v`, `python3 scripts/verify_architecture.py`, Cargo workspace tests/fmt/Clippy with `--manifest-path loft-core-rust/Cargo.toml --locked`, then the source-pinned Go `with_gvisor` normal/race/vet/module checks. Native entry is `bash scripts/build-native.sh`; Android Release checks/build use `bash scripts/build-android.sh`. These commands have checkpoint receipts; read the latest report before calling a particular source/artifact passing.
+
+Android main/Binder Stop ingress does only priority fencing and cancellation, including terminal node-resolution closure and scoped original TUN close. Go Abort/join, resource getters and publication run on the reserved worker. Preserve pending ownership and actual completion receipts. Inspect `docs/contracts/resources.md` before adding any periodic work; device PSS, Fold, DNS and power acceptance cannot be inferred from host suites.
+
+For the0.1.2 shared privacy implementation read `docs/contracts/network-privacy.md` and `docs/decisions/notifications.md`: policy epoch/scope/UID freeze, strict schema2/envelope3 receipts, node-domain Fake-IP and proof revocation apply across transports. VPN foreground notification visibility follows actual permission/channel state; mail notification authority is unavailable until real server events/subscriptions exist.
+
+Final acceptance artifact is the actual signed ARM64 Release at the project-root `bin/loft.apk`. Verify this exact file with `scripts/verify_apk.py`, signature/version/manifest checks and `scripts/verify_secrets.py` alongside the actual index; record source/build/test identities and SHA256. Replace it atomically only after final checks, and report the actual signing/device scope. Production default remains ARM64. The paired x86 test ABI/native-root uses separate task-owned outputs and must not replace production native sources. No task credential or private node becomes a Git URL, argument, fixture or archive member.

@@ -1,0 +1,262 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "version": "0.1.2-LYNX",
+  "checked_at_utc": "2026-11-26T05:39:01.464830+00:00",
+  "artifact": {
+    "path": "bin/loft.apk",
+    "bytes": 21507686,
+    "sha256": "64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e",
+    "manifest": {
+      "package": "net.aptist.loft",
+      "version_name": "0.1.2-LYNX",
+      "version_code": 3,
+      "min_sdk": 29,
+      "target_sdk": 36,
+      "debuggable": false,
+      "allow_backup": false,
+      "uses_cleartext_traffic": false,
+      "private_core_process": ":vpn",
+      "vpn_permission": "android.permission.BIND_VPN_SERVICE",
+      "foreground_service_type": "systemExempted",
+      "foreground_service_type_apk_value": "0x400",
+      "resizeable_activity": true,
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED",
+        "android.permission.HIDE_OVERLAY_WINDOWS",
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS",
+        "net.aptist.loft.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ],
+      "manifest_sha256": "94cbcdd9a227873b592730a71aad5c40f6f09418758038c509f6d4e48c042a83"
+    },
+    "native_alignment": {
+      "result": "PASS",
+      "apk": "loft.apk",
+      "native_libraries": {
+        "lib/arm64-v8a/libandroidx.graphics.path.so": {
+          "machine": "AArch64",
+          "load_segments": 3,
+          "alignment": "16KiB-compatible"
+        },
+        "lib/arm64-v8a/libgojni.so": {
+          "machine": "AArch64",
+          "load_segments": 4,
+          "alignment": "16KiB-compatible"
+        },
+        "lib/arm64-v8a/libjnidispatch.so": {
+          "machine": "AArch64",
+          "load_segments": 2,
+          "alignment": "16KiB-compatible"
+        },
+        "lib/arm64-v8a/libloft_ffi.so": {
+          "machine": "AArch64",
+          "load_segments": 4,
+          "alignment": "16KiB-compatible"
+        }
+      }
+    },
+    "native_libraries": [
+      {
+        "path": "lib/arm64-v8a/libandroidx.graphics.path.so",
+        "bytes": 10096,
+        "sha256": "41e9a793c43a0f4fddb19e33f346bace464f30f888ba7b9eaf96294ea115bfb6",
+        "matches_stripped_build_output": true,
+        "original_merged_build_output": "loft-android/app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib/arm64-v8a/libandroidx.graphics.path.so",
+        "original_merged_sha256": "41e9a793c43a0f4fddb19e33f346bace464f30f888ba7b9eaf96294ea115bfb6",
+        "stripped_build_output": "loft-android/app/build/intermediates/stripped_native_libs/release/stripReleaseDebugSymbols/out/lib/arm64-v8a/libandroidx.graphics.path.so",
+        "stripped_sha256": "41e9a793c43a0f4fddb19e33f346bace464f30f888ba7b9eaf96294ea115bfb6",
+        "retained_original_diagnostic": {
+          "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/unstripped/lib/arm64-v8a/libandroidx.graphics.path.so",
+          "bytes": 10096,
+          "sha256": "41e9a793c43a0f4fddb19e33f346bace464f30f888ba7b9eaf96294ea115bfb6"
+        }
+      },
+      {
+        "path": "lib/arm64-v8a/libgojni.so",
+        "bytes": 15936872,
+        "sha256": "7a34cfa8328ea4c128f4c1790d62226aca06ef072a464db303b3c85e770d4eed",
+        "matches_stripped_build_output": true,
+        "original_merged_build_output": "loft-android/app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib/arm64-v8a/libgojni.so",
+        "original_merged_sha256": "4007a231029fed1ab63d3b9b602acb2d1a9ab84d418dad8cce80826a7d2d4259",
+        "stripped_build_output": "loft-android/app/build/intermediates/stripped_native_libs/release/stripReleaseDebugSymbols/out/lib/arm64-v8a/libgojni.so",
+        "stripped_sha256": "7a34cfa8328ea4c128f4c1790d62226aca06ef072a464db303b3c85e770d4eed",
+        "retained_original_diagnostic": {
+          "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/unstripped/lib/arm64-v8a/libgojni.so",
+          "bytes": 22409792,
+          "sha256": "4007a231029fed1ab63d3b9b602acb2d1a9ab84d418dad8cce80826a7d2d4259"
+        },
+        "raw_native_input": {
+          "path": "loft-android/app/build/generated/gomobile/loft-engine.aar",
+          "aar_sha256": "77df0f72d069de9047762c0dbcf8c2df9dbe05634825ee7ef09b583026ee57f4",
+          "jni_member": "jni/arm64-v8a/libgojni.so",
+          "jni_sha256": "4007a231029fed1ab63d3b9b602acb2d1a9ab84d418dad8cce80826a7d2d4259",
+          "matches_merged": true
+        }
+      },
+      {
+        "path": "lib/arm64-v8a/libjnidispatch.so",
+        "bytes": 165992,
+        "sha256": "ddfc6c965bbe366615c000ec1f06552ddf0bb2b4f9d921d0bff8c75b3cb2ca4c",
+        "matches_stripped_build_output": true,
+        "original_merged_build_output": "loft-android/app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib/arm64-v8a/libjnidispatch.so",
+        "original_merged_sha256": "abc26e994517bcaa3309acdb0a27373864086c7569c89d3087b8626fada9ef06",
+        "stripped_build_output": "loft-android/app/build/intermediates/stripped_native_libs/release/stripReleaseDebugSymbols/out/lib/arm64-v8a/libjnidispatch.so",
+        "stripped_sha256": "ddfc6c965bbe366615c000ec1f06552ddf0bb2b4f9d921d0bff8c75b3cb2ca4c",
+        "retained_original_diagnostic": {
+          "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/unstripped/lib/arm64-v8a/libjnidispatch.so",
+          "bytes": 176520,
+          "sha256": "abc26e994517bcaa3309acdb0a27373864086c7569c89d3087b8626fada9ef06"
+        }
+      },
+      {
+        "path": "lib/arm64-v8a/libloft_ffi.so",
+        "bytes": 1144736,
+        "sha256": "efef34c34848344489c7f0e25c2945b11e4bb5e649ba81a7aca51424fde95653",
+        "matches_stripped_build_output": true,
+        "original_merged_build_output": "loft-android/app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib/arm64-v8a/libloft_ffi.so",
+        "original_merged_sha256": "ac386efe89d8ea30cd437e3309ca52b78b2649e11391e9867b4f2b4aa9ea5446",
+        "stripped_build_output": "loft-android/app/build/intermediates/stripped_native_libs/release/stripReleaseDebugSymbols/out/lib/arm64-v8a/libloft_ffi.so",
+        "stripped_sha256": "efef34c34848344489c7f0e25c2945b11e4bb5e649ba81a7aca51424fde95653",
+        "retained_original_diagnostic": {
+          "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/unstripped/lib/arm64-v8a/libloft_ffi.so",
+          "bytes": 1582648,
+          "sha256": "ac386efe89d8ea30cd437e3309ca52b78b2649e11391e9867b4f2b4aa9ea5446"
+        },
+        "raw_native_input": {
+          "path": "loft-android/app/build/generated/jniLibs/arm64-v8a/libloft_ffi.so",
+          "sha256": "ac386efe89d8ea30cd437e3309ca52b78b2649e11391e9867b4f2b4aa9ea5446",
+          "matches_merged": true
+        }
+      }
+    ],
+    "signature": {
+      "verified": true,
+      "schemes": {
+        "1": false,
+        "2": true,
+        "3": true
+      },
+      "certificate_sha256": "4fd578439fe8c3bb5ab2abc6c33e494753a965dc47e44d96e313962852a400fc",
+      "certificate_dn": "CN=LOFT Local Development, O=LOFT Mobile",
+      "identity": "local development key; not production signing",
+      "verification_ranges": {
+        "v3": "SDK>=29",
+        "v2": "SDK24..27 cryptographic verification only; declared application minSdk remains29"
+      }
+    }
+  },
+  "unsigned_build_sha256": "fdcec3c1686e578657e208817ea3fbc9f0c30cc7f3a070e14e94f0463b2338d1",
+  "release_build_receipt_sha256": "9b862df9740342a2d3fab0aed959b8205b48f7be386a72e0431c9d46425da5be",
+  "android_source_preflight_sha256": "205fb8df1fe2d49b2d32f1e47b4c17a4937f1f1401f0a57a7813d3e7827e6acc",
+  "android_runtime_receipt_sha256": "2a386f256b6c63bbbb0304a3e25015ce957a1b9b742310d1e9fcf2d63043ae62",
+  "native_build_receipt_sha256": "c7ca7333338d6af867fa44e21b73b6530838121fd54798a84e358be1cb6c9dd5",
+  "candidate_and_canonical_sha_equal": true,
+  "atomic_replacement": true,
+  "exact_canonical_reverified": true,
+  "secret_scan": {
+    "result": "PASS",
+    "inspected": 1547,
+    "scope": "git_index_and_artifact_members",
+    "private_inputs_available": true,
+    "failures": []
+  },
+  "secret_scan_stage": "Actual APK and current Git index at handoff; Root full source staging/scan still required",
+  "scope": "Actual signed ARM64 Release artifact validation; Android execution used separate matching x86 APK; physical ARM64/Fold/Doze/power/72h not certified",
+  "mail_push": "Unconfigured real server source/subscription/provider; default-denied sink is a foundation, not production push",
+  "retained_diagnostics": {
+    "version": "0.1.2-LYNX",
+    "canonical_apk_sha256": "64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e",
+    "android_source_preflight_sha256": "205fb8df1fe2d49b2d32f1e47b4c17a4937f1f1401f0a57a7813d3e7827e6acc",
+    "retained_at_utc": "2026-11-26T05:42:56.416142+00:00",
+    "files": [
+      {
+        "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/r8/mapping.txt",
+        "bytes": 32823427,
+        "sha256": "2067fa5f662e2dcc39fa7fb144110c7538274368ef0afa674a41464bcc5a8c80"
+      },
+      {
+        "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/r8/configuration.txt",
+        "bytes": 56279,
+        "sha256": "4d7991599926ae2125d32eccd4cc43d2db061d3953d6702c9139146f731cf2e5"
+      },
+      {
+        "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/r8/seeds.txt",
+        "bytes": 794445,
+        "sha256": "4979626614a1af1e0835c440df33e1016c2ebc24086d4245f280b5b78ec2a58a"
+      },
+      {
+        "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/r8/usage.txt",
+        "bytes": 3547650,
+        "sha256": "52d371067bbaed4933b38b0e65a5750b658e5f18a83094b80b64fda8b1eb8747"
+      },
+      {
+        "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/r8/resources.txt",
+        "bytes": 347608,
+        "sha256": "eb9cbad98ac027a972fa101d9472517a6b5f0e3ea35c381754c38ab941f97045"
+      },
+      {
+        "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/native-debug-symbols.zip",
+        "bytes": 6882838,
+        "sha256": "add40c5d87e2f1af9659deb06235c88cedb94da84235e32ef91fa1b1c88fa52e"
+      },
+      {
+        "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/unstripped/lib/arm64-v8a/libandroidx.graphics.path.so",
+        "bytes": 10096,
+        "sha256": "41e9a793c43a0f4fddb19e33f346bace464f30f888ba7b9eaf96294ea115bfb6"
+      },
+      {
+        "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/unstripped/lib/arm64-v8a/libgojni.so",
+        "bytes": 22409792,
+        "sha256": "4007a231029fed1ab63d3b9b602acb2d1a9ab84d418dad8cce80826a7d2d4259"
+      },
+      {
+        "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/unstripped/lib/arm64-v8a/libjnidispatch.so",
+        "bytes": 176520,
+        "sha256": "abc26e994517bcaa3309acdb0a27373864086c7569c89d3087b8626fada9ef06"
+      },
+      {
+        "path": "release-artifacts/0.1.2-LYNX/64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e/unstripped/lib/arm64-v8a/libloft_ffi.so",
+        "bytes": 1582648,
+        "sha256": "ac386efe89d8ea30cd437e3309ca52b78b2649e11391e9867b4f2b4aa9ea5446"
+      }
+    ],
+    "scope": "Local ignored ARM64 R8/unstripped/native symbol diagnostics; no signing key or task/node credential copied"
+  },
+  "release_resource_locales": {
+    "exit_code": 0,
+    "artifact_sha256": "fdcec3c1686e578657e208817ea3fbc9f0c30cc7f3a070e14e94f0463b2338d1",
+    "required_resource_locale_configs": {
+      "de": true,
+      "ja": true,
+      "zh": true
+    },
+    "default_unsuffixed_english": true,
+    "log_sha256": "7a7c2295c8559a324be29ef96343d3de0c1bcd9f5b2bc01049866edefcef1eb7",
+    "scope": "Actual unsigned Release resource configuration presence; source-key and API notification translations are separate checks"
+  },
+  "paired_x86_release_smoke": {
+    "path": "docs/validation/android-0.1.2-x86-r8-smoke.json",
+    "sha256": "d944992cb75662ba31f09e0a9f566888731493b60452779a47df45c36fcf48c0",
+    "passed": true,
+    "go_jni_path": "docs/validation/android-0.1.2-x86-r8-go-jni.json",
+    "go_jni_sha256": "5a917675bd1434c5066a36f2cbf4ce97c60abefc0f6cf874ac5e7a6bcf034421",
+    "canonical_arm64_unchanged": true
+  },
+  "tool_validation_failures_preserved": [
+    {
+      "stage": "unsigned manifest binary enum representation",
+      "local_receipt": "tmp/verification/android-delivery-0.1.2/sign-first-manifest-interpretation-failure.json"
+    },
+    {
+      "stage": "apksigner duplicate password file read EOF",
+      "local_receipt": "tmp/verification/android-delivery-0.1.2/sign-candidate-first-failure.json"
+    },
+    {
+      "stage": "Signature verifier selects v3 for minSdk29; v2 needs a separate cryptographic range",
+      "local_receipt": "tmp/verification/android-delivery-0.1.2/sign-first-signature-interpretation-failure.json"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "rust": "1.100.0",
+  "rust_target": "aarch64-linux-android",
+  "go": "1.27.4",
+  "java_major": 21,
+  "gradle": "8.13",
+  "gradle_sha256": "20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78",
+  "android_gradle_plugin": "8.13.2",
+  "kotlin": "2.3.21",
+  "compose_bom": "2026.03.01",
+  "window_manager": "1.5.1",
+  "android_min_sdk": 29,
+  "android_compile_target_sdk": 36,
+  "build_tools": "36.0.0",
+  "ndk": "28.2.13676358",
+  "commandline_tools_archive": "commandlinetools-linux-16111833_latest.zip",
+  "commandline_tools_archive_sha1": "e025545c62a8e64c7559119566a569fb1dec5f60",
+  "native_abis": ["arm64-v8a"]
+}

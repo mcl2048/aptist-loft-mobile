@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "version": "0.1.2-LYNX",
+  "passed": true,
+  "checked_at_utc": "2026-11-26T05:56:41.892411+00:00",
+  "artifact": {
+    "path": "tmp/verification/android-delivery-0.1.2/x86-r8-release-signed.apk",
+    "sha256": "b99a6450bcb0ddb31913b801bd52c4c23c5d024db8eff58cab9bb78763654a27",
+    "bytes": 22736474,
+    "abi": "x86_64",
+    "debuggable": false,
+    "signing": "development"
+  },
+  "installed_artifact_sha256": "b99a6450bcb0ddb31913b801bd52c4c23c5d024db8eff58cab9bb78763654a27",
+  "build_receipt_sha256": "588b3983a907057ef9831e401b25a17dee11a312c264ff733fb8fe751643f483",
+  "canonical_arm64_sha256": "64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e",
+  "canonical_arm64_unchanged": true,
+  "ordinary_application_uid": true,
+  "private_core_service_and_process_observed": true,
+  "actual_rust_guest_snapshot_observed": "Not connected + No nodes added + inactive protection; source UI exposes these only after a decoded immutable native snapshot",
+  "native_libraries": [
+    {
+      "path": "lib/x86_64/libandroidx.graphics.path.so",
+      "sha256": "4e56c996f13670e70082658de7880c4020eabf4f25e43387f88ed78a713fc9f0"
+    },
+    {
+      "path": "lib/x86_64/libgojni.so",
+      "sha256": "bb8a633b4c1bd9b96422d8225737721ef1c879ec33d3cf619381e016449072f7"
+    },
+    {
+      "path": "lib/x86_64/libjnidispatch.so",
+      "sha256": "288eafff19a70e833498201071c3d724f03f32ee8ff64a14fca50b57d975db70"
+    },
+    {
+      "path": "lib/x86_64/libloft_ffi.so",
+      "sha256": "ecbd52c91f93a510281ff189444094e006ba045f4139244715d1e75b51aeacbe"
+    }
+  ],
+  "visible_rail": [
+    {
+      "label": "Open account and server settings",
+      "bounds": [
+        18,
+        34,
+        54,
+        70
+      ]
+    },
+    {
+      "label": "Home",
+      "bounds": [
+        4,
+        84,
+        68,
+        140
+      ]
+    },
+    {
+      "label": "Network",
+      "bounds": [
+        4,
+        148,
+        68,
+        204
+      ]
+    },
+    {
+      "label": "Protection",
+      "bounds": [
+        4,
+        212,
+        68,
+        268
+      ]
+    },
+    {
+      "label": "Records",
+      "bounds": [
+        4,
+        276,
+        68,
+        332
+      ]
+    },
+    {
+      "label": "Settings",
+      "bounds": [
+        4,
+        792,
+        68,
+        848
+      ]
+    }
+  ],
+  "png": "docs/validation/ui/loft-0.1.2-x86-r8-guest.png",
+  "png_sha256": "b1a9c20e45b436f2fbf3a61ce8b909a8d6e19b648f1d53f657ecb405d9bb0131",
+  "actual_pixels": [
+    673,
+    900
+  ],
+  "density_dpi": 160,
+  "host_elapsed_seconds": 195.784,
+  "debug_artifacts_preserved": [
+    {
+      "path": "tmp/verification/android-delivery-0.1.2/preserved-current-debug/app-debug.apk",
+      "sha256": "e6b575c29d3c3010656d5328e920bf217d20181f43dbc1d91318ada0ede40103",
+      "bytes": 50183475
+    },
+    {
+      "path": "tmp/verification/android-delivery-0.1.2/preserved-current-debug/app-debug-androidTest.apk",
+      "sha256": "5856a00671f7e4d7099d68a32208263aa4acbb1bc4e26717e95a9b59897d89db",
+      "bytes": 954276
+    }
+  ],
+  "secret_scan": {
+    "result": "PASS",
+    "inspected": 1547,
+    "scope": "git_index_and_artifact_members",
+    "private_inputs_available": true,
+    "failures": []
+  },
+  "scope": "API29 TCG ordinary-UID minified x86 Release Rust/JNA/private service actual guest snapshot/UI startup, plus independent kept Go JNI static metadata reflection. Go VPN runtime/transport remained unconstructed. Separate Debug APK has the8 actual node/privacy/notification regressions; no ARM64/Fold/Doze/power/72h certification.",
+  "not_arm64_fold_doze_battery_72h_or_new_node_regression": true,
+  "rust_jna_private_service_startup_passed": true,
+  "go_jni_static_metadata_probe": {
+    "path": "docs/validation/android-0.1.2-x86-r8-go-jni.json",
+    "sha256": "5a917675bd1434c5066a36f2cbf4ce97c60abefc0f6cf874ac5e7a6bcf034421",
+    "passed": true,
+    "scope": "Only kept static metadata entry loaded; no Go VPN runtime constructor, TUN, node or business network request"
+  },
+  "visually_checked_native_rail_and_split_layout": true
+}

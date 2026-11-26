@@ -1,0 +1,21 @@
+{
+  "gateway_commit": "231f14813f2b45cb6f0bde984181c57cba1d02fd",
+  "scope": "bounded_classifier_and_synthetic_domain_routing_extraction",
+  "sources": {
+    "modules/firewall/dns_guard.go": "170746a8b7ba418d6bd5d34a42e0975cc54089ee392868164ef63827ba273a69",
+    "modules/firewall/stream_guard.go": "99143a543918774b9a3d7c96942c6767a14e5c7febf70dcc30b7ed92b27bdd14",
+    "modules/firewall/webrtc_guard.go": "76e6365c28ad8b8e1118c9a6e7fccd6ecb15ed6ae81330d0b6cd890fcd8c7a37",
+    "GhostX-core-main/dns/transport/fakeip/fakeip.go": "221e600c4794efc13fb19f720a4878b946fd770e635db55fee13e85519829188",
+    "GhostX-core-main/dns/transport/fakeip/memory.go": "e18ddaf4bc31cc4c36e528c63e05f1249c825d9075c03c97343d2c8a61ce0c30",
+    "GhostX-core-main/dns/transport/fakeip/store.go": "8309c455232bc8a856f396fcd21f70fcab48d6efb741f833d20170e4cef32ce4",
+    "GhostX-core-main/route/route.go": "5e1047a81e0849cfe00e15617f40c831085689fed01062c2e7e6274b4824c58a"
+  },
+  "changes": [
+    "shared current-client/epoch/scope proof replaces Gateway registry route lookup",
+    "bounded map entries, dynamic bytes and fixed process-owned TTL quarantine replace unbounded fake-IP storage; no permanent domain history",
+    "atomic resolve/lease and maximum renewal deadlines preserve advertisements through final reply I/O, active leases and retirement",
+    "independent TCP direction probes and retained admitted UDP classification guard fragments, replies and empty datagrams",
+    "synthetic routing remains separate from validated real wire DNS replies; no new ExchangeDNS wire verb or physical fallback"
+  ],
+  "upstream_checkout_modified": false
+}

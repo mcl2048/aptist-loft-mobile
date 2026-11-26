@@ -1,0 +1,62 @@
+{
+  "checks": [
+    {
+      "aar_bytes": 11208593,
+      "aar_sha256": "77df0f72d069de9047762c0dbcf8c2df9dbe05634825ee7ef09b583026ee57f4",
+      "abi": "arm64-v8a",
+      "binding_bytes": 143797,
+      "binding_sha256": "656d7b78abac672575af6ef1ec3cec4bba324356eccbc8d0216d4681809ef853",
+      "checked_at_utc": "2026-11-26T03:06:34.288972+00:00",
+      "command": [
+        "bash",
+        "scripts/build-native.sh"
+      ],
+      "elapsed_seconds": 34.4,
+      "go_elf_machine": 183,
+      "go_jni_bytes": 22409792,
+      "go_jni_sha256": "4007a231029fed1ab63d3b9b602acb2d1a9ab84d418dad8cce80826a7d2d4259",
+      "go_native_alignment": {
+        "alignment": "16KiB-compatible",
+        "load_segments": 4,
+        "machine": "AArch64"
+      },
+      "log_sha256": "c5e5a6d0c5cf842e46e231b3d912d9a7e3ac7c1c00fef0273d71b0bf30b4118c",
+      "output_root": "loft-android/app/build/generated",
+      "returncode": 0,
+      "rust_jni_bytes": 1582648,
+      "rust_jni_sha256": "ac386efe89d8ea30cd437e3309ca52b78b2649e11391e9867b4f2b4aa9ea5446",
+      "rust_native_alignment": {
+        "alignment": "16KiB-compatible",
+        "load_segments": 4,
+        "machine": "AArch64"
+      }
+    },
+    {
+      "aar_bytes": 11998887,
+      "aar_sha256": "b2fed78b8f5503544df594bf52202fdf3bf6f580fbee479ecb353b4161f3b919",
+      "abi": "x86_64",
+      "binding_bytes": 143797,
+      "binding_sha256": "656d7b78abac672575af6ef1ec3cec4bba324356eccbc8d0216d4681809ef853",
+      "checked_at_utc": "2026-11-26T03:07:06.368367+00:00",
+      "command": [
+        "bash",
+        "scripts/build-native.sh"
+      ],
+      "elapsed_seconds": 31.649,
+      "go_elf_machine": 62,
+      "go_jni_bytes": 23890088,
+      "go_jni_sha256": "a263a9b3230dbd4968a81a75798a787b9da515baf8af0b78995f443a530bc9fa",
+      "log_sha256": "e705d19d47238b715a22435c27710e3d5c834a3fd8210a0ff5bbaf82a60a63ae",
+      "output_root": "tmp/native-0.1.2-x86",
+      "returncode": 0,
+      "rust_jni_bytes": 1614352,
+      "rust_jni_sha256": "5fea563df079bc14c8ca163c253d5873664eb012556a051d7459ada79209d0f9"
+    }
+  ],
+  "identical_kotlin_bindings": true,
+  "schema_version": 1,
+  "scope": "compiled paired native inputs; not Android execution or physical-device/power acceptance",
+  "source_freeze_go_sha256": "ccfb8e15f0b4a4966fdf1505fd2f040f2fd2bb99a77cb6756e6b4ceb94007292",
+  "source_freeze_rust_sha256": "db5b0bc7a146af10f4c24a72ca3459252ae35e7d5a4e3f2a2aa228bb4beb58f3",
+  "version": "0.1.2-LYNX"
+}

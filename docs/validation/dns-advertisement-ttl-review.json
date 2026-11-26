@@ -1,0 +1,46 @@
+{
+  "baseline": {
+    "assertions_reached": true,
+    "benign_control_passed": true,
+    "exit_code": 1,
+    "map_sha256": "7de8bddcd3ad8e03d5a3c6eda0aeea15e5a9366d669c9c97f3b043febe939ad9",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "c6b6fba64e64178029dab464d699ef8298a588086a7171ab4380406306e7bb99"
+  },
+  "coverage": [
+    "older captured renewal cannot shorten final-write TTL",
+    "one-entry map cannot evict the advertised alias before its deadline",
+    "queued concurrent captures cannot reduce the final-write deadline",
+    "fresh capture extends the same domain identity",
+    "cleanup releases the dynamic byte Budget"
+  ],
+  "finding": "DNS advertisement expiry shortened by an older captured renewal",
+  "patched": {
+    "budget_sha256": "477b244062f654e3f30da7491d0681dc7078f0e9692085fc7c05c372462022c7",
+    "command": [
+      "go",
+      "test",
+      "-p=1",
+      ".",
+      "-run",
+      "^TestReview",
+      "-count=1",
+      "-v"
+    ],
+    "exit_code": 0,
+    "go_version": "go version go1.27.4 linux/amd64",
+    "harness_sha256": "c23c2a6151cfe737e67702f31320e9d82cb568e245a95b322b1b9cc77c226e40",
+    "map_sha256": "9d5de6be245c165b67ad812ba8e5af62020928d75189f518abd54a09c082492c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "f58724ce04678e41ac8a26387a68d676b7a237fdb8440d218b253347d56e9cdc",
+    "subtests": 3,
+    "top_level_tests": 4
+  },
+  "remaining": [
+    "whole-module final source tests are recorded separately",
+    "cross-language current-scope receipts and actual Android DNS/TLS must be verified with matching new APK",
+    "no ARM64 handset/Fold/Doze/PSS/battery/72-hour evidence follows from these tests"
+  ],
+  "schema_version": 1,
+  "scope": "isolated actual Map and byte Budget; no node/network/Android execution"
+}

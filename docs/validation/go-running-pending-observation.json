@@ -1,0 +1,38 @@
+{
+  "closed": {
+    "enforcement_active": false,
+    "ownership_pending": false,
+    "physical_open": 0,
+    "resources_released": true,
+    "runtime_state": "closed",
+    "transport_ready": false
+  },
+  "go_freeze_sha256": "ccfb8e15f0b4a4966fdf1505fd2f040f2fd2bb99a77cb6756e6b4ceb94007292",
+  "observation_exit_code": 0,
+  "pending": {
+    "authenticated": true,
+    "enforcement_active": true,
+    "ownership_pending": true,
+    "resources_released": false,
+    "runtime_state": "running",
+    "transport_ready": true,
+    "tun_ready": true
+  },
+  "pending_running_is_legal": true,
+  "pending_vs_settled_changed_fields": [
+    "ownership_pending"
+  ],
+  "producer_receipt_sha256": "af0618b66e4dd7d3d91c08f53bc948b10009c78c2adfb54a4e78b0d9e34fec6f",
+  "remaining": "Android consumer must reject Ready until join without treating legal pending as a fault; actual device result must be rerun independently.",
+  "schema_version": 1,
+  "scope": "actual local X/gVisor frozen Go producer; no Android/private-node outcome",
+  "settled": {
+    "authenticated": true,
+    "enforcement_active": true,
+    "ownership_pending": false,
+    "resources_released": false,
+    "runtime_state": "running",
+    "transport_ready": true,
+    "tun_ready": true
+  }
+}

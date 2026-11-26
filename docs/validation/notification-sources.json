@@ -1,0 +1,38 @@
+[
+  {
+    "source": "fgs-types",
+    "url": "https://developer.android.com/develop/background-work/services/fgs/service-types",
+    "final_url": "https://developer.android.com/develop/background-work/services/fgs/service-types",
+    "status": 200,
+    "bytes": 311214,
+    "sha256": "6ec3c7e2276e842fab667f7837532199a7f338d1421779a44b2013c400be69f8",
+    "retrieved_utc": "2026-11-25T23:28:28.728353+00:00"
+  },
+  {
+    "source": "notification-permission",
+    "url": "https://developer.android.com/develop/ui/views/notifications/notification-permission",
+    "final_url": "https://developer.android.com/develop/ui/compose/notifications/notification-permission",
+    "status": 200,
+    "bytes": 368384,
+    "sha256": "1121fd3d96ba174464dfd94d1f5a25601ab163eef4a88505ecb5a4b475a8ff20",
+    "retrieved_utc": "2026-11-25T23:28:31.853094+00:00"
+  },
+  {
+    "source": "notifications",
+    "url": "https://developer.android.com/develop/ui/views/notifications",
+    "final_url": "https://developer.android.com/develop/ui/views/notifications",
+    "status": 200,
+    "bytes": 326708,
+    "sha256": "3af93a4140ca49682d0921e7828e3ecc1bba93cb8400080bf0f7ef284a5976d5",
+    "retrieved_utc": "2026-11-25T23:28:31.706765+00:00"
+  },
+  {
+    "source": "fcm-android-priority",
+    "url": "https://firebase.google.com/docs/cloud-messaging/android/message-priority",
+    "final_url": "https://firebase.google.com/docs/cloud-messaging/android-message-priority",
+    "status": 200,
+    "bytes": 317145,
+    "sha256": "dbeacf17a9f73d2b448b587899c37667588c5b0bbdb100f954e452e747c06498",
+    "retrieved_utc": "2026-11-25T23:28:37.990159+00:00"
+  }
+]
