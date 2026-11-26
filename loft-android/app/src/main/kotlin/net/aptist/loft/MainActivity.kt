@@ -5,6 +5,8 @@ import android.os.Build
 import android.Manifest
 import android.content.pm.PackageManager
 import android.content.Intent
+import android.content.ActivityNotFoundException
+import android.net.Uri
 import android.net.VpnService
 import android.view.MotionEvent
 import android.view.View
@@ -38,6 +40,9 @@ class MainActivity : AppCompatActivity() {
     }
     private val notificationPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
         model.refreshNotificationAccess(); launchVpnPermission()
+    }
+    private val hubExport = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        model.finishHubExport(result.data?.data.takeIf { result.resultCode == RESULT_OK })
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         val preferences = AppearancePreferences(this)
@@ -93,7 +98,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setSensitivePage(page: Page) {
-        val sensitive = page == Page.IMPORT_NODE || page == Page.ACCOUNT
+        val sensitive = page in setOf(Page.IMPORT_NODE, Page.ACCOUNT, Page.MAIL)
         if (sensitivePage == sensitive) return
         sensitivePage = sensitive
         applySensitiveWindow()
@@ -133,6 +138,19 @@ class MainActivity : AppCompatActivity() {
         val intent = VpnService.prepare(this)
         if (intent == null) model.completeVpnPermission(true) else vpnPermission.launch(intent)
     }
+    fun launchHubBrowser(url: String): Boolean {
+        val uri = Uri.parse(url)
+        if (uri.scheme != "https" || uri.host == null || uri.userInfo != null || uri.fragment != null) return false
+        return try {
+            startActivity(Intent(Intent.ACTION_VIEW, uri).addCategory(Intent.CATEGORY_BROWSABLE))
+            true
+        } catch (_: ActivityNotFoundException) { false }
+    }
+    fun launchHubExport(mediaType: String, filename: String): Boolean = try {
+        hubExport.launch(Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE)
+            .setType(mediaType).putExtra(Intent.EXTRA_TITLE, filename))
+        true
+    } catch (_: ActivityNotFoundException) { false }
     private fun applyTheme(choice: ThemeChoice) {
         AppCompatDelegate.setDefaultNightMode(when (choice) {
             ThemeChoice.SYSTEM -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM

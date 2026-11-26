@@ -16,6 +16,9 @@ use std::{
 };
 use zeroize::Zeroizing;
 
+mod hub;
+pub use hub::*;
+
 uniffi::setup_scaffolding!();
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, uniffi::Error)]

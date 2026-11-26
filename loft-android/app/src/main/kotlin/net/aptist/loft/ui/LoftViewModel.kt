@@ -4,12 +4,15 @@ import android.app.Application
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.ParcelFileDescriptor
 import android.provider.Settings
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +21,10 @@ import kotlinx.coroutines.withContext
 import net.aptist.loft.foundation.*
 import net.aptist.loft.service.*
 import net.aptist.loft.core.generated.ConnectionState
+import net.aptist.loft.core.generated.HubAction
+import net.aptist.loft.core.generated.HubMailMessage
+import net.aptist.loft.core.generated.HubMailPage
+import net.aptist.loft.core.generated.HubSnapshot
 import net.aptist.loft.core.generated.NodePage
 import net.aptist.loft.core.generated.NodeSummary
 
@@ -56,6 +63,12 @@ data class LoftUiState(
     val theme: ThemeChoice = ThemeChoice.SYSTEM,
     val locale: String = "en",
     val notifications: AppNotificationAccess = AppNotificationAccess(),
+    val hub: HubSnapshot? = null,
+    val hubBusy: Boolean = false,
+    val hubStatus: String? = null,
+    val hubBrowserReady: Boolean = false,
+    val hubMail: HubMailPage? = null,
+    val hubMessage: HubMailMessage? = null,
 ) {
     val canChangeConfiguration: Boolean
         get() = availability == ServiceAvailability.AVAILABLE && storageOpenFailure == null
@@ -86,6 +99,11 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     private var visible = false
     private var appsJob: Job? = null
     private var appsEpoch = 0L
+    private var hubRequest: Long? = null
+    private var hubAction: HubAction? = null
+    private var browserUrl: String? = null
+    private var hubExpiry: Job? = null
+    private var pendingExport: HubExport? = null
     private val client = CoreServiceClient(application, ::receivedFrame, ::receivedReceipt, ::serviceLost, ::receivedNodePage)
 
     init { client.setPresentationLocale(mutable.value.locale); client.bind() }
@@ -93,9 +111,13 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     fun setVisible(value: Boolean) {
         visible = value
         client.setVisible(value)
-        if (!value) { cancelApps(); cancelNodePage() }
+        if (!value) {
+            cancelApps(); cancelNodePage()
+            if (mutable.value.presentation.navigation.page == Page.MAIL && !hubExportInProgress()) clearMail()
+        }
         else if (mutable.value.presentation.navigation.page == Page.ROUTING) loadApps()
         else if (nodePageVisible()) loadNodePage()
+        else if (mutable.value.presentation.navigation.page in setOf(Page.ACCOUNT, Page.MAIL)) refreshHub()
     }
     fun setFolds(folds: List<PhysicalFold>) { mutable.value = mutable.value.copy(folds = folds.take(2).toList()) }
     fun resize(viewport: Viewport) {
@@ -116,6 +138,10 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     fun back(): Boolean {
         val state = mutable.value
         if (state.pendingRequest != null) return true
+        if (state.presentation.navigation.page == Page.MAIL && state.hubMessage != null && !state.presentation.navigation.menuOpen) {
+            closeMailMessage()
+            return true
+        }
         if (state.importConfirmation) { mutable.value = state.copy(importConfirmation = false); return true }
         if (state.deleteConfirmation) { mutable.value = state.copy(deleteConfirmation = false); return true }
         if (state.presentation.navigation.pendingPage != null) { keepEditing(); return true }
@@ -145,12 +171,14 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         if (old.presentation.navigation.page != navigation.page && navigation.pendingPage == null) {
             if (old.presentation.navigation.page == Page.ROUTING) cancelApps()
             if (old.presentation.navigation.page in setOf(Page.NODES, Page.NODE_DETAILS) && navigation.page !in setOf(Page.NODES, Page.NODE_DETAILS)) cancelNodePage()
+            if (old.presentation.navigation.page == Page.MAIL && !hubExportInProgress()) clearMail()
             val current = mutable.value
             mutable.value = current.copy(importConfirmation = false, deleteConfirmation = false,
                 presentation = current.presentation.copy(navigation = navigation,
                     routingDraft = if (navigation.page == Page.ROUTING) current.native?.core?.let { RoutingDraft.from(it.routingEnabled, it.selectedApps.toSet()) } else current.presentation.routingDraft))
             if (navigation.page == Page.ROUTING && visible) loadApps()
             if (navigation.page in setOf(Page.NODES, Page.NODE_DETAILS) && visible) loadNodePage()
+            if (navigation.page in setOf(Page.ACCOUNT, Page.MAIL) && visible) refreshHub()
         } else mutable.value = old.copy(presentation = old.presentation.copy(navigation = navigation))
     }
 
@@ -174,6 +202,142 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun stageServer() { submit(CoreCommand.StageServer(mutable.value.serverText)) }
     fun resetServer() { submit(CoreCommand.ResetServer) }
+
+    fun checkHub() = submitHub(HubAction.DISCOVER)
+    fun signIn(mailAccess: Boolean) = submitHub(HubAction.SIGN_IN, mailAccess = mailAccess)
+    fun completeHubLogin() = submitHub(HubAction.COMPLETE)
+    fun cancelHubLogin() = submitHub(HubAction.CANCEL)
+    fun logoutHub() {
+        clearMail()
+        submitHub(HubAction.LOGOUT)
+    }
+    fun openHubBrowser(launch: (String) -> Boolean) {
+        val url = browserUrl ?: return
+        if (launch(url)) {
+            browserUrl = null
+            mutable.value = mutable.value.copy(hubBrowserReady = false, hubStatus = "browser_opened")
+        } else mutable.value = mutable.value.copy(hubStatus = "browser_unavailable")
+    }
+    fun loadHubMail(folder: String, next: Boolean = false) {
+        val page = mutable.value.hubMail
+        val cursor = if (next) page?.takeIf { it.folder == folder }?.cursor ?: return else null
+        submitHub(if (folder == "trash") HubAction.MAIL_TRASH else HubAction.MAIL_INBOX, cursor)
+    }
+    fun readHubMail(id: String) = submitHub(HubAction.MAIL_MESSAGE, id)
+    fun closeMailMessage() {
+        mutable.value = mutable.value.copy(hubMessage = null)
+    }
+    fun startHubExport(attachmentId: String?, launch: (String, String) -> Boolean) {
+        val state = mutable.value
+        val message = state.hubMessage ?: return
+        val snapshot = state.hub ?: return
+        if (pendingExport != null || state.hubBusy || snapshot.session?.mailAccess != true) return
+        val attachment = attachmentId?.let { id -> message.attachments.firstOrNull { it.id == id } ?: return }
+        val input = if (attachment != null) "${message.summary.id}:${attachment.id}" else message.summary.id
+        pendingExport = HubExport(if (attachment != null) HubAction.MAIL_ATTACHMENT else HubAction.MAIL_CONTENT, input, snapshot.generation)
+        val name = attachment?.filename ?: "message.txt"
+        if (!launch(if (attachment == null) "text/plain" else "application/octet-stream", name)) {
+            pendingExport = null
+            mutable.value = mutable.value.copy(hubStatus = "destination_failed")
+        }
+    }
+    fun finishHubExport(uri: Uri?) {
+        val request = pendingExport ?: return
+        pendingExport = null
+        if (uri == null || uri.scheme != "content" || mutable.value.hub?.generation != request.generation) return
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val destination = runCatching { getApplication<Application>().contentResolver.openFileDescriptor(uri, "wt") }.getOrNull()
+                destination.use { file ->
+                    withContext(Dispatchers.Main.immediate) {
+                        if (mutable.value.hub?.generation == request.generation) {
+                            if (file == null) mutable.value = mutable.value.copy(hubStatus = "destination_failed")
+                            else submitHub(request.action, request.input, destination = file)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private data class HubExport(val action: HubAction, val input: String, val generation: ULong)
+    private fun hubExportInProgress() = pendingExport != null || hubAction in setOf(HubAction.MAIL_ATTACHMENT, HubAction.MAIL_CONTENT)
+    private fun refreshHub() {
+        if (!visible || !mutable.value.canChangeConfiguration || hubRequest != null) return
+        submitHub(null)
+    }
+    private fun submitHub(action: HubAction?, input: String? = null, mailAccess: Boolean = false,
+        destination: ParcelFileDescriptor? = null) {
+        val current = mutable.value
+        if (hubRequest != null || !current.canChangeConfiguration || current.pendingRequest != null) return
+        val request = runCatching { Math.addExact(nextRequest, 1L) }.getOrNull() ?: return
+        nextRequest = request
+        hubRequest = request
+        hubAction = action
+        if (action != null) mutable.value = current.copy(hubBusy = true, hubStatus = null)
+        if (!client.executeHub(request, action, input, mailAccess, destination) { code, result ->
+                if (hubRequest == request) receiveHub(action, code, result)
+            }) {
+            hubRequest = null
+            hubAction = null
+            mutable.value = mutable.value.copy(hubBusy = false, hubStatus = "unavailable")
+        }
+    }
+    private fun receiveHub(action: HubAction?, code: String, result: HubResult?) {
+        hubRequest = null
+        hubAction = null
+        val state = mutable.value
+        val latest = result?.snapshot ?: state.hub
+        val scopeChanged = latest?.generation != state.hub?.generation
+        if (scopeChanged || latest?.transactionPending != true) browserUrl = null
+        if (result?.browserUrl != null && latest?.transactionPending == true) browserUrl = result.browserUrl
+        if (scopeChanged) pendingExport = null
+        val canShowMail = latest?.session?.mailAccess == true && state.presentation.navigation.page == Page.MAIL && visible
+        val status = when {
+            action == null && code == "ok" -> state.hubStatus
+            code != "ok" -> code
+            action == HubAction.COMPLETE && latest?.transactionPending == true -> "login_pending"
+            action == HubAction.MAIL_ATTACHMENT || action == HubAction.MAIL_CONTENT -> "export_saved"
+            else -> null
+        }
+        mutable.value = state.copy(hub = latest, hubBusy = false, hubStatus = status, hubBrowserReady = browserUrl != null,
+            hubMail = result?.page?.takeIf { canShowMail } ?: state.hubMail.takeIf { canShowMail && !scopeChanged },
+            hubMessage = result?.message?.takeIf { canShowMail } ?: state.hubMessage.takeIf { canShowMail && !scopeChanged && result?.page == null })
+        if (result != null) scheduleHubExpiry(latest)
+    }
+    private fun scheduleHubExpiry(snapshot: HubSnapshot?) {
+        hubExpiry?.cancel()
+        val remaining = snapshot?.session?.expiresInSeconds?.toLong() ?: return
+        hubExpiry = viewModelScope.launch {
+            // A single local expiry only removes private presentation data.
+            delay(remaining * 1_000)
+            val state = mutable.value
+            if (state.hub?.generation == snapshot.generation) {
+                pendingExport = null
+                clearMail()
+                mutable.value = mutable.value.copy(hub = snapshot.copy(session = null), hubStatus = "session_expired")
+            }
+        }
+    }
+    private fun clearMail() {
+        if (hubAction in setOf(HubAction.MAIL_INBOX, HubAction.MAIL_TRASH, HubAction.MAIL_MESSAGE,
+                HubAction.MAIL_CONTENT, HubAction.MAIL_ATTACHMENT)) cancelHubUiWork()
+        mutable.value = mutable.value.copy(hubMail = null, hubMessage = null)
+    }
+    private fun cancelHubUiWork() {
+        hubRequest?.let(client::cancelHub)
+        hubRequest = null
+        hubAction = null
+        mutable.value = mutable.value.copy(hubBusy = false)
+    }
+    private fun clearHub() {
+        cancelHubUiWork()
+        hubExpiry?.cancel()
+        hubExpiry = null
+        browserUrl = null
+        pendingExport = null
+        mutable.value = mutable.value.copy(hub = null, hubStatus = null, hubBrowserReady = false, hubMail = null, hubMessage = null)
+    }
     fun selectNode(id: String, showDetails: Boolean) {
         val state = mutable.value
         val node = state.nodePage?.nodes?.find { it.id == id } ?: state.native?.core?.nodes?.find { it.id == id } ?: return
@@ -374,6 +538,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
     private fun receivedFrame(frame: SnapshotFrame) {
+        if (mutable.value.native?.core?.serverAddress != frame.core.serverAddress) clearHub()
         val state = mutable.value
         val existingDraft = state.presentation.routingDraft
         val draft = if (existingDraft == null || !existingDraft.dirty) RoutingDraft.from(frame.core.routingEnabled, frame.core.selectedApps.toSet()) else existingDraft
@@ -382,6 +547,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         mutable.value = state.copy(native = frame, availability = ServiceAvailability.AVAILABLE, serverText = server, selectedNodeMetadata = choice.summary,
             presentation = state.presentation.copy(routingDraft = draft, selectedNodeId = choice.id))
         if (visible && nodePageVisible()) loadNodePage()
+        if (mutable.value.hub == null && mutable.value.presentation.navigation.page in setOf(Page.ACCOUNT, Page.MAIL)) refreshHub()
     }
     private fun receivedReceipt(requestId: Long, code: ReceiptCode) {
         val state = mutable.value
@@ -417,11 +583,13 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         }
         mutable.value = updated
         if (visible && nodePageVisible()) loadNodePage()
+        if (code in setOf(ReceiptCode.SERVER_STAGED, ReceiptCode.SERVER_RESET, ReceiptCode.STORAGE_REOPENED)) refreshHub()
     }
     private fun serviceLost(code: ReceiptCode) {
         pendingOperation = null
         vpnPermission.cancel()
         cancelNodePage()
+        clearHub()
         val state = mutable.value
         mutable.value = state.copy(native = null, nodePage = null, availability = ServiceAvailability.UNAVAILABLE,
             pendingRequest = null, stopRequest = null, notice = code,
@@ -431,7 +599,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     private fun isStorageOpenFailure(code: ReceiptCode): Boolean =
         code == ReceiptCode.STORAGE_UNAVAILABLE || code == ReceiptCode.STORAGE_RECOVERY_REQUIRED
     override fun onCleared() {
-        client.close(); cancelApps(); cancelNodePage()
+        clearHub(); client.close(); cancelApps(); cancelNodePage()
         mutable.value = mutable.value.copy(importText = "", serverText = "", native = null,
             presentation = mutable.value.presentation.copy(routingDraft = null))
         super.onCleared()

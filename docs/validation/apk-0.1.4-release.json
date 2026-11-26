@@ -1,0 +1,69 @@
+{
+  "path": "bin/loft.apk",
+  "sha256": "8b62eb2ae82c218cee91fe7c335c17d66b08d3afb126d210c1e48c1ace06fc18",
+  "bytes": 28032581,
+  "package": "net.aptist.loft",
+  "version_name": "0.1.4-LYNX",
+  "version_code": 5,
+  "min_sdk": 29,
+  "target_sdk": 36,
+  "debuggable": false,
+  "allow_backup": false,
+  "full_backup_content": false,
+  "uses_cleartext_traffic": false,
+  "data_extraction_rules_sha256": "e6d3a37a18eb3ac437c2bad69718ab0abce3a70d1e9832d4c785d1c7e56ad14a",
+  "manifest_sha256": "17154ea8d12babbca71d17ce771b597ac79f682e54610f6999afbb1026b25de6",
+  "signing_identity": "local development, same certificate as 0.1.2",
+  "signature_cert_sha256": "4fd578439fe8c3bb5ab2abc6c33e494753a965dc47e44d96e313962852a400fc",
+  "signature_sdk_ranges": {
+    "v3": [
+      "29",
+      "36"
+    ],
+    "v2": [
+      "24",
+      "27"
+    ]
+  },
+  "native_libraries": {
+    "lib/arm64-v8a/libandroidx.graphics.path.so": {
+      "sha256": "41e9a793c43a0f4fddb19e33f346bace464f30f888ba7b9eaf96294ea115bfb6",
+      "bytes": 10096,
+      "machine": "AArch64",
+      "load_segments": 3,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libgojni.so": {
+      "sha256": "f93b57e6497ce17089e945512f50268e834c088f606e02018b2c69b378cb75e3",
+      "bytes": 15936872,
+      "machine": "AArch64",
+      "load_segments": 4,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libjnidispatch.so": {
+      "sha256": "ddfc6c965bbe366615c000ec1f06552ddf0bb2b4f9d921d0bff8c75b3cb2ca4c",
+      "bytes": 165992,
+      "machine": "AArch64",
+      "load_segments": 2,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libloft_ffi.so": {
+      "sha256": "01d0065e0729ff4318cc82a1cdfd1b5dbe08de3815580ad6bc658bdb782a0e87",
+      "bytes": 7402824,
+      "machine": "AArch64",
+      "load_segments": 4,
+      "alignment": "16KiB-compatible"
+    }
+  },
+  "secret_scan": {
+    "result": "PASS",
+    "inspected": 1724,
+    "scope": "git_index_and_artifact_members",
+    "private_inputs_available": true,
+    "failures": []
+  },
+  "checked_at_utc": "2026-11-26T13:28:41.476985+00:00",
+  "unsigned_sha256": "c3410ed770b3a1aff28bf9a9388433fedccdb9ce4923256705de0a5e8a6b5f23",
+  "previous_canonical_sha256": "9bed65cc3677d0cc1edee048f58d8ee739bb72f393ef0fcc809b6edc81c695f4",
+  "candidate_sha256": "8b62eb2ae82c218cee91fe7c335c17d66b08d3afb126d210c1e48c1ace06fc18"
+}

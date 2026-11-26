@@ -1,0 +1,27 @@
+# loftmobile-1126-01 · LOFT Hub
+
+The design uses guide v3.6 and the Android UI design, with OAuth Security BCP RFC 9700, Native Apps RFC 8252, OIDC Core, Cloudflare Pages service bindings and Cloudflare’s Rust Worker and D1 references. The local Portal source under `66fbb991628d1f9dc8045397df72202f80b84df8` retains the IDP implementation introduced in the pinned 2.2.0 source. [Hub contract](../docs/contracts/hub.md)
+
+## Provisioning checkpoint
+
+- Cloudflare accepted the account token for Pages, Workers and D1 inventory. The account-specific token verification endpoint returned 401. Pages project and same-named D1 database provisioning subsequently succeeded. Cloudflare assigned `https://aptist-loft-hub.pages.dev` as the public origin.
+- Portal discovery advertised S256 and RS256 at the selected issuer. Initial public JWKS returned 503. After a confirmed HTTP 201 Portal OAuth registration by a live SYSTEM administrator and read-only operation confirmation, JWKS returned 200 and one RS256 public key. The client has `openid`, `email`, `mail.read` and no machine tenant delegation.
+- Native Android has separate build evidence from deployed browser/API validation. The first API 29 launch using software acceleration alone required the emulator’s explicit TCG environment setting.
+
+## Build and local tests
+
+- The 43 root Python checks and Rust architecture boundary passed. Mobile Rust passed 108 workspace tests, formatting and all-target Clippy with warnings denied. Rust dependency audit found zero known vulnerabilities in 150 locked mobile dependencies and 133 locked Hub dependencies. It reported maintenance advisories for host `basic-toml` and the Worker SDK's `chrono` dependency.
+- The source-pinned Go module passed owned-source, module and vet checks. Its `with_gvisor` normal and race executions each passed 114 top-level tests and 145 subtests. Production and test ABI native builds completed separately; the APP version is 0.1.4 and the existing VPN engine source is unchanged.
+- Hub passed seven Rust integration checks, four concurrent SQLite checks, WASM Clippy, a locked Worker build and the production-shape local workerd test. The runtime test exercised Pages service binding, S256 and signed RS256, scope/proof denial, repeated completion, inbox/trash with a cursor, text conversion, actual attachment bytes, logout and source revocation. The initial local harness needed an explicit CompiledWasm module. Cloudflare's Request constructor rejected redirect mode `error`; the Worker now uses manual mode and denies upstream redirect responses, verified by the runtime test.
+- Initial installer execution found `rustup` installed outside PATH. The installer now also checks Cargo's bin directory. The next attempt applied the D1 schema and deployed the Worker, then Wrangler rejected a custom Pages config path. The corrected installer enters a private staging directory and uses its standard `wrangler.json`.
+
+## Production Hub
+
+- The Linux installer applied D1 migration `0001_identity.sql`, uploaded Worker version `50da51cf-166e-499a-b6b9-9cd953e26759` and published Pages deployment `b3b1aed7`. The main Pages address returned the expected descriptor through its Worker service binding. The deployed WASM SHA256 is `fe4f9b69cd101f614bc3b189b1222c299dfc1ed3e01cbcf3e440c8a16fa062db`.
+- A live Portal SYSTEM account completed Password, browser navigation/consent endpoints, the registered callback, the APP proof exchange and logout against the production Hub. Identity-only mail access returned 403. With fresh explicit `mail.read` consent, inbox and trash returned HTTP 200 with zero messages. One HTTPS attempt failed with a transport EOF during the second transaction start, and a new explicit transaction completed successfully. A separate attempt with the designated Portal test account returned HTTP 401 at the Portal login endpoint before OAuth. Production nonempty mailbox content, physical browser interaction and representative accounts from separate tenant databases remain unverified. The local workerd integration exercised actual body and attachment bytes with a synthetic Portal.
+- Portal retains its source role, session and tenant account eligibility criteria. The first installation requires a Portal client registration as well as Cloudflare authorization. Later deploys can use the saved Worker bindings and Cloudflare API credentials. [Deployment instructions](../hub-install/Readme.md)
+
+## Android release
+
+- Both ABI builds used Rust 1.100.0, Go 1.27.4 and generated identical UniFFI bindings. Gradle 8.13 ARM64 Release ran R8, resource shrinking, lint and packaging. APP JVM had 83 passing cases, and the existing UI foundation had 117. Lint reported 0 errors and 48 warnings. The 83 x86 Debug JVM cases used the paired test inputs and precede the final poisoned-core publication guard. [Build evidence](../docs/validation/build-0.1.4.json)
+- `bin/loft.apk` is the signed ARM64 Release, versionCode 5. Its SHA256 is `8b62eb2ae82c218cee91fe7c335c17d66b08d3afb126d210c1e48c1ace06fc18`. The exact file passed 16 KiB native ZIP and ELF checks, APK v2/v3 signature checks, binary manifest and the index/artifact secret scan. It uses the same local development certificate as 0.1.2. Physical ARM64, Fold, battery and 72-hour operation were outside this executed scope. [APK receipt](../docs/validation/apk-0.1.4-release.json)

@@ -45,6 +45,10 @@ def private_key_forms(value: str) -> list[bytes]:
 
 def extract_credentials(text: str) -> list[bytes]:
     values = [m.group().encode() for m in re.finditer(r"(?:github_pat_|gh[pousr]_)[A-Za-z0-9_]{10,512}", text)]
+    for match in re.finditer(r"(?im)^\s*(?:Token|(?:Cloudflare\s+)?API\s+Token|first_user_pin|PORTAL_CLIENT_SECRET|HUB_ENCRYPTION_KEY)\s*[:：=]\s*\"?([^\s\"（]+)", text):
+        values.append(match[1].encode())
+    for match in re.finditer(r'"(?:secret|PORTAL_CLIENT_SECRET|HUB_ENCRYPTION_KEY)"\s*:\s*"([A-Za-z0-9_-]{30,128})"', text):
+        values.append(match[1].encode())
     for match in re.finditer(r"(?:socks5|socks|hyrakenx|hyraken-pro)://[^\s<>\"']+", text, re.I):
         uri = match.group()
         values.append(uri.encode())
@@ -156,15 +160,18 @@ def scan_artifact(path: Path, credentials: list[bytes]) -> tuple[int, list[dict]
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apk", type=Path, action="append", default=[])
+    parser.add_argument("--private-input", type=Path, action="append", default=[])
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     try:
         credentials = []
-        for name in ("Prompt/Task-Now.txt", "guide/TEST.TXT"):
+        for name in ("Prompt/Task-Now.txt", "guide/TEST.TXT", "guide/Test-token.txt"):
             path = root / name
             if path.exists():
                 credentials.extend(extract_credentials(read_private(path).decode("utf-8")))
+        for path in args.private_input:
+            credentials.extend(extract_credentials(read_private(path).decode("utf-8")))
         credentials = list(dict.fromkeys(credentials))
         inspected, failures = scan_index(root, credentials)
         for path in args.apk:

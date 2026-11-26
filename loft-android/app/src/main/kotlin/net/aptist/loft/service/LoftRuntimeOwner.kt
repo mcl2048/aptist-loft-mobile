@@ -19,6 +19,7 @@ import net.aptist.loft.engine.VPNRuntime
 import net.aptist.loft.engine.VPNStateListener
 import net.aptist.loft.foundation.*
 import net.aptist.loft.ipc.ILoftEvents
+import net.aptist.loft.ipc.ILoftHubEvents
 import java.io.File
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.RejectedExecutionException
@@ -43,6 +44,7 @@ class LoftRuntimeOwner private constructor(context: Context) {
     private val publicationFailed = AtomicBoolean(false)
     private val availabilityGuard = CoreAvailabilityGuard { unavailableNotice(); fault(active.get()) }
     private val commands = executor(8)
+    private val hub = HubControl { core -> broadcast(capture(core)) }
     private val starts = executor(1)
     private val events = executor(1)
     private val priority = executor(1)
@@ -111,6 +113,7 @@ class LoftRuntimeOwner private constructor(context: Context) {
 
     fun detachUi(token: Any) {
         if (!uiController.compareAndSet(token, null)) return
+        hub.cancel()
         observerTargets().forEach { observers.unregister(it) }
         // If the queue is full, every already queued job runs the same cleanup.
         submitCommand { }
@@ -152,6 +155,26 @@ class LoftRuntimeOwner private constructor(context: Context) {
         }
     }
     fun unsubscribe(observer: ILoftEvents) { observers.unregister(observer) }
+
+    fun cancelHubWork(requestId: Long) { hub.cancel(requestId) }
+
+    fun executeHub(requestId: Long, name: String, input: String?, mailAccess: Boolean,
+        destination: ParcelFileDescriptor?, observer: ILoftHubEvents) {
+        val action = HubAction.entries.firstOrNull { it.name == name }
+        val work = HubControl.Work(requestId, action, input, mailAccess, destination, observer)
+        val savesFile = action == HubAction.MAIL_CONTENT || action == HubAction.MAIL_ATTACHMENT
+        if (requestId <= 0 || (name.isNotEmpty() && action == null) || (input?.length ?: 0) > 4096 ||
+            savesFile != (destination != null)) {
+            hub.reject(work, "invalid_request"); return
+        }
+        if (!hub.reserve(work)) { hub.reject(work, "busy"); return }
+        if (!submitCommand {
+            val core = try { retainCoreOnWorker() }
+            catch (_: Exception) { hub.reject(work, "unavailable"); return@submitCommand }
+            catch (_: LinkageError) { hub.reject(work, "unavailable"); return@submitCommand }
+            hub.execute(core, work) { resources.releaseUi() }
+        }) hub.reject(work, "busy")
+    }
 
     fun reopenStorage(requestId: Long, observer: ILoftEvents) {
         if (requestId <= 0) { sendReceipt(observer, requestId, ReceiptCode.INVALID_COMMAND, byteArrayOf()); return }
@@ -219,8 +242,12 @@ class LoftRuntimeOwner private constructor(context: Context) {
                     when (command) {
                         is CoreCommand.ImportNode -> { core.importNode(command.raw); ReceiptCode.NODE_IMPORTED }
                         is CoreCommand.RemoveNode -> { core.removeNode(command.id); ReceiptCode.NODE_REMOVED }
-                        is CoreCommand.StageServer -> { core.stageServer(command.raw); mailNotifications.revoke(); ReceiptCode.SERVER_STAGED }
-                        CoreCommand.ResetServer -> { core.resetServer(); mailNotifications.revoke(); ReceiptCode.SERVER_RESET }
+                        is CoreCommand.StageServer -> {
+                            val previous = core.snapshot().serverAddress
+                            if (core.stageServer(command.raw) != previous) { hub.cancel(); mailNotifications.revoke() }
+                            ReceiptCode.SERVER_STAGED
+                        }
+                        CoreCommand.ResetServer -> { core.resetServer(); hub.cancel(); mailNotifications.revoke(); ReceiptCode.SERVER_RESET }
                         is CoreCommand.SetRouting -> { core.setAppRouting(command.enabled, command.packageNames); ReceiptCode.ROUTING_STAGED }
                         is CoreCommand.SetNetworkPrivacyPolicy -> {
                             core.setNetworkPrivacyPolicy(NetworkPrivacyAdapter.native(command.policy), command.expectedGeneration)

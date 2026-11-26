@@ -8,6 +8,7 @@ import android.os.Binder
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.os.ParcelFileDescriptor
 import android.os.Process
 import android.os.RemoteException
 import net.aptist.loft.foundation.ControlCodec
@@ -15,6 +16,8 @@ import net.aptist.loft.foundation.CoreCommand
 import net.aptist.loft.foundation.VisibilityEpoch
 import net.aptist.loft.ipc.ILoftControl
 import net.aptist.loft.ipc.ILoftEvents
+import net.aptist.loft.ipc.ILoftHubEvents
+import net.aptist.loft.core.generated.HubAction
 import net.aptist.loft.core.generated.NodePage
 
 /** Uses only application Context; retained across Activity and window changes. */
@@ -151,6 +154,31 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
         catch (_: RemoteException) { pages.cancel(); lost(ReceiptCode.STATE_UNAVAILABLE); false }
     }
     fun cancelNodePages() = pages.cancel()
+
+    internal fun executeHub(requestId: Long, action: HubAction?, input: String?, mailAccess: Boolean,
+        destination: ParcelFileDescriptor?, receive: (String, HubResult?) -> Unit): Boolean {
+        val control = remote ?: return false
+        val ticket = bindingGeneration
+        val callback = object : ILoftHubEvents.Stub() {
+            override fun onResult(id: Long, code: String, payload: ByteArray) {
+                if (Binder.getCallingUid() != Process.myUid() || id != requestId || code.length > 64 || payload.size > HubWire.MAX_BYTES) return
+                handler.post {
+                    try {
+                        if (closed || ticket != bindingGeneration) return@post
+                        val result = try { payload.takeIf { it.isNotEmpty() }?.let(HubWire::decode) }
+                        catch (_: java.io.IOException) { receive("invalid_response", null); return@post }
+                        receive(code, result)
+                    } finally { payload.fill(0) }
+                }
+            }
+        }
+        return try { control.executeHub(requestId, action?.name.orEmpty(), input, mailAccess, destination, callback); true }
+        catch (_: RemoteException) { lost(ReceiptCode.STATE_UNAVAILABLE); false }
+    }
+
+    internal fun cancelHub(requestId: Long) {
+        try { remote?.cancelHubWork(requestId) } catch (_: RemoteException) { }
+    }
     private fun validCaller(payload: ByteArray): Boolean = Binder.getCallingUid() == Process.myUid() && payload.size <= ControlCodec.MAX_CONTROL_BYTES
     private fun acceptFrame(payload: ByteArray): Boolean {
         return try {

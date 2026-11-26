@@ -4,7 +4,7 @@ The Android MVP uses native Compose, stable welcome/vpn/shield/mail/audit/settin
 
 The full plan additionally calls for SOCKS5/hyrakenx/hyraken-pro QR/link import, selected-app proxy with unselected apps direct, physical socket protection, encrypted storage, Shield software/attestation policies, optional Portal BFF login and own-user mail. They are staged P0–P5 work: a framework release must identify what is implemented, planned and unverified.
 
-The current framework implements three-protocol link parsing, a Keystore-wrapped SQLCipher guest store, the 200-node/50-row directory, VPN ownership and Stop, shared node-domain Fake-IP/RTC rules and native notification boundaries. QR, large FD imports, live TUN replacement/reconnect, BFF login/mail and Shield remain later adapters. The active Readme, requirements and task report record verified status.
+The current framework implements three-protocol link parsing, a Keystore-wrapped SQLCipher guest store, the 200-node/50-row directory, VPN ownership and Stop, shared node-domain Fake-IP/RTC rules and native notification boundaries. LOFT Hub supplies Portal browser authorization and own-user mail through Pages, Rust Workers and D1. QR, large FD imports, live TUN replacement/reconnect and Shield remain later adapters. The active Readme, requirements and task report record verified status.
 
 The source inputs on this server are:
 

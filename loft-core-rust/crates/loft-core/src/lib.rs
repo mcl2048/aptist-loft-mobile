@@ -14,11 +14,16 @@ use std::sync::{
 };
 use zeroize::Zeroizing;
 mod certificates;
+mod hub;
 mod import;
 mod origin;
 mod persistence;
 mod privacy;
 mod vpn;
+pub use hub::{
+    HubAction, HubError, HubMailAttachment, HubMailMessage, HubMailPage, HubMailSummary,
+    HubReceipt, HubRequest, HubSession, HubSnapshot,
+};
 pub use import::{MAX_NODE_INPUT_BYTES, MAX_NODE_LABEL_BYTES};
 pub use origin::{MAX_SERVER_INPUT_BYTES, normalize_server_origin};
 pub use persistence::{LoadedLocalConfig, LocalConfigEdit, LocalConfigStore, LocalSettings};
@@ -161,6 +166,7 @@ pub struct CoreState {
     local_storage_failed: bool,
     generation: u64,
     vpn: vpn::VpnLifecycle,
+    hub: hub::HubState,
     stop_signal: Arc<AtomicBool>,
 }
 
@@ -193,6 +199,7 @@ impl CoreState {
             local_storage_failed: false,
             generation: 0,
             vpn: vpn::VpnLifecycle::default(),
+            hub: hub::HubState::default(),
             stop_signal,
         }
     }
@@ -367,7 +374,7 @@ impl CoreState {
         Ok(())
     }
 
-    /// Stages an origin; compatibility discovery and TLS verification are unavailable in this release.
+    /// Stages an origin and fences any prior Hub operation after committing the new candidate.
     pub fn stage_server(&mut self, raw: String) -> Result<String, CoreError> {
         let raw = Zeroizing::new(raw);
         self.require_local_config()?;
@@ -383,6 +390,7 @@ impl CoreState {
                 ..self.local.clone()
             },
         )?;
+        self.hub.change_candidate();
         Ok(origin)
     }
 
@@ -398,7 +406,9 @@ impl CoreState {
                 server_candidate: None,
                 ..self.local.clone()
             },
-        )
+        )?;
+        self.hub.change_candidate();
+        Ok(())
     }
 
     /// Stores a validated draft. It does not establish a TUN or apply an Android allowlist.

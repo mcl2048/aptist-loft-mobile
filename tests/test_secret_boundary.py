@@ -95,6 +95,16 @@ class DeliveryScannerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(json.loads(result.stdout)["result"], "PASS")
 
+    def test_deployment_credential_input_is_scanned_and_redacted(self):
+        deployment = self.root / 'credentials.txt'
+        secret = 'syntheticCloudflareInput01234567890123456789'
+        deployment.write_text('[Cloudflare API Token]\nToken=' + secret + '\n')
+        (self.root / 'component.rs').write_text(secret)
+        self.git('add', 'component.rs')
+        result = self.run_scanner('--private-input', str(deployment))
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertNotIn(secret, result.stdout + result.stderr)
+
     def test_credential_in_a_staged_filename_is_blocked_and_redacted(self):
         name = self.token + ".txt"
         (self.root / name).write_text("ordinary content\n")

@@ -62,6 +62,6 @@ X preserves fixed-target application UDP 1–1024 bytes. Pro preserves 0–65,50
 
 ## Optional modules and verification boundary
 
-Anonymous startup is local. Account/server editing, mail and Shield expose their actual dependency states. Administrator clientSecret and Portal bearer remain outside the APP's current BFF path. The persistent native module rail uses icons with localized spoken names and a selected state. Pixel/Samsung Fold, TalkBack, Always-on/Doze, battery and 72-hour acceptance require their own device evidence.
+Anonymous startup is local. The Hub uses origin-bound public discovery, explicit activation, user-triggered browser sign-in and scoped, read-only mail. Its private service boundary keeps Portal client secrets and Portal bearers on the server. The persistent native module rail uses icons with localized spoken names and a selected state. Pixel/Samsung Fold, TalkBack, Always-on/Doze, battery and 72-hour acceptance require their own device evidence. [Hub contract](hub.md)
 
 Read `docs/contracts/resources.md` for task/resource ownership and `docs/validation/` plus the task report for executed tests, failed attempts and unverified limits. Compilation, host reducers/packets, Android TUN execution and physical-device acceptance are distinct claims.

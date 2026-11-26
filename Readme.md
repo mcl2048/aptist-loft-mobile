@@ -1,10 +1,14 @@
-# LOFT mobile · 0.1.3-LYNX
+# LOFT mobile · 0.1.4-LYNX
 
 LOFT is a native Android application framework with Rust-owned business state and source-pinned Go VPN adapters. Task `loftmobile-1125-01` builds the foundation against local `guide/guide.md` v3.6 and `guide/ui-design.md`. The complete P0–P5 product roadmap has separate implementation and device gates.
 
+Task `loftmobile-1126-01` adds LOFT Hub. A Cloudflare Pages endpoint forwards to a Rust Worker, which verifies Portal OAuth and holds short-lived encrypted authorization state in D1. In Android, enter a Hub HTTPS origin as the server address candidate, verify and activate it, then use the system browser to sign in to Portal. Explicit mail consent enables read-only inbox, trash, message and attachment access for the signed-in account. [Hub contract](docs/contracts/hub.md) · [Linux installer](hub-install/Readme.md) · [Task report](report/loftmobile-1126-01-progress.md)
+
+The first deployment is [aptist-loft-hub.pages.dev](https://aptist-loft-hub.pages.dev). The signed ARM64 Release is `bin/loft.apk`, versionCode `5`, SHA256 `8b62eb2ae82c218cee91fe7c335c17d66b08d3afb126d210c1e48c1ace06fc18`. It uses the local development certificate and passed 83 APP and 117 foundation JVM tests, APK signature, native alignment and the index/artifact secret scan. [Build evidence](docs/validation/build-0.1.4.json) · [Exact APK verification](docs/validation/apk-0.1.4-release.json)
+
 Task `loftmobile-1125-02` adds the icon-only native module rail and encrypted guest persistence. The rail retains localized accessibility names, selected state and the full module titles in secondary navigation. The guest store retains complete imported SOCKS5, HyrakenX and Hyraken Pro configuration, including credentials, certificates and protocol parameters. Saved routing, privacy and server drafts also survive restart. An Android Keystore key wraps the SQLCipher database key. [Storage contract](docs/contracts/encrypted-storage.md) · [Current task report](report/loftmobile-1125-02-progress.md)
 
-The signed ARM64 Release is at `bin/loft.apk`, versionCode `4`, with SHA256 `9bed65cc3677d0cc1edee048f58d8ee739bb72f393ef0fcc809b6edc81c695f4`. It uses the local development certificate from 0.1.2. The current build passed 79 app and 117 foundation JVM tests. API 29 covered force-stop restoration and accessibility on the paired x86 Debug app, plus guest startup on the minified x86 Release. [Exact APK verification](docs/validation/apk-0.1.3-release.json) · [Build evidence](docs/validation/build-0.1.3.json) · [Android instrumentation](docs/validation/android-0.1.3-runtime.json)
+The 0.1.3 signed ARM64 Release used versionCode `4` and the local development certificate from 0.1.2. That build passed 79 APP and 117 foundation JVM tests. API 29 covered force-stop restoration and accessibility on the paired x86 Debug app, plus guest startup on the minified x86 Release. [0.1.3 APK verification](docs/validation/apk-0.1.3-release.json) · [0.1.3 build evidence](docs/validation/build-0.1.3.json) · [0.1.3 runtime](docs/validation/android-0.1.3-runtime.json)
 
 The private `:vpn` process owns one Rust core, the Android TUN and the lazy Go runtime. Compose displays immutable receipts; closing the UI, changing language/theme or resizing a Fold window does not own the VPN lifetime. Guest startup is local and has no Portal or cloud dependency.
 
@@ -17,7 +21,8 @@ The private `:vpn` process owns one Rust core, the Android TUN and the lazy Go r
 | App routing foundation | Exact PackageManager-reported UID/package Builder scope; empty/lockdown conflict rejection, drafts separate from applied routing; hidden-package/device scope remains unverified |
 | Shared network privacy | Node-domain Fake-IP, original FQDN restoration, current-client DNS/RTC proof, IPv6 rejection and bounded passive TTL/lease recovery |
 | Native UI | Persistent icon-only module rail, four locales, themes, window/hinge/tabletop layouts and retained presentation drafts |
-| Optional account/mail/Shield | Honest dependency states; no simulated login, inbox, malware verdict or server trust |
+| Optional Portal account and mail | Origin verification and confirmation, system-browser OAuth, explicit `mail.read` and own-user mailbox operations |
+| Shield | Reports the capability boundary for software checks and attestation |
 | Notification foundation | Real VPN foreground lease, native icon and priority Stop; actual permission/channel reporting; default-denied mail event boundary |
 | Release foundation | Fixed tools, generated native bindings, architecture/source/secret guards, R8/lint/native/signature checks and validation records |
 
@@ -27,7 +32,7 @@ DNS and recognized WebRTC traffic use shared `proxy_only`/`block` rules before a
 
 The added-memory ledger is 8 MiB, including a fixed 528 KiB non-domain address quarantine reservation; dynamic capacity is 7,847,936 bytes. Mappings are limited to 256 entries/256 KiB and retain identity through live I/O and advertised TTL. Passive recovery needs no periodic restart or extra polling. These allocation limits do not establish handset PSS or battery performance.
 
-QR, the 512 KiB Android FD-import path, live TUN/candidate replacement, automatic reconnect, Rust BFF/OAuth, own-user mail, Shield/attestation and Gateway policy integration remain explicit later capabilities. The current Portal only supports confidential OAuth; its administrator clientSecret and user bearer do not belong in this APP's BFF path. A normalized server candidate is not a verified enterprise server.
+QR, the 512 KiB Android FD-import path, live TUN replacement, automatic reconnect, Shield/attestation and Gateway policy integration remain roadmap items. Portal confidential OAuth keeps the administrator client secret and upstream user bearer in the Worker. The APP confirms compatibility over HTTPS and uses a short-lived Hub-only session after user consent.
 
 Portal `notifyUnread` writes a database marker, not a mobile event. Real new-mail push still needs a successful-publication event source, Rust subscription authority and an actual configured provider. The framework does not poll mail or initialize an unconfigured push service. API29 passed actual Blocked/Connected foreground notifications, four-language text, hidden-UI continuity and notification PendingIntent Stop/removal; API33+ denial, status-bar rendering and physical background survival remain separate acceptance.
 

@@ -1,4 +1,4 @@
-# LOFT Rust framework · 0.1.3-LYNX
+# LOFT Rust framework · 0.1.4-LYNX
 
 This workspace owns client configuration and business state. Core snapshots use schema 2 and node pages use schema 1. The private Android service opens one persistent `AppCore` on its serial command worker. Android supplies system capabilities and Go supplies the engine adapter. Snapshot reads use published memory state.
 
@@ -33,7 +33,11 @@ The query checks the caller's global snapshot generation first, returning `Stale
 
 Import material checks include strict PEM/DER parsing, validity windows, SAN/SPKI-pin agreement, supplied chain links, X client CA signatures and the client certificate/private-key relationship. They do not implement complete live TLS/PKIX/revocation verification. The actual transport adapter must perform its own full TLS validation and protect/bind actual sockets before it can provide a connection receipt.
 
-The Rust core has no active cloud server profile, authentication, mailbox, software scanner, OS TUN implementation, QR/file import transport or automatic background reconnection. The service adapters implement real VPN/TUN work; their actual transport/device acceptance is separate evidence. No connection, login or safety verdict is synthesized.
+The Hub port runs only for explicit Account and Mail actions. A staged origin starts unverified. Successful LOFT compatibility discovery pins the returned Portal issuer for that scope and leaves the enterprise trust field in the framework snapshot unchanged. The app generates a 32-byte proof, sends its SHA-256 challenge to the Hub and hands the Portal authorization URL to the system browser. Manual completion requires the original proof and a matching live Hub receipt. Portal access tokens and client secrets stay with the Hub. Restart preserves the candidate and starts with an anonymous account.
+
+The Hub snapshot has its own generation. Candidate changes, a completed sign-in, expiry and local logout fence requests across accounts and servers. A confirmed session is bounded by the reported source lifetime, at most 300 seconds. Local sign-out happens before network logout. The remote revocation outcome is reported separately. Mail access requires explicit consent and exposes bounded read-only inbox and trash pages, native text previews and separately requested content and attachments. Attachment delivery uses the confirmed detail's ID and byte length. The FFI request, raw response and saved-file payload stay in the private service. The existing VPN snapshot schema and input boundaries continue to apply.
+
+The framework also retains the local boundary for software scanning, QR/file imports and automatic VPN reconnection. Android owns browser and HTTPS capabilities and VPN/TUN handling. See the current task report for live endpoint and device evidence.
 
 The service calls `beginVpn(nodeId, expectedSnapshotGeneration)` after a valid Android permission ticket. Its opaque `VpnStartTicket` freezes node/draft scope, then accepts one `freezeEffectivePackages` and one actual `freezeNetworkScope`. The service obtains bounded `canonicalNetworkPolicy` for Go installation before consuming single-use `takeRawNode`. The canonical credential URI stays service -> Go only, never in a record, Binder reply, UI or log. `markVpnReady` requires the matching attempt/policy/UID scope, consumed configuration, exact effective packages, authenticated/transport/TUN/socket facts, actual DNS/RTC/profile enforcement and platform IPv4/no-bypass/IPv6 confirmations. Only then does Rust publish `Connected`, `appliedRouting` and active privacy protection.
 

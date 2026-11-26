@@ -4,9 +4,11 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.os.ParcelFileDescriptor
 import android.os.Process
 import net.aptist.loft.ipc.ILoftControl
 import net.aptist.loft.ipc.ILoftEvents
+import net.aptist.loft.ipc.ILoftHubEvents
 
 /** Private UI binding; the process owner also serves LoftVpnService. */
 class LoftCoreService : Service() {
@@ -25,6 +27,11 @@ class LoftCoreService : Service() {
         override fun reopenStorage(requestId: Long, receiptObserver: ILoftEvents) {
             enforceCaller(); owner.reopenStorage(requestId, receiptObserver)
         }
+        override fun executeHub(requestId: Long, action: String, input: String?, mailAccess: Boolean,
+            destination: ParcelFileDescriptor?, observer: ILoftHubEvents) {
+            enforceCaller(); owner.executeHub(requestId, action, input, mailAccess, destination, observer)
+        }
+        override fun cancelHubWork(requestId: Long) { enforceCaller(); owner.cancelHubWork(requestId) }
     }
     override fun onCreate() {
         super.onCreate()

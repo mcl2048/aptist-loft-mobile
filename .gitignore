@@ -12,6 +12,7 @@
 **/local.properties
 **/.gradle/
 **/.kotlin/
+**/.wrangler/
 **/build/
 **/target/
 **/node_modules/

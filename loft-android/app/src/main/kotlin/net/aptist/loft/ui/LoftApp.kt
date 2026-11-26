@@ -112,7 +112,7 @@ private fun Pane(bounds: PaneBounds, content: @Composable BoxScope.() -> Unit) {
 
 @Composable
 private fun ModuleRail(state: LoftUiState, model: LoftViewModel, layout: AdaptiveLayout, height: Float, modifier: Modifier) {
-    val modules = ModuleCatalog.rail(mailAvailable = false).filterNot { it == ModuleId.SETTING }
+    val modules = ModuleCatalog.rail(mailAvailable = state.hub?.mailSupported == true).filterNot { it == ModuleId.SETTING }
     Column(modifier.background(LocalLoftColors.current.rail).clipToBounds().selectableGroup()) {
         val gap = layout.horizontalRailGap
         if (gap == null) {
@@ -261,19 +261,20 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
         Page.ACCOUNT -> ScrollPage(modifier) {
             PageTitle(R.string.account_title)
             NativeNotice(state)
-            InfoRow(R.string.module_account, stringResource(R.string.anonymous))
-            Text(stringResource(R.string.account_guest_body))
+            val session = state.hub?.session
+            InfoRow(R.string.module_account, session?.email ?: stringResource(if (session == null) R.string.anonymous else R.string.hub_signed_in))
             SectionTitle(R.string.server_candidate)
             OutlinedTextField(value = state.serverText, onValueChange = model::setServerText,
                 label = { Text(stringResource(R.string.server_address)) }, modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, keyboardType = KeyboardType.Uri), enabled = state.pendingRequest == null)
-            Text(stringResource(R.string.server_help), style = MaterialTheme.typography.bodySmall)
-            PrimaryButton(R.string.validate_address, model::stageServer, state.serverText.isNotBlank() && state.pendingRequest == null && state.canChangeConfiguration)
+            Text(stringResource(R.string.hub_server_help), style = MaterialTheme.typography.bodySmall)
+            val candidate = state.native?.core?.serverAddress
+            PrimaryButton(R.string.hub_save_server, model::stageServer, state.serverText.isNotBlank() && state.serverText != candidate &&
+                state.pendingRequest == null && state.canChangeConfiguration)
             LinkButton(onClick = model::resetServer, enabled = state.canChangeConfiguration && state.pendingRequest == null &&
-                state.native?.core?.serverAddress != null) { Text(stringResource(R.string.reset_candidate)) }
-            SelectionContainer { Text(state.native?.core?.serverAddress ?: stringResource(R.string.no_server)) }
-            if (state.native?.core?.serverAddress != null) Text(stringResource(R.string.server_not_verified), color = LocalLoftColors.current.warning)
-            if (!dual) { LoginDependency(model); MailDependency(model) }
+                candidate != null) { Text(stringResource(R.string.reset_candidate)) }
+            SelectionContainer { Text(candidate ?: stringResource(R.string.no_server)) }
+            HubAccount(state, model)
         }
         Page.SHIELD -> ScrollPage(modifier) {
             PageTitle(R.string.shield_title)
@@ -281,7 +282,7 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
             Explanation(R.string.software_checks, R.string.software_unknown)
             if (!dual) { Explanation(R.string.device_trust, R.string.device_unknown); Text(stringResource(R.string.shield_scope)) }
         }
-        Page.MAIL -> ScrollPage(modifier) { PageTitle(R.string.mail_title); MailDependency(model); if (!dual) Text(stringResource(R.string.mail_privacy)) }
+        Page.MAIL -> ScrollPage(modifier) { PageTitle(R.string.mail_title); HubMail(state, model) }
         Page.AUDIT -> LazyColumn(modifier.fillMaxSize().padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item { PageTitle(R.string.audit_title); Text(stringResource(R.string.audit_body)) }
             if (state.receipts.isEmpty()) item { Text(stringResource(R.string.no_receipts)) }
@@ -300,7 +301,7 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
             AppearanceChoices(state, onTheme, onLocale)
             NotificationStatus(state, model)
             LinkButton(onClick = { model.navigate(Page.ACCOUNT) }, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.account_title)) }
-            LinkButton(onClick = { model.navigate(Page.MAIL) }, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.mail_title)) }
+            if (state.hub?.mailSupported == true) LinkButton(onClick = { model.navigate(Page.MAIL) }, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.mail_title)) }
             if (!dual) PrivacyAndBackground()
         }
         Page.DIAGNOSTICS -> ScrollPage(modifier) { Diagnostics(state, model) }
@@ -315,8 +316,8 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
             Page.ROUTING -> { RoutingSummary(state, model); RoutingSave(state, model); LocalStorage() }
             Page.VPN_HOME -> { SelectedNodeSummary(state, model); RoutingSummary(state, model); Explanation(R.string.software_checks, R.string.software_unknown) }
             Page.IMPORT_NODE -> { Explanation(R.string.storage_title, R.string.storage_body); Text(stringResource(R.string.import_limit)); Text(stringResource(R.string.camera_unavailable)) }
-            Page.ACCOUNT -> { LoginDependency(model); MailDependency(model) }
-            Page.MAIL -> { Explanation(R.string.privacy, R.string.mail_privacy); LoginDependency(model) }
+            Page.ACCOUNT -> Text(stringResource(R.string.account_guest_body))
+            Page.MAIL -> Explanation(R.string.privacy, R.string.hub_mail_privacy)
             Page.SHIELD -> { Explanation(R.string.device_trust, R.string.device_unknown); Text(stringResource(R.string.shield_scope)) }
             Page.SETTINGS -> PrivacyAndBackground()
             Page.AUDIT, Page.DIAGNOSTICS -> { Explanation(R.string.framework_title, R.string.framework_body); LocalStorage() }
@@ -471,14 +472,122 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
     state.native?.core?.activeNodeId?.let { active -> InfoRow(R.string.active_node, state.selectedNodeMetadata?.takeIf { it.id == active }?.label ?: active) }
     LinkButton(onClick = { model.navigate(Page.NODES) }) { Text(stringResource(R.string.choose_node)) }
 }
-@Composable private fun LoginDependency(model: LoftViewModel) {
-    Explanation(R.string.login_unavailable, R.string.login_dependency)
-    LinkButton(onClick = { model.navigate(Page.VPN_HOME) }) { Text(stringResource(R.string.continue_guest)) }
+@Composable private fun HubAccount(state: LoftUiState, model: LoftViewModel) {
+    val candidate = state.native?.core?.serverAddress ?: return
+    val activity = LocalActivity.current as? MainActivity
+    val profile = state.hub?.takeIf { it.origin == candidate }
+    val enabled = state.canChangeConfiguration && !state.hubBusy && state.pendingRequest == null && state.serverText == candidate
+    HorizontalDivider(color = LocalLoftColors.current.divider)
+    HubStatus(state)
+    if (profile?.issuer == null) {
+        PrimaryButton(R.string.hub_check_server, model::checkHub, enabled)
+        return
+    }
+    InfoRow(R.string.hub_issuer, profile.issuer.orEmpty())
+    if (profile.transactionPending) {
+        if (state.hubBrowserReady) PrimaryButton(R.string.hub_open_browser,
+            { model.openHubBrowser { activity?.launchHubBrowser(it) == true } }, enabled)
+        else Text(stringResource(R.string.hub_browser_return))
+        if (!state.hubBrowserReady) PrimaryButton(R.string.hub_complete_sign_in, model::completeHubLogin, enabled)
+        LinkButton(onClick = model::cancelHubLogin, enabled = enabled) { Text(stringResource(R.string.cancel)) }
+        return
+    }
+    if (profile.session == null) PrimaryButton(R.string.hub_sign_in, { model.signIn(false) }, enabled)
+    else LinkButton(onClick = model::logoutHub, enabled = enabled) { Text(stringResource(R.string.hub_sign_out)) }
+    if (profile.mailSupported) {
+        if (profile.session?.mailAccess != true) {
+            Text(stringResource(R.string.hub_mail_consent), style = MaterialTheme.typography.bodySmall)
+            PrimaryButton(R.string.hub_authorize_mail, { model.signIn(true) }, enabled)
+        } else LinkButton(onClick = { model.navigate(Page.MAIL) }, enabled = enabled) { Text(stringResource(R.string.mail_title)) }
+    }
 }
-@Composable private fun MailDependency(model: LoftViewModel) {
-    Explanation(R.string.mail_unavailable, R.string.mail_dependency)
-    LinkButton(onClick = { model.navigate(Page.ACCOUNT) }) { Text(stringResource(R.string.account_title)) }
-    LinkButton(onClick = { model.navigate(Page.MAIL) }) { Text(stringResource(R.string.mail_title)) }
+
+@Composable private fun HubMail(state: LoftUiState, model: LoftViewModel) {
+    val activity = LocalActivity.current as? MainActivity
+    HubStatus(state)
+    if (state.hub?.session?.mailAccess != true) {
+        Text(stringResource(if (state.hub?.mailSupported == true) R.string.hub_mail_consent else R.string.hub_mail_choose_server))
+        LinkButton(onClick = { model.navigate(Page.ACCOUNT) }) { Text(stringResource(R.string.account_title)) }
+        return
+    }
+    val enabled = !state.hubBusy
+    val page = state.hubMail
+    val message = state.hubMessage
+    if (message != null) {
+        LinkButton(onClick = model::closeMailMessage, enabled = enabled) { Text(stringResource(R.string.hub_mail_back)) }
+        Text(message.summary.subject.ifBlank { stringResource(R.string.hub_no_subject) }, style = MaterialTheme.typography.titleLarge)
+        InfoRow(R.string.hub_mail_from, message.summary.from)
+        InfoRow(R.string.hub_mail_to, message.summary.to)
+        Text(mailDate(message.summary.receivedAt, state.locale), style = MaterialTheme.typography.bodySmall)
+        Text(stringResource(if (message.summary.read) R.string.hub_mail_read else R.string.hub_mail_unread), style = MaterialTheme.typography.bodySmall)
+        HorizontalDivider(color = LocalLoftColors.current.divider)
+        Text(message.text.ifEmpty { stringResource(R.string.hub_no_body) })
+        if (message.truncated) {
+            Text(stringResource(R.string.hub_mail_truncated), style = MaterialTheme.typography.bodySmall)
+            LinkButton(onClick = { model.startHubExport(null) { media, name -> activity?.launchHubExport(media, name) == true } },
+                enabled = enabled) { Text(stringResource(R.string.hub_save_text)) }
+        }
+        if (message.attachments.isNotEmpty()) {
+            SectionTitle(R.string.hub_attachments)
+            message.attachments.forEach { attachment ->
+                LinkButton(onClick = { model.startHubExport(attachment.id) { media, name -> activity?.launchHubExport(media, name) == true } },
+                    enabled = enabled, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.hub_save_attachment, attachment.filename))
+                }
+            }
+        }
+        return
+    }
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FilterChip(selected = page?.folder == "inbox", enabled = enabled, onClick = { model.loadHubMail("inbox") },
+            label = { Text(stringResource(R.string.hub_inbox)) })
+        FilterChip(selected = page?.folder == "trash", enabled = enabled, onClick = { model.loadHubMail("trash") },
+            label = { Text(stringResource(R.string.hub_trash)) })
+    }
+    Text(stringResource(R.string.hub_mail_privacy), style = MaterialTheme.typography.bodySmall)
+    if (page == null) return
+    if (page.messages.isEmpty()) Text(stringResource(R.string.hub_mail_empty))
+    page.messages.forEach { row ->
+        Column(Modifier.fillMaxWidth().heightIn(min = 56.dp).clickable(enabled = enabled, role = Role.Button) { model.readHubMail(row.id) }
+            .padding(vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(row.subject.ifBlank { stringResource(R.string.hub_no_subject) }, style = MaterialTheme.typography.titleMedium,
+                fontWeight = if (row.read) FontWeight.Normal else FontWeight.SemiBold)
+            Text(row.from, style = MaterialTheme.typography.bodyMedium)
+            Text(mailDate(row.receivedAt, state.locale), style = MaterialTheme.typography.bodySmall, color = LocalLoftColors.current.secondaryText)
+            Text(stringResource(if (row.read) R.string.hub_mail_read else R.string.hub_mail_unread), style = MaterialTheme.typography.bodySmall)
+        }
+        HorizontalDivider(color = LocalLoftColors.current.divider)
+    }
+    if (page.cursor != null) PrimaryButton(R.string.hub_mail_next, { model.loadHubMail(page.folder, next = true) }, enabled)
+}
+
+private fun mailDate(value: String, locale: String): String = runCatching {
+    DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.forLanguageTag(locale))
+        .format(Date.from(java.time.Instant.parse(value)))
+}.getOrDefault(value)
+
+@Composable private fun HubStatus(state: LoftUiState) {
+    val status = if (state.hubBusy) R.string.hub_working else when (state.hubStatus) {
+        null, "browser_opened" -> null
+        "browser_unavailable" -> R.string.hub_browser_unavailable
+        "login_pending" -> R.string.hub_login_pending
+        "no_server", "incompatible_server" -> R.string.hub_incompatible_server
+        "busy" -> R.string.hub_busy
+        "invalid_request", "invalid_response", "stale_request" -> R.string.hub_invalid_response
+        "network_unavailable" -> R.string.hub_network_unavailable
+        "not_signed_in", "session_expired" -> R.string.hub_session_expired
+        "insufficient_scope" -> R.string.hub_mail_consent
+        "no_transaction", "transaction_expired" -> R.string.hub_transaction_expired
+        "access_denied" -> R.string.hub_access_denied
+        "rate_limited" -> R.string.hub_rate_limited
+        "not_found" -> R.string.hub_mail_not_found
+        "too_large" -> R.string.hub_too_large
+        "destination_failed" -> R.string.hub_destination_failed
+        "export_saved" -> R.string.hub_export_saved
+        "revocation_unconfirmed" -> R.string.hub_revocation_unconfirmed
+        else -> R.string.hub_unavailable
+    }
+    if (status != null) Text(stringResource(status), modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
 }
 
 @Composable private fun AppearanceChoices(state: LoftUiState, onTheme: (ThemeChoice) -> Unit, onLocale: (String) -> Unit) {
@@ -563,7 +672,7 @@ private fun notificationLabel(value: NotificationAccessStatus): Int = when (valu
     Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.28f)).clickable { model.toggleMenu() })
     val density = LocalDensity.current
     val menuPages = (listOf(ModuleCatalog.entry(state.presentation.navigation.module)) + ModuleCatalog.children(state.presentation.navigation.module))
-        .filterNot { it == Page.NODE_DETAILS }
+        .filterNot { it == Page.NODE_DETAILS || (it == Page.MAIL && state.hub?.mailSupported != true) }
     Surface(Modifier.offset { IntOffset((primary.left * density.density).roundToInt(), ((primary.top + 56f) * density.density).roundToInt()) }
         .width((primary.width - 24f).coerceIn(48f, 240f).dp).heightIn(max = (primary.height - 56f).coerceAtLeast(48f).dp),
         shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surface) {

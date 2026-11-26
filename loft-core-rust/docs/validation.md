@@ -165,3 +165,13 @@ Design references include the SQLCipher API, SQLite atomic commit behavior and O
 | `cargo fmt --all --check` | Exit 0. |
 
 The tested `Cargo.lock` SHA-256 is `fa6681a8195f2aec474bd99cf4fcbe91cda225caa44ebf2af36eb0211cb5b130`. The first failing test log and explicit column diagnostic log have SHA-256 `b047d1f4c1e7d2df8fe546ba34cbb3ed7b98b77105fe42785ae9092f793a7a16` and `87dac854647bcc511c1fe5029962d374f1b0af5f10e833bb0c9ac198e7fa693d`.
+
+## Hub account and mail port, 0.1.4-LYNX
+
+The client contract was checked against RFC 8252's external browser guidance, RFC 9700's code flow and PKCE guidance and RFC 8628's transaction polling limits. The APP uses a Hub-specific proof and explicit completion. Portal continues to own browser sign-in and consent. The Hub owns Portal client credentials and tokens.
+
+The first pinned `cargo test -p loft-core --test hub --locked` ran three tests against compiled admission shells. It exited 101. The no-candidate test received the shell's `StateUnavailable` and the other tests reached missing discovery behavior. On the first implementation run two tests passed. The reauthorization fixture incorrectly expected the existing account to disappear during browser authorization. The fixture now checks that the previously confirmed account persists until a valid replacement arrives. The resulting suite covers proof binding, explicit pending and completed receipts, matching issuer and browser destination, stale result fencing through candidate changes and logout, opt-in mail access, folder-scoped cursors, attachment byte verification and source session rejection.
+
+`cargo test --manifest-path loft-core-rust/Cargo.toml --workspace --locked --no-fail-fast` passed 108 tests, including six Hub cases. These cases use synthetic receipts and establish core admission, fencing and parsing behavior. The root task report records live Portal and Cloudflare behavior and execution of the Android client.
+
+Pinned `cargo fmt --all --check` and `cargo clippy --workspace --all-targets --locked -- -D warnings` both exited 0. The task's isolated x86 native build compiled `libloft_ffi.so` and regenerated Kotlin through UniFFI 0.32.2. The generated Kotlin SHA256 was `6163b4e69d6f0dc92ebd274d820c2abc481e2ef54f8095e4e51ad76d786d17b5`. The generated port exposes `hubBegin`, `hubFinish`, `hubSnapshot`, `hubClear` and `hubAbandon` with immutable records and typed `HubException` failures.
