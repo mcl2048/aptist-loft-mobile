@@ -16,10 +16,12 @@ use zeroize::Zeroizing;
 mod certificates;
 mod import;
 mod origin;
+mod persistence;
 mod privacy;
 mod vpn;
 pub use import::{MAX_NODE_INPUT_BYTES, MAX_NODE_LABEL_BYTES};
 pub use origin::{MAX_SERVER_INPUT_BYTES, normalize_server_origin};
+pub use persistence::{LoadedLocalConfig, LocalConfigEdit, LocalConfigStore, LocalSettings};
 pub use privacy::{
     AppliedNetworkPrivacy, DnsMode, DnsPrivacyLimits, EffectivePackageUid, HydraConfig, HydraScope,
     LeakProtectionMode, NetworkPrivacyEnforcement, NetworkPrivacyPolicy, NetworkPrivacyReceipt,
@@ -71,6 +73,8 @@ pub enum CoreError {
     InvalidNetworkPrivacyPolicy,
     InvalidNetworkPrivacyReceipt,
     UnsupportedNetworkPrivacyPolicy,
+    StorageUnavailable,
+    StorageRecoveryRequired,
 }
 
 impl fmt::Display for CoreError {
@@ -141,24 +145,23 @@ pub struct CoreSnapshot {
 }
 
 struct NodeEntry {
+    id: u64,
     summary: NodeSummary,
     config: import::NodeConfig,
     charge: usize,
 }
 
-/// A synchronous, session-local owner. It opens no network, file, timer or data-plane runtime.
+/// A synchronous business-state owner. Configuration can be committed through its local repository port.
 pub struct CoreState {
     nodes: Vec<NodeEntry>,
     retained_node_bytes: usize,
     next_node_id: u64,
-    server_candidate: Option<String>,
-    routing_enabled: bool,
-    selected_apps: Vec<String>,
+    local: LocalSettings,
+    local_store: Option<Box<dyn LocalConfigStore>>,
+    local_storage_failed: bool,
     generation: u64,
     vpn: vpn::VpnLifecycle,
     stop_signal: Arc<AtomicBool>,
-    network_privacy_policy: NetworkPrivacyPolicy,
-    network_privacy_policy_epoch: u64,
 }
 
 impl fmt::Debug for CoreState {
@@ -185,14 +188,12 @@ impl CoreState {
             nodes: Vec::new(),
             retained_node_bytes: 0,
             next_node_id: 1,
-            server_candidate: None,
-            routing_enabled: false,
-            selected_apps: Vec::new(),
+            local: LocalSettings::default(),
+            local_store: None,
+            local_storage_failed: false,
             generation: 0,
             vpn: vpn::VpnLifecycle::default(),
             stop_signal,
-            network_privacy_policy: NetworkPrivacyPolicy::default(),
-            network_privacy_policy_epoch: 1,
         }
     }
 
@@ -206,7 +207,7 @@ impl CoreState {
         };
         CoreSnapshot {
             schema_version: 2,
-            core_version: "0.1.2-LYNX".into(),
+            core_version: concat!(env!("CARGO_PKG_VERSION"), "-LYNX").into(),
             nodes: self
                 .nodes
                 .iter()
@@ -214,10 +215,10 @@ impl CoreState {
                 .map(|node| node.summary.clone())
                 .collect(),
             node_count: self.nodes.len() as u32,
-            server_address: self.server_candidate.clone(),
+            server_address: self.local.server_candidate.clone(),
             server_verified: false,
-            routing_enabled: self.routing_enabled,
-            selected_apps: self.selected_apps.clone(),
+            routing_enabled: self.local.routing_enabled,
+            selected_apps: self.local.selected_apps.clone(),
             connection_state,
             generation: self.generation,
             connection_attempt_id: self.vpn.current_attempt_id,
@@ -228,8 +229,8 @@ impl CoreState {
             },
             applied_routing: self.vpn.applied.clone(),
             vpn_failure: self.vpn.failure,
-            network_privacy_policy: self.network_privacy_policy.clone(),
-            network_privacy_policy_epoch: self.network_privacy_policy_epoch,
+            network_privacy_policy: self.local.network_privacy_policy.clone(),
+            network_privacy_policy_epoch: self.local.network_privacy_policy_epoch,
             applied_network_privacy: self.vpn.applied_network_privacy.clone(),
             network_privacy_enforcement: match (connection_state, &self.vpn.applied_network_privacy)
             {
@@ -245,22 +246,26 @@ impl CoreState {
         policy: NetworkPrivacyPolicy,
         expected_generation: u64,
     ) -> Result<(), CoreError> {
+        self.require_local_config()?;
         if expected_generation != self.generation {
             return Err(CoreError::StaleGeneration);
         }
         let policy = policy.normalized()?;
-        if policy == self.network_privacy_policy {
+        if policy == self.local.network_privacy_policy {
             return Ok(());
         }
         let generation = self.next_generation()?;
         let epoch = self
+            .local
             .network_privacy_policy_epoch
             .checked_add(1)
             .ok_or(CoreError::GenerationExhausted)?;
-        self.network_privacy_policy = policy;
-        self.network_privacy_policy_epoch = epoch;
-        self.generation = generation;
-        Ok(())
+        let settings = LocalSettings {
+            network_privacy_policy: policy,
+            network_privacy_policy_epoch: epoch,
+            ..self.local.clone()
+        };
+        self.commit_local_settings(generation, settings)
     }
 
     /// Reads one metadata page at the caller's generation without reconciling or mutating state.
@@ -293,7 +298,28 @@ impl CoreState {
 
     /// Parses and commits one complete configuration. Every failure leaves state and generation unchanged.
     pub fn import_node(&mut self, raw: String) -> Result<NodeSummary, CoreError> {
-        let candidate = import::parse_node(raw)?;
+        let raw = Zeroizing::new(raw);
+        self.require_local_config()?;
+        let candidate = import::parse_node(&raw, Some(x509_parser::time::ASN1Time::now()))?;
+        let (charge, retained) = self.admit_node(&candidate)?;
+        let generation = self.next_generation()?;
+        let id = self.next_node_id;
+        let next_id = id.checked_add(1).ok_or(CoreError::GenerationExhausted)?;
+        let summary = candidate.summary(format!("node-{id:016x}"));
+        self.commit_local(generation, LocalConfigEdit::ImportNode { id, uri: &raw })?;
+        self.nodes.push(NodeEntry {
+            id,
+            summary: summary.clone(),
+            config: candidate.config,
+            charge,
+        });
+        self.retained_node_bytes = retained;
+        self.next_node_id = next_id;
+        self.generation = generation;
+        Ok(summary)
+    }
+
+    fn admit_node(&self, candidate: &import::NodeCandidate) -> Result<(usize, usize), CoreError> {
         if self
             .nodes
             .iter()
@@ -309,24 +335,11 @@ impl CoreState {
         if self.nodes.len() == MAX_NODES || retained > MAX_RETAINED_NODE_BYTES {
             return Err(CoreError::NodeCapacityReached);
         }
-        let generation = self.next_generation()?;
-        let next_id = self
-            .next_node_id
-            .checked_add(1)
-            .ok_or(CoreError::GenerationExhausted)?;
-        let summary = candidate.summary(format!("node-{:016x}", self.next_node_id));
-        self.nodes.push(NodeEntry {
-            summary: summary.clone(),
-            config: candidate.config,
-            charge,
-        });
-        self.retained_node_bytes = retained;
-        self.next_node_id = next_id;
-        self.generation = generation;
-        Ok(summary)
+        Ok((charge, retained))
     }
 
     pub fn remove_node(&mut self, id: String) -> Result<(), CoreError> {
+        self.require_local_config()?;
         validate_node_id(&id)?;
         if self.vpn.state != ConnectionState::Disconnected && self.vpn.target.as_ref() == Some(&id)
         {
@@ -342,6 +355,12 @@ impl CoreState {
             .retained_node_bytes
             .checked_sub(self.nodes[position].charge)
             .ok_or(CoreError::StateUnavailable)?;
+        self.commit_local(
+            generation,
+            LocalConfigEdit::RemoveNode {
+                id: self.nodes[position].id,
+            },
+        )?;
         self.nodes.remove(position);
         self.retained_node_bytes = retained;
         self.generation = generation;
@@ -351,24 +370,35 @@ impl CoreState {
     /// Stages an origin; compatibility discovery and TLS verification are unavailable in this release.
     pub fn stage_server(&mut self, raw: String) -> Result<String, CoreError> {
         let raw = Zeroizing::new(raw);
+        self.require_local_config()?;
         let origin = normalize_server_origin(&raw)?;
-        if self.server_candidate.as_ref() == Some(&origin) {
+        if self.local.server_candidate.as_ref() == Some(&origin) {
             return Ok(origin);
         }
         let generation = self.next_generation()?;
-        self.server_candidate = Some(origin.clone());
-        self.generation = generation;
+        self.commit_local_settings(
+            generation,
+            LocalSettings {
+                server_candidate: Some(origin.clone()),
+                ..self.local.clone()
+            },
+        )?;
         Ok(origin)
     }
 
     pub fn reset_server(&mut self) -> Result<(), CoreError> {
-        if self.server_candidate.is_none() {
+        self.require_local_config()?;
+        if self.local.server_candidate.is_none() {
             return Ok(());
         }
         let generation = self.next_generation()?;
-        self.server_candidate = None;
-        self.generation = generation;
-        Ok(())
+        self.commit_local_settings(
+            generation,
+            LocalSettings {
+                server_candidate: None,
+                ..self.local.clone()
+            },
+        )
     }
 
     /// Stores a validated draft. It does not establish a TUN or apply an Android allowlist.
@@ -377,18 +407,23 @@ impl CoreState {
         enabled: bool,
         packages: Vec<String>,
     ) -> Result<(), CoreError> {
+        self.require_local_config()?;
         let selected_apps = normalize_packages(packages)?;
         if enabled && selected_apps.is_empty() {
             return Err(CoreError::EmptyRoutingSelection);
         }
-        if self.routing_enabled == enabled && self.selected_apps == selected_apps {
+        if self.local.routing_enabled == enabled && self.local.selected_apps == selected_apps {
             return Ok(());
         }
         let generation = self.next_generation()?;
-        self.routing_enabled = enabled;
-        self.selected_apps = selected_apps;
-        self.generation = generation;
-        Ok(())
+        self.commit_local_settings(
+            generation,
+            LocalSettings {
+                routing_enabled: enabled,
+                selected_apps,
+                ..self.local.clone()
+            },
+        )
     }
 
     pub fn connect(&mut self, id: String) -> Result<(), CoreError> {
@@ -467,7 +502,7 @@ mod tests {
     #[test]
     fn privacy_epoch_exhaustion_denies_a_change_without_reusing_scope() {
         let mut core = CoreState::new();
-        core.network_privacy_policy_epoch = u64::MAX;
+        core.local.network_privacy_policy_epoch = u64::MAX;
         let before = core.snapshot();
         let policy = NetworkPrivacyPolicy {
             webrtc_policy: LeakProtectionMode::Block,
@@ -483,7 +518,7 @@ mod tests {
     #[test]
     fn privacy_epoch_max_serializes_as_an_exact_unsigned_decimal_string() {
         let mut core = CoreState::new();
-        core.network_privacy_policy_epoch = u64::MAX;
+        core.local.network_privacy_policy_epoch = u64::MAX;
         let node = core.import_node("socks5://proxy.example".into()).unwrap();
         let ticket = core.begin_vpn(node.id, core.snapshot().generation).unwrap();
         crate::test_support::freeze(&ticket, vec![]);

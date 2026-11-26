@@ -1,6 +1,6 @@
 # LOFT Go VPN and control SDK
 
-Version `0.1.2-LYNX` includes real HyrakenX, Hyraken Pro and SOCKS5 adapters plus the `with_gvisor` Android IPv4 packet stack. Rust owns client business state; the private Android `:vpn` service owns the Go runtime, platform permission, original TUN descriptor and captured underlying Network. Constructing or inspecting either Go runtime performs no network or TUN startup.
+Version `0.1.3-LYNX` includes real HyrakenX, Hyraken Pro and SOCKS5 adapters plus the `with_gvisor` Android IPv4 packet stack. Rust owns client business state. The private Android `:vpn` service owns the Go runtime, platform permission, original TUN descriptor and captured underlying Network. Constructing or inspecting either Go runtime performs no network or TUN startup.
 
 The real Java binding package is `net.aptist.loft.engine`:
 

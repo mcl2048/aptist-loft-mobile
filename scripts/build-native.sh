@@ -12,6 +12,7 @@ case "${LOFT_NATIVE_ABI}" in
     export CARGO_TARGET_AARCH64_LINUX_ANDROID_RUSTFLAGS="-C link-arg=-Wl,-z,max-page-size=16384"
     export CC_aarch64_linux_android="${LOFT_LLVM}/aarch64-linux-android29-clang"
     export AR_aarch64_linux_android="${LOFT_LLVM}/llvm-ar"
+    export RANLIB_aarch64_linux_android="${LOFT_LLVM}/llvm-ranlib"
     test -x "${CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER}"
     ;;
   x86_64)
@@ -28,6 +29,7 @@ case "${LOFT_NATIVE_ABI}" in
     export CARGO_TARGET_X86_64_LINUX_ANDROID_RUSTFLAGS="-C link-arg=-Wl,-z,max-page-size=16384"
     export CC_x86_64_linux_android="${LOFT_LLVM}/x86_64-linux-android29-clang"
     export AR_x86_64_linux_android="${LOFT_LLVM}/llvm-ar"
+    export RANLIB_x86_64_linux_android="${LOFT_LLVM}/llvm-ranlib"
     test -x "${CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER}"
     ;;
   *) printf '%s\n' 'Unsupported native ABI.' >&2; exit 2 ;;

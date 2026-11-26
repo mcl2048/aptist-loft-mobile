@@ -1,9 +1,9 @@
 [workspace]
-members = ["crates/loft-core", "crates/loft-ffi", "crates/loft-bindgen"]
+members = ["crates/loft-core", "crates/loft-ffi", "crates/loft-bindgen", "crates/loft-storage"]
 resolver = "3"
 
 [workspace.package]
-version = "0.1.2"
+version = "0.1.3"
 edition = "2024"
 rust-version = "1.100"
 license = "Apache-2.0"
@@ -11,7 +11,10 @@ license = "Apache-2.0"
 [workspace.dependencies]
 base64 = "=0.22.1"
 rustls = { version = "=0.23.46", default-features = false, features = ["std", "ring"] }
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.145"
 sha2 = "=0.10.9"
+tempfile = "=3.27.0"
 uniffi = { version = "=0.32.2", default-features = false }
 x509-parser = { version = "=0.18.1", features = ["verify"] }
 zeroize = { version = "=1.9.2", features = ["derive"] }

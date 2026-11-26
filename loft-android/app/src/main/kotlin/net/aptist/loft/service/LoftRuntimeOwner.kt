@@ -19,6 +19,7 @@ import net.aptist.loft.engine.VPNRuntime
 import net.aptist.loft.engine.VPNStateListener
 import net.aptist.loft.foundation.*
 import net.aptist.loft.ipc.ILoftEvents
+import java.io.File
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.ThreadPoolExecutor
@@ -45,6 +46,8 @@ class LoftRuntimeOwner private constructor(context: Context) {
     private val starts = executor(1)
     private val events = executor(1)
     private val priority = executor(1)
+    private val uiController = AtomicReference<Any?>(null)
+    private var workerUiLease = false
     private val stopDispatch = StopDispatch()
     private val eventQueued = AtomicBoolean(false)
     private val stopLock = Any()
@@ -57,7 +60,8 @@ class LoftRuntimeOwner private constructor(context: Context) {
         coreFactory = {
             System.setProperty("jna.library.path", app.applicationInfo.nativeLibraryDir)
             System.loadLibrary("loft_ffi")
-            AppCore()
+            AndroidDatabaseKey(File(app.noBackupFilesDir, "local-store"), "net.aptist.loft.database-wrap.v1")
+                .open { path, key, allowCreate -> AppCore.openPersistent(path, key, allowCreate) }
         },
         goFactory = {
             val attempt = checkNotNull(active.get())
@@ -103,28 +107,85 @@ class LoftRuntimeOwner private constructor(context: Context) {
         active.get()?.service?.refreshLocalizedNotification()
     }
 
-    fun retainUi(): Boolean = try { resources.retainUi(); true } catch (_: Exception) { false } catch (_: LinkageError) { false }
-    fun releaseUi() {
-        resources.releaseUi()
-        if (runCatching { resources.currentCore() }.isFailure) engineVersion = ""
+    fun attachUi(token: Any) { uiController.set(token) }
+
+    fun detachUi(token: Any) {
+        if (!uiController.compareAndSet(token, null)) return
+        observerTargets().forEach { observers.unregister(it) }
+        // If the queue is full, every already queued job runs the same cleanup.
+        submitCommand { }
     }
+
+    private fun submitCommand(work: () -> Unit): Boolean = submit(commands) {
+        try { work() } finally {
+            if (workerUiLease && uiController.get() == null) {
+                workerUiLease = false
+                resources.releaseUi()
+                if (runCatching { resources.currentCore() }.isFailure) engineVersion = ""
+            }
+        }
+    }
+
+    private fun retainCoreOnWorker(): AppCore {
+        val core = resources.retainUi()
+        if (!workerUiLease && uiController.get() != null) {
+            resources.retainExistingUi()
+            workerUiLease = true
+        }
+        return core
+    }
+
     fun subscribe(observer: ILoftEvents) {
         synchronized(observerLock) {
-            if (observers.registeredCallbackCount >= 4) { sendReceipt(observer, 0, ReceiptCode.RESOURCE_BUSY, freshPayload()); return }
+            if (observers.registeredCallbackCount >= 4) { sendReceipt(observer, 0, ReceiptCode.RESOURCE_BUSY, byteArrayOf()); return }
             observers.register(observer)
         }
-        val payload = freshPayload()
-        if (payload.isEmpty()) sendReceipt(observer, 0, unavailableCode(), payload) else sendSnapshot(observer, payload)
+        if (!submitCommand {
+            val core = try { retainCoreOnWorker() }
+            catch (failure: Exception) { sendReceipt(observer, 0, openFailure(failure), byteArrayOf()); return@submitCommand }
+            catch (_: LinkageError) { sendReceipt(observer, 0, ReceiptCode.NATIVE_UNAVAILABLE, byteArrayOf()); return@submitCommand }
+            val payload = try { capture(core) } finally { resources.releaseUi() }
+            if (payload.isEmpty()) sendReceipt(observer, 0, unavailableCode(), payload) else sendSnapshot(observer, payload)
+        }) {
+            observers.unregister(observer)
+            sendReceipt(observer, 0, ReceiptCode.RESOURCE_BUSY, byteArrayOf())
+        }
     }
     fun unsubscribe(observer: ILoftEvents) { observers.unregister(observer) }
+
+    fun reopenStorage(requestId: Long, observer: ILoftEvents) {
+        if (requestId <= 0) { sendReceipt(observer, requestId, ReceiptCode.INVALID_COMMAND, byteArrayOf()); return }
+        if (!submitCommand {
+            val admitted = synchronized(admissionLock) {
+                if (active.get() != null || stopQueued) false
+                else { stopEpoch = Any(); true }
+            }
+            val released = admitted && if (workerUiLease) resources.releaseSoleUiLease()
+                else runCatching { resources.currentCore() }.isFailure
+            if (!released) {
+                sendReceipt(observer, requestId, ReceiptCode.RESOURCE_BUSY, byteArrayOf())
+                return@submitCommand
+            }
+            workerUiLease = false
+            engineVersion = ""
+            closedNetworkResources.set(null)
+            val core = try { retainCoreOnWorker() }
+            catch (failure: Exception) { sendReceipt(observer, requestId, openFailure(failure), byteArrayOf()); return@submitCommand }
+            catch (_: LinkageError) { sendReceipt(observer, requestId, ReceiptCode.NATIVE_UNAVAILABLE, byteArrayOf()); return@submitCommand }
+            val payload = try { capture(core) } finally { resources.releaseUi() }
+            broadcast(payload)
+            sendReceipt(observer, requestId, if (payload.isEmpty()) unavailableCode() else ReceiptCode.STORAGE_REOPENED, payload)
+        }) sendReceipt(observer, requestId, ReceiptCode.RESOURCE_BUSY, byteArrayOf())
+    }
+
     fun queryNodePage(requestId: Long, offset: Int, expectedGeneration: ULong, observer: ILoftEvents) {
         if (requestId <= 0 || offset !in 0..150 || offset % 50 != 0) {
             sendNodePage(observer, requestId, ReceiptCode.INVALID_NODE_PAGE, byteArrayOf()); return
         }
-        val core = try { resources.retainUi() }
-        catch (_: Exception) { sendNodePage(observer, requestId, ReceiptCode.NATIVE_UNAVAILABLE, byteArrayOf()); return }
-        catch (_: LinkageError) { sendNodePage(observer, requestId, ReceiptCode.NATIVE_UNAVAILABLE, byteArrayOf()); return }
-        if (!submit(commands) {
+        if (!submitCommand {
+            val core = try { retainCoreOnWorker() }
+            catch (failure: Exception) { sendNodePage(observer, requestId, openFailure(failure), byteArrayOf()); return@submitCommand }
+            catch (_: LinkageError) { sendNodePage(observer, requestId, ReceiptCode.NATIVE_UNAVAILABLE, byteArrayOf()); return@submitCommand }
             try {
                 val page = NodePageWire.encode(core.nodePage(offset.toUInt(), expectedGeneration))
                 sendNodePage(observer, requestId, ReceiptCode.NODE_PAGE_READY, page)
@@ -133,30 +194,26 @@ class LoftRuntimeOwner private constructor(context: Context) {
                 sendNodePage(observer, requestId, if (failure is NodePageWireException) ReceiptCode.INVALID_COMMAND else ReceiptCode.nativeFailure(failure), byteArrayOf())
             } catch (_: LinkageError) { fault(active.get()); sendNodePage(observer, requestId, ReceiptCode.NATIVE_UNAVAILABLE, byteArrayOf()) }
             finally { resources.releaseUi() }
-        }) {
-            resources.releaseUi()
-            sendNodePage(observer, requestId, ReceiptCode.RESOURCE_BUSY, byteArrayOf())
-        }
-    }
-    fun clearObservers() {
-        val targets = observerTargets()
-        targets.forEach { observers.unregister(it) }
+        }) sendNodePage(observer, requestId, ReceiptCode.RESOURCE_BUSY, byteArrayOf())
     }
     fun execute(requestId: Long, payload: ByteArray, observer: ILoftEvents) {
         if (requestId <= 0 || payload.size !in 5..ControlCodec.MAX_CONTROL_BYTES) {
-            sendReceipt(observer, requestId, ReceiptCode.CONTROL_TOO_LARGE, freshPayload()); return
+            sendReceipt(observer, requestId, ReceiptCode.CONTROL_TOO_LARGE, byteArrayOf()); return
         }
         val owned = payload.copyOf()
         val command = try { ControlCodec.decode(owned) }
         catch (failure: ControlMessageException) {
-            sendReceipt(observer, requestId, if (failure.problem == ControlProblem.TOO_LARGE) ReceiptCode.CONTROL_TOO_LARGE else ReceiptCode.INVALID_COMMAND, freshPayload())
+            sendReceipt(observer, requestId, if (failure.problem == ControlProblem.TOO_LARGE) ReceiptCode.CONTROL_TOO_LARGE else ReceiptCode.INVALID_COMMAND, byteArrayOf())
             return
         } finally { owned.fill(0) }
         if (command == CoreCommand.Stop) { requestStop(observer, requestId); return }
-        val core = try { resources.retainUi() }
-        catch (_: Exception) { sendReceipt(observer, requestId, ReceiptCode.NATIVE_UNAVAILABLE, byteArrayOf()); return }
-        catch (_: LinkageError) { sendReceipt(observer, requestId, ReceiptCode.NATIVE_UNAVAILABLE, byteArrayOf()); return }
-        if (!submit(commands) {
+        val connectEpoch = if (command is CoreCommand.Connect) synchronized(admissionLock) {
+            if (stopQueued) null else stopEpoch
+        } else null
+        if (!submitCommand {
+            val core = try { retainCoreOnWorker() }
+            catch (failure: Exception) { sendReceipt(observer, requestId, openFailure(failure), byteArrayOf()); return@submitCommand }
+            catch (_: LinkageError) { sendReceipt(observer, requestId, ReceiptCode.NATIVE_UNAVAILABLE, byteArrayOf()); return@submitCommand }
             try {
                 val code = try {
                     when (command) {
@@ -169,7 +226,7 @@ class LoftRuntimeOwner private constructor(context: Context) {
                             core.setNetworkPrivacyPolicy(NetworkPrivacyAdapter.native(command.policy), command.expectedGeneration)
                             ReceiptCode.NETWORK_PRIVACY_STAGED
                         }
-                        is CoreCommand.Connect -> beginVpn(core, command)
+                        is CoreCommand.Connect -> beginVpn(core, command, connectEpoch)
                         CoreCommand.Stop -> error("STOP_MUST_BYPASS_NORMAL_QUEUE")
                     }
                 } catch (failure: AppScopeException) {
@@ -180,16 +237,13 @@ class LoftRuntimeOwner private constructor(context: Context) {
                 broadcast(result)
                 sendReceipt(observer, requestId, if (result.isEmpty()) unavailableCode() else code, result)
             } finally { resources.releaseUi() }
-        }) {
-            resources.releaseUi()
-            sendReceipt(observer, requestId, ReceiptCode.RESOURCE_BUSY, freshPayload())
-        }
+        }) sendReceipt(observer, requestId, ReceiptCode.RESOURCE_BUSY, byteArrayOf())
     }
-    private fun beginVpn(core: AppCore, command: CoreCommand.Connect): ReceiptCode {
+    private fun beginVpn(core: AppCore, command: CoreCommand.Connect, epoch: Any?): ReceiptCode {
         if (VpnService.prepare(app) != null) return ReceiptCode.VPN_PERMISSION_DENIED
-        val epoch = synchronized(admissionLock) {
-            if (stopQueued) throw CoreException.ConnectionBusy()
-            stopEpoch
+        synchronized(admissionLock) {
+            if (epoch == null || stopQueued) throw CoreException.ConnectionBusy()
+            if (epoch !== stopEpoch) throw CoreException.TicketExpired()
         }
         val ticket = core.beginVpn(command.nodeId, command.expectedGeneration)
         var vpnLease = false
@@ -405,15 +459,12 @@ class LoftRuntimeOwner private constructor(context: Context) {
                         // Cancel pending Ready before joining construction. All
                         // bounded Go waits and resource monitors stay off entry.
                         runCatching { attempt?.go?.get()?.runtime?.abort() }
-                        val fallback = attempt?.core ?: runCatching { resources.currentCore() }.getOrNull()
-                        var coreLease = false
-                        val core = try { resources.retainUi().also { coreLease = true } }
-                            catch (_: Exception) { fallback } catch (_: LinkageError) { fallback }
+                        val core = resources.retainExistingUi()
                         try {
                             if (core != null && attempt == null) { runCatching { core.beginVpnStop() }; publish(core) }
                             if (core != null && reason != null && attempt != null) runCatching { core.markVpnFailed(attempt.id, reason) }
                             cleanup(attempt, core, explicit = true, foreground = foreground)
-                        } finally { if (coreLease) resources.releaseUi() }
+                        } finally { if (core != null) resources.releaseUi() }
                     }
                     work
                 }
@@ -519,9 +570,13 @@ class LoftRuntimeOwner private constructor(context: Context) {
         catch (_: Exception) { unavailableNotice(); fault(active.get()); byteArrayOf() }
         catch (_: LinkageError) { unavailableNotice(); fault(active.get()); byteArrayOf() }
     }
-    private fun freshPayload(): ByteArray {
-        val core = try { resources.retainUi() } catch (_: Exception) { return byteArrayOf() } catch (_: LinkageError) { return byteArrayOf() }
-        return try { capture(core) } finally { resources.releaseUi() }
+    private fun openFailure(failure: Exception): ReceiptCode = when (failure) {
+        is StorageKeyException -> when (failure.failure) {
+            StorageKeyFailure.UNAVAILABLE -> ReceiptCode.STORAGE_UNAVAILABLE
+            StorageKeyFailure.RECOVERY_REQUIRED -> ReceiptCode.STORAGE_RECOVERY_REQUIRED
+        }
+        is CoreException -> ReceiptCode.nativeFailure(failure)
+        else -> ReceiptCode.NATIVE_UNAVAILABLE
     }
     private fun unavailableCode() = if (publicationFailed.get()) ReceiptCode.PUBLICATION_EXHAUSTED else ReceiptCode.STATE_UNAVAILABLE
     private fun publish(core: AppCore) {

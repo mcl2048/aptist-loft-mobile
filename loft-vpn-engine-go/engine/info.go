@@ -9,7 +9,7 @@ import (
 
 const (
 	schemaVersion       = 1
-	engineVersion       = "0.1.2-LYNX"
+	engineVersion       = "0.1.3-LYNX"
 	gatewaySourcePin    = "231f14813f2b45cb6f0bde984181c57cba1d02fd"
 	maxOperations       = 64
 	maxReservedBytes    = int64(8 * 1024 * 1024)

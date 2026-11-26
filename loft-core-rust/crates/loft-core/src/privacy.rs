@@ -1,14 +1,17 @@
 use crate::{CoreError, MAX_ROUTING_BYTES, MAX_ROUTING_PACKAGES, validate_package_name};
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::net::SocketAddrV4;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum DnsMode {
     NodeDomainFakeIp,
     WireTcp,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum LeakProtectionMode {
     ProxyOnly,
     Block,
@@ -28,7 +31,8 @@ pub enum NetworkPrivacyEnforcement {
     Blocked,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct DnsPrivacyLimits {
     pub map_max_entries: u32,
     pub map_max_bytes: u32,
@@ -48,7 +52,8 @@ impl Default for DnsPrivacyLimits {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct HydraConfig {
     pub enabled: bool,
     pub auto_jitter: bool,
@@ -74,7 +79,8 @@ impl Default for HydraConfig {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct NetworkPrivacyPolicy {
     pub dns_mode: DnsMode,
     pub dns_leak_policy: LeakProtectionMode,

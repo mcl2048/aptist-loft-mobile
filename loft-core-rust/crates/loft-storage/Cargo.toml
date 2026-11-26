@@ -1,0 +1,18 @@
+[package]
+name = "loft-storage"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+loft-core = { path = "../loft-core" }
+rusqlite = { version = "=0.43.0", default-features = false, features = ["bundled-sqlcipher-vendored-openssl", "limits"] }
+serde_json.workspace = true
+zeroize.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

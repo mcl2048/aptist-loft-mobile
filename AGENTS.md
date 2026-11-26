@@ -8,7 +8,7 @@ Initial task `loftmobile-1125-01` delivers a compiled application framework, nat
 
 Owners are assigned explicitly: Rust core/FFI under `loft-core-rust/`; native Android under `loft-android/`; Go SDK under `loft-vpn-engine-go/`; root integrator owns scripts/docs/report/version/Git/toolchain and server framework. Ask the owning agent before changing another subtree. Do not modify Gateway/Portal sources or other projects' caches.
 
-Use TDD for validation, state/admission, lifecycle and error behavior; avoid mock-only or source-text tests. Two build workers initially, with large native/Gradle builds coordinated. Every external call is user-initiated and bound to profile/issuer/generation. Anonymous startup is local. No administrator clientSecret or Portal bearer in the current BFF APK path. Credentials stay memory-only until encrypted storage exists and snapshots are redacted/paginated.
+Use TDD for validation, state/admission, lifecycle and error behavior. Two build workers initially, with large native/Gradle builds coordinated. Every external call is user-initiated and bound to profile/issuer/generation. Anonymous startup is local. Keep administrator clientSecret and Portal bearer outside the current BFF APK path. Imported credentials use the guest SQLCipher repository, with redacted and paginated snapshots. Read `docs/contracts/encrypted-storage.md` before changing storage, key provisioning or recovery.
 
 Supported locales en/zh/ja/de are complete for visible text/errors/accessibility. Persistent module rail uses stable IDs and native assets; no WebView main UI, runtime plugin, automatic cloud poll or hidden timer that simulates connection.
 

@@ -30,6 +30,7 @@ data class LoftUiState(
     val presentation: PresentationState = PresentationState(),
     val native: SnapshotFrame? = null,
     val availability: ServiceAvailability = ServiceAvailability.OPENING,
+    val storageOpenFailure: ReceiptCode? = null,
     val importText: String = "",
     val importConfirmation: Boolean = false,
     val deleteConfirmation: Boolean = false,
@@ -56,6 +57,8 @@ data class LoftUiState(
     val locale: String = "en",
     val notifications: AppNotificationAccess = AppNotificationAccess(),
 ) {
+    val canChangeConfiguration: Boolean
+        get() = availability == ServiceAvailability.AVAILABLE && storageOpenFailure == null
     override fun toString() = "LoftUiState(<redacted>)"
 }
 
@@ -185,6 +188,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         val native = state.native
         val node = state.presentation.selectedNodeId
         if (state.pendingRequest != null || state.stopRequest != null || state.vpnPermissionPending) return false
+        if (!state.canChangeConfiguration) { showNotice(state.storageOpenFailure ?: ReceiptCode.STATE_UNAVAILABLE); return false }
         if (native == null || node == null) { showNotice(ReceiptCode.STATE_UNAVAILABLE); return false }
         if (native.core.connectionState != ConnectionState.DISCONNECTED) { showNotice(ReceiptCode.CONNECTION_BUSY); return false }
         if (!vpnPermission.request(node, native.core.generation)) return false
@@ -338,15 +342,27 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
             .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
     fun reopenService() {
+        val state = mutable.value
+        if (state.pendingRequest != null || state.stopRequest != null) return
         cancelNodePage()
-        mutable.value = mutable.value.copy(availability = ServiceAvailability.OPENING, native = null, nodePage = null, pendingRequest = null)
+        if (state.storageOpenFailure != null) {
+            val request = Math.addExact(nextRequest, 1L)
+            if (client.reopenStorage(request)) {
+                nextRequest = request
+                pendingOperation = OperationKind.STORAGE_REOPEN
+                mutable.value = mutable.value.copy(pendingRequest = request, notice = null)
+                return
+            }
+        }
+        mutable.value = mutable.value.copy(availability = ServiceAvailability.OPENING, native = null, nodePage = null,
+            pendingRequest = null, notice = null, storageOpenFailure = null)
         client.reopen()
     }
     private fun submit(command: CoreCommand) {
         if (command == CoreCommand.Stop) { stopControl(); return }
         val state = mutable.value
         if (state.pendingRequest != null) return
-        if (state.availability != ServiceAvailability.AVAILABLE) { showNotice(ReceiptCode.STATE_UNAVAILABLE); return }
+        if (!state.canChangeConfiguration) { showNotice(state.storageOpenFailure ?: ReceiptCode.STATE_UNAVAILABLE); return }
         val request = Math.addExact(nextRequest, 1L)
         nextRequest = request; pendingOperation = OperationKind.of(command)
         mutable.value = state.copy(pendingRequest = request, notice = null)
@@ -390,6 +406,15 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         if (code in setOf(ReceiptCode.NATIVE_UNAVAILABLE, ReceiptCode.STATE_UNAVAILABLE, ReceiptCode.PUBLICATION_EXHAUSTED, ReceiptCode.TUN_CLOSED_CORE_UNAVAILABLE)) {
             updated = updated.copy(native = updated.native.takeIf { it?.core?.connectionState == ConnectionState.UNAVAILABLE }, availability = ServiceAvailability.UNAVAILABLE)
         }
+        if (operation == OperationKind.STORAGE_REOPEN && isStorageOpenFailure(code)) {
+            updated = updated.copy(native = null, availability = ServiceAvailability.UNAVAILABLE, storageOpenFailure = code)
+        } else if (code == ReceiptCode.STORAGE_RECOVERY_REQUIRED || (updated.native == null && isStorageOpenFailure(code))) {
+            updated = updated.copy(availability = if (updated.native == null) ServiceAvailability.UNAVAILABLE else updated.availability,
+                storageOpenFailure = code)
+        }
+        if (code == ReceiptCode.STORAGE_REOPENED) {
+            updated = updated.copy(storageOpenFailure = null)
+        }
         mutable.value = updated
         if (visible && nodePageVisible()) loadNodePage()
     }
@@ -397,8 +422,14 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         pendingOperation = null
         vpnPermission.cancel()
         cancelNodePage()
-        mutable.value = mutable.value.copy(native = null, nodePage = null, availability = ServiceAvailability.UNAVAILABLE, pendingRequest = null, stopRequest = null, notice = code)
+        val state = mutable.value
+        mutable.value = state.copy(native = null, nodePage = null, availability = ServiceAvailability.UNAVAILABLE,
+            pendingRequest = null, stopRequest = null, notice = code,
+            storageOpenFailure = if (isStorageOpenFailure(code)) code else state.storageOpenFailure)
     }
+
+    private fun isStorageOpenFailure(code: ReceiptCode): Boolean =
+        code == ReceiptCode.STORAGE_UNAVAILABLE || code == ReceiptCode.STORAGE_RECOVERY_REQUIRED
     override fun onCleared() {
         client.close(); cancelApps(); cancelNodePage()
         mutable.value = mutable.value.copy(importText = "", serverText = "", native = null,

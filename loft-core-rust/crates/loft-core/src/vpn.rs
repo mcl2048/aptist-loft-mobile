@@ -376,6 +376,7 @@ impl CoreState {
         node_id: String,
         expected_snapshot_generation: u64,
     ) -> Result<Arc<VpnStartTicket>, CoreError> {
+        self.require_local_config()?;
         if expected_snapshot_generation != self.generation {
             return Err(CoreError::StaleGeneration);
         }
@@ -390,7 +391,7 @@ impl CoreState {
             .iter()
             .find(|node| node.summary.id == node_id)
             .ok_or(CoreError::NodeNotFound)?;
-        if self.network_privacy_policy.hydra.enabled
+        if self.local.network_privacy_policy.hydra.enabled
             && node.summary.protocol == ProtocolKind::Socks5
         {
             return Err(CoreError::UnsupportedNetworkPrivacyPolicy);
@@ -401,15 +402,16 @@ impl CoreState {
             .next_attempt_id
             .checked_add(1)
             .ok_or(CoreError::GenerationExhausted)?;
+        node.config.validate_certificate_times()?;
         let uri = node.config.canonical_uri()?;
         let ticket = Arc::new(VpnStartTicket {
             attempt_id: self.vpn.next_attempt_id,
             node_id: node_id.clone(),
-            routing_enabled: self.routing_enabled,
-            requested_packages: self.selected_apps.clone(),
+            routing_enabled: self.local.routing_enabled,
+            requested_packages: self.local.selected_apps.clone(),
             protocol: node.summary.protocol,
-            network_privacy_policy: self.network_privacy_policy.clone(),
-            network_policy_epoch: self.network_privacy_policy_epoch,
+            network_privacy_policy: self.local.network_privacy_policy.clone(),
+            network_policy_epoch: self.local.network_privacy_policy_epoch,
             valid: AtomicBool::new(true),
             stop_signal: self.stop_signal.clone(),
             content: Mutex::new(TicketContent {

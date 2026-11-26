@@ -8,6 +8,7 @@ pub mod test_support;
 
 use std::{
     fmt,
+    path::Path,
     sync::{
         Arc, Mutex, RwLock, TryLockError,
         atomic::{AtomicBool, AtomicU64, Ordering},
@@ -50,6 +51,8 @@ pub enum CoreError {
     InvalidNetworkPrivacyPolicy,
     InvalidNetworkPrivacyReceipt,
     UnsupportedNetworkPrivacyPolicy,
+    StorageUnavailable,
+    StorageRecoveryRequired,
 }
 
 impl fmt::Display for CoreError {
@@ -324,15 +327,24 @@ impl AppCore {
     pub fn new() -> Arc<Self> {
         let stop_signal = Arc::new(AtomicBool::new(false));
         let state = loft_core::CoreState::with_stop_signal(stop_signal.clone());
-        let published = Arc::new(state.snapshot());
-        Arc::new(Self {
-            state: Mutex::new(state),
-            published: RwLock::new(published),
-            stop_signal,
-            active_attempt: AtomicU64::new(0),
-            stop_fence: AtomicU64::new(0),
-        })
+        Self::from_state(state, stop_signal)
     }
+
+    #[uniffi::constructor]
+    pub fn open_persistent(
+        database_path: String,
+        key: Vec<u8>,
+        allow_create: bool,
+    ) -> Result<Arc<Self>, CoreError> {
+        let key = Zeroizing::new(key);
+        let stop_signal = Arc::new(AtomicBool::new(false));
+        let store =
+            loft_storage::SqlCipherStore::open(Path::new(&database_path), &key, allow_create)?;
+        drop(key);
+        let state = loft_core::CoreState::with_local_storage(stop_signal.clone(), store)?;
+        Ok(Self::from_state(state, stop_signal))
+    }
+
     pub fn snapshot(&self) -> CoreSnapshot {
         let published = self
             .published
@@ -453,6 +465,17 @@ impl AppCore {
 }
 
 impl AppCore {
+    fn from_state(state: loft_core::CoreState, stop_signal: Arc<AtomicBool>) -> Arc<Self> {
+        let published = Arc::new(state.snapshot());
+        Arc::new(Self {
+            state: Mutex::new(state),
+            published: RwLock::new(published),
+            stop_signal,
+            active_attempt: AtomicU64::new(0),
+            stop_fence: AtomicU64::new(0),
+        })
+    }
+
     fn with_state<T>(
         &self,
         action: impl FnOnce(&mut loft_core::CoreState) -> Result<T, loft_core::CoreError>,
@@ -513,6 +536,8 @@ impl From<loft_core::CoreError> for CoreError {
             loft_core::CoreError::UnsupportedNetworkPrivacyPolicy => {
                 Self::UnsupportedNetworkPrivacyPolicy
             }
+            loft_core::CoreError::StorageUnavailable => Self::StorageUnavailable,
+            loft_core::CoreError::StorageRecoveryRequired => Self::StorageRecoveryRequired,
         }
     }
 }

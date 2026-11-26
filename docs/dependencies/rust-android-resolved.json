@@ -1,7 +1,10 @@
 {
-  "cargo_lock_sha256": "dc811b80791237566399467b9a6b59e59931c3bf058557c36ca666a3bacbfad8",
-  "checked_at_utc": "2026-11-26T02:42:16.456777+00:00",
-  "command": "cargo tree --manifest-path loft-core-rust/Cargo.toml -p loft-ffi --target aarch64-linux-android --locked --offline -e normal --prefix none --format {p}",
+  "cargo_lock_sha256": "fa6681a8195f2aec474bd99cf4fcbe91cda225caa44ebf2af36eb0211cb5b130",
+  "checked_at_utc": "2026-11-26T09:51:10.090022+00:00",
+  "commands": [
+    "cargo tree --manifest-path loft-core-rust/Cargo.toml -p loft-ffi --target aarch64-linux-android --locked --offline -e normal --prefix none --format {p}",
+    "cargo tree --manifest-path loft-core-rust/Cargo.toml -p loft-ffi --target aarch64-linux-android --locked --offline -e normal,build --prefix none --format {p}"
+  ],
   "components": [
     {
       "cargo_checksum": "2cb931c189b85683d69a5cfad41d4d418671e1ac413dd209f3f2fc31e3cfd902",
@@ -34,6 +37,15 @@
       "name": "asn1-rs-impl",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.2.0"
+    },
+    {
+      "build_dependency": true,
+      "cargo_checksum": "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53",
+      "host_proc_macro": false,
+      "license": "Apache-2.0 OR MIT",
+      "name": "autocfg",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "1.5.1"
     },
     {
       "cargo_checksum": "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6",
@@ -74,6 +86,15 @@
       "name": "camino",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "1.2.6"
+    },
+    {
+      "build_dependency": true,
+      "cargo_checksum": "02f0e023adb368345ce0ca6cdfc0f24a06554468d0e8503e14a0841de79bfa69",
+      "host_proc_macro": false,
+      "license": "MIT OR Apache-2.0",
+      "name": "cc",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "1.11.3"
     },
     {
       "cargo_checksum": "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600",
@@ -156,12 +177,37 @@
       "version": "0.3.15"
     },
     {
+      "cargo_checksum": "2acce4a10f12dc2fb14a218589d4f1f62ef011b2d0cc4b3cb1bba8e94da14649",
+      "host_proc_macro": false,
+      "license": "MIT/Apache-2.0",
+      "name": "fallible-iterator",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.3.0"
+    },
+    {
+      "cargo_checksum": "7360491ce676a36bf9bb3c56c1aa791658183a54d2744120f27285738d90465a",
+      "host_proc_macro": false,
+      "license": "MIT/Apache-2.0",
+      "name": "fallible-streaming-iterator",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.1.9"
+    },
+    {
       "cargo_checksum": "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223",
       "host_proc_macro": false,
       "license": "Apache-2.0 OR MIT",
       "name": "fastrand",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "2.5.0"
+    },
+    {
+      "build_dependency": true,
+      "cargo_checksum": "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48",
+      "host_proc_macro": false,
+      "license": "MIT OR Apache-2.0",
+      "name": "find-msvc-tools",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.1.15"
     },
     {
       "cargo_checksum": "b5c95b673b8f6f7235229ae11c5642d81b04c2e64c1e2fb417bc0cf73ca45f29",
@@ -220,6 +266,14 @@
       "version": "2.14.2"
     },
     {
+      "cargo_checksum": "3bd1574e617a9a6c1f8f8181bd7e841e1f20e4277607ef28945765188d6284d4",
+      "host_proc_macro": false,
+      "license": "MIT OR Apache-2.0",
+      "name": "itoa",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "1.0.19"
+    },
+    {
       "cargo_checksum": "20870f649af7073d53e38067b2a84312175d56ea15217e1b15bc83506ec50afb",
       "host_proc_macro": false,
       "license": "MIT OR Apache-2.0",
@@ -236,28 +290,20 @@
       "version": "0.2.191"
     },
     {
+      "cargo_checksum": "b06e69070b7e12262b0cd90832f0a7396f142a2b330181255562decf9f0c6215",
+      "host_proc_macro": false,
+      "license": "MIT",
+      "name": "libsqlite3-sys",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.40.0"
+    },
+    {
       "cargo_checksum": "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53",
       "host_proc_macro": false,
       "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
       "name": "linux-raw-sys",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.12.1"
-    },
-    {
-      "cargo_checksum": null,
-      "host_proc_macro": false,
-      "license": "Apache-2.0",
-      "name": "loft-core",
-      "source": "workspace",
-      "version": "0.1.2"
-    },
-    {
-      "cargo_checksum": null,
-      "host_proc_macro": false,
-      "license": "Apache-2.0",
-      "name": "loft-ffi",
-      "source": "workspace",
-      "version": "0.1.2"
     },
     {
       "cargo_checksum": "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98",
@@ -332,6 +378,32 @@
       "version": "1.21.4"
     },
     {
+      "build_dependency": true,
+      "cargo_checksum": "46eb8fb9fb3b61ce1c0f8a026c4c1a0714d3a9e138e7fbde78753ce2babc3846",
+      "host_proc_macro": false,
+      "license": "MIT/Apache-2.0",
+      "name": "openssl-src",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "300.6.1+3.6.3"
+    },
+    {
+      "cargo_checksum": "19c413d6ec9ebaf5e1c829d355cb3e9f783778d700f135be0921d52fce3c60ae",
+      "host_proc_macro": false,
+      "license": "MIT",
+      "name": "openssl-sys",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.9.118"
+    },
+    {
+      "build_dependency": true,
+      "cargo_checksum": "f6b464fbc74e149a392436b17d523f769e057cb6877f6a5c4618bc6f11800548",
+      "host_proc_macro": false,
+      "license": "MIT OR Apache-2.0",
+      "name": "pkg-config",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.3.34"
+    },
+    {
       "cargo_checksum": "4a6394b9e965e73d0a289ee54f589087e2c676aedf60885baf52c76b771e4958",
       "host_proc_macro": false,
       "license": "MIT OR Apache-2.0",
@@ -362,6 +434,14 @@
       "name": "ring",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.17.14"
+    },
+    {
+      "cargo_checksum": "f172c4812a19b26d1c23cdb0070e69db335503dfa378b910eb857386e5b8beba",
+      "host_proc_macro": false,
+      "license": "MIT",
+      "name": "rusqlite",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.43.0"
     },
     {
       "cargo_checksum": "faf0c4a6ece9950b9abdb62b1cfcf2a68b3b67a10ba445b3bb85be2a293d0632",
@@ -404,6 +484,14 @@
       "version": "0.103.17"
     },
     {
+      "cargo_checksum": "9774ba4a74de5f7b1c1451ed6cd5285a32eddb5cccb8cc655a4e50009e06477f",
+      "host_proc_macro": false,
+      "license": "Apache-2.0 OR BSL-1.0",
+      "name": "ryu",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "1.0.23"
+    },
+    {
       "cargo_checksum": "4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba",
       "host_proc_macro": false,
       "license": "MIT OR Apache-2.0",
@@ -428,6 +516,14 @@
       "version": "1.0.229"
     },
     {
+      "cargo_checksum": "402a6f66d8c709116cf22f558eab210f5a50187f702eb4d7e5ef38d9a7f1c79c",
+      "host_proc_macro": false,
+      "license": "MIT OR Apache-2.0",
+      "name": "serde_json",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "1.0.145"
+    },
+    {
       "cargo_checksum": "9c187e0a369471c550af028cba56d4f4fa2a489ad28151ae95a4d340a2a8b782",
       "host_proc_macro": false,
       "license": "MIT OR Apache-2.0",
@@ -444,12 +540,38 @@
       "version": "0.10.9"
     },
     {
+      "build_dependency": true,
+      "cargo_checksum": "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba",
+      "host_proc_macro": false,
+      "license": "MIT OR Apache-2.0",
+      "name": "shlex",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "2.0.1"
+    },
+    {
       "cargo_checksum": "33f4fe9184a62d842c9ef383018f3306d8ba224fd9d836f56d7288308847c256",
       "host_proc_macro": false,
       "license": "MIT OR Apache-2.0",
       "name": "siphasher",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "1.0.4"
+    },
+    {
+      "cargo_checksum": "3244542535d5de959d90ec55d1b5ff0fd2bb7b1310223907d5f11932847f7b59",
+      "host_proc_macro": false,
+      "license": "MIT OR Apache-2.0",
+      "name": "smallvec",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "1.16.6"
+    },
+    {
+      "build_dependency": true,
+      "cargo_checksum": "fd6b5280ed2593d07b2816ec531821c15c306903bcca224716f1fbcc2bbfedfe",
+      "host_proc_macro": false,
+      "license": "MIT AND BSD-3-Clause AND blessing AND WTFPL",
+      "name": "sqlcipher-src",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "420.0.0+sqlcipher-4.20.0-sqlite-3.54.1-libtomcrypt-1.18.2"
     },
     {
       "cargo_checksum": "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f",
@@ -644,6 +766,24 @@
       "version": "0.9.0"
     },
     {
+      "build_dependency": true,
+      "cargo_checksum": "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426",
+      "host_proc_macro": false,
+      "license": "MIT/Apache-2.0",
+      "name": "vcpkg",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.2.15"
+    },
+    {
+      "build_dependency": true,
+      "cargo_checksum": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a",
+      "host_proc_macro": false,
+      "license": "MIT/Apache-2.0",
+      "name": "version_check",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "version": "0.9.5"
+    },
+    {
       "cargo_checksum": "8c3b93199df0ab874cdf0c6a94f0a0dc3423fe41f1cafb62b8bd7b1deb277aef",
       "host_proc_macro": false,
       "license": "MIT",
@@ -678,7 +818,10 @@
   ],
   "not_a_binary_reachability_claim": true,
   "schema_version": 1,
-  "scope": "cargo_normal_dependency_graph_for_loft_ffi_aarch64_linux_android_including_host_proc_macros",
-  "tree_stdout_sha256": "e19989affda16b9b7573a01cedead97de46b5e471c2f2f64f17b4c43404c5123",
-  "workspace_version": "0.1.2-LYNX"
+  "scope": "cargo_normal_and_build_graph_for_loft_ffi_aarch64_linux_android_including_native_source_build_dependencies",
+  "tree_stdout_sha256": [
+    "06899cd4add199f70767b933175bd74a0855f3c4fd4e7cdb338a355058a76b37",
+    "2d83173f54b89bd401bc58b6e6eae4b2f0061c7f57d899dbcfe41b9c710bb54d"
+  ],
+  "workspace_version": "0.1.3-LYNX"
 }

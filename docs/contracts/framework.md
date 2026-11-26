@@ -1,16 +1,16 @@
 # Framework contract · CoreSnapshot 2 / Android envelope 3
 
-Product `loft`, Android package `net.aptist.loft`, target version `0.1.2-LYNX`. This contract covers the application framework and its real VPN resource adapter. Policy JSON and NodePage remain schema1; their numbers are independent of the snapshot/envelope versions. Executed source/artifact checks, the complete product roadmap, production identity service and device acceptance are tracked separately in `docs/requirements.md` and the validation report.
+Product `loft`, Android package `net.aptist.loft`, target version `0.1.3-LYNX`. This contract covers the application framework and its VPN resource adapter. Policy JSON and NodePage use schema 1. Their numbers are independent of the snapshot and envelope versions. See the [requirements](../requirements.md) for executed checks and remaining roadmap work.
 
 ## Owners and generated boundaries
 
-`loft-core-rust/crates/loft-core` owns validated configuration and business state. `loft-ffi` exports `AppCore` through UniFFI; generated Kotlin uses `net.aptist.loft.core.generated` and `libloft_ffi.so`. The private Android `:vpn` owner creates one core. Creating/querying it performs no network request, file operation, TUN creation or periodic work. Kotlin supplies system operations and Go supplies protocol/TUN resources; neither supplies a replacement business state machine.
+`loft-core-rust/crates/loft-core` owns validated configuration and business state. `loft-ffi` exports `AppCore` through UniFFI with generated Kotlin in `net.aptist.loft.core.generated` and `libloft_ffi.so`. The private Android `:vpn` owner opens one core and its encrypted local configuration on the serial control worker. Snapshot queries read published state. Kotlin supplies system operations and Go supplies protocol/TUN resources. [Encrypted storage contract](encrypted-storage.md)
 
 Kotlin and native libraries must be generated from the same frozen Rust source and UniFFI version. Bindings are build outputs. The Go `engine` package is generated with the module-locked gomobile/gobind tools and `with_gvisor`; a controller-only build does not contain the VPN stack.
 
 ## Local configuration and queries
 
-`importNode`, `removeNode`, `stageServer`, `resetServer` and `setAppRouting` return typed failures. Validation completes before mutation. Nodes and credentials remain explicitly session-local until encrypted storage and recovery are separately implemented; plaintext persistence is forbidden. `stageServer` only normalizes an HTTPS candidate and leaves `serverVerified=false`; it does not verify a server or start OAuth.
+`importNode`, `removeNode`, `stageServer`, `resetServer`, `setAppRouting` and `setNetworkPrivacyPolicy` return typed failures. The production owner validates and commits changes to encrypted storage before publishing them. `stageServer` normalizes an HTTPS candidate and leaves `serverVerified=false`.
 
 `CoreSnapshot` schema2 is an immutable owned record containing version, at most50 redacted node summaries, full `nodeCount`, server candidate, routing draft, connection state, global generation, attempt ID, active node, confirmed routing and an optional stable VPN failure. It adds a privacy draft/epoch, separate applied policy and actual enforcement state. Summaries omit raw links, usernames, passwords, seeds, PEM and private keys. The snapshot prefix is not the complete directory. [Network privacy](network-privacy.md) defines the matching producer/consumer contract; NodePage remains schema1 and Android publication envelope is3.
 
@@ -26,7 +26,7 @@ Kotlin and native libraries must be generated from the same frozen Rust source a
 | Server candidate | 2048 input bytes; normalized HTTPS origin only |
 | Binder application payload | 60 KiB; 4 KiB reserved beneath the 64 KiB design ceiling |
 
-The existing byte-array import command admits only what fits its 60 KiB envelope. The larger Rust parsing allowance is not proof of a 512 KiB Android import path. Bounded `ParcelFileDescriptor` import transport, QR and encrypted restart recovery remain explicit implementation work; do not truncate an input or omit certificate/key material.
+The existing byte-array import command admits only what fits its 60 KiB envelope. Bounded `ParcelFileDescriptor` import transport and QR remain future work. Import preserves all validated certificate and key material.
 
 ## VPN attempt and receipt port
 
@@ -62,6 +62,6 @@ X preserves fixed-target application UDP 1–1024 bytes. Pro preserves 0–65,50
 
 ## Optional modules and verification boundary
 
-Anonymous startup is local. Account/server editing, mail and Shield expose their actual dependency states. No current native public OAuth, Rust BFF, mailbox, malware verdict, attestation, SQLCipher recovery or Gateway policy receipt is fabricated. Administrator clientSecret and Portal bearer remain outside the APP's current BFF path. Fold/layout, four-language resources and the persistent module rail are native UI capabilities; actual Pixel/Samsung, TalkBack, Always-on/Doze, battery and 72-hour acceptance require their own evidence.
+Anonymous startup is local. Account/server editing, mail and Shield expose their actual dependency states. Administrator clientSecret and Portal bearer remain outside the APP's current BFF path. The persistent native module rail uses icons with localized spoken names and a selected state. Pixel/Samsung Fold, TalkBack, Always-on/Doze, battery and 72-hour acceptance require their own device evidence.
 
 Read `docs/contracts/resources.md` for task/resource ownership and `docs/validation/` plus the task report for executed tests, failed attempts and unverified limits. Compilation, host reducers/packets, Android TUN execution and physical-device acceptance are distinct claims.

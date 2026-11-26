@@ -55,6 +55,21 @@ class SnapshotPublicationTest {
         assertNull(consumer.consume(11, fresh))
     }
 
+    @Test fun restoredConfigurationMayHaveLowerGenerationInTheSameBinding() {
+        val publisher = SnapshotPublisher()
+        val stopped = publisher.capture({ core().copy(generation = 11uL, connectionAttemptId = 3uL) }, SnapshotMetadata())
+        val inFlight = publisher.capture({ core().copy(generation = 11uL, connectionAttemptId = 3uL) }, SnapshotMetadata())
+        val reopened = publisher.capture(::core, SnapshotMetadata())
+        val consumer = SnapshotConsumer()
+        consumer.begin(11)
+        assertEquals(11uL, consumer.consume(11, stopped)!!.core.generation)
+        val restored = consumer.consume(11, reopened)!!
+        assertEquals(7uL, restored.core.generation)
+        assertEquals(0uL, restored.core.connectionAttemptId)
+        assertEquals(ConnectionState.DISCONNECTED, restored.core.connectionState)
+        assertNull(consumer.consume(11, inFlight))
+    }
+
     // Exhaustion must break the transport instead of recycling an ordering value
     // or querying a snapshot that can never be published safely.
     @Test fun exhaustedPublicationSequenceFailsBeforeQueryingAnotherSnapshot() {

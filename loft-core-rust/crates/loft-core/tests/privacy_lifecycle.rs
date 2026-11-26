@@ -69,7 +69,10 @@ fn anonymous_snapshot_has_a_local_draft_and_no_effective_protection() {
     let core = CoreState::new();
     let snapshot = core.snapshot();
     assert_eq!(snapshot.schema_version, 2);
-    assert_eq!(snapshot.core_version, "0.1.2-LYNX");
+    assert_eq!(
+        snapshot.core_version,
+        concat!(env!("CARGO_PKG_VERSION"), "-LYNX")
+    );
     assert_eq!(snapshot.generation, 0);
     assert_eq!(snapshot.network_privacy_policy_epoch, 1);
     assert_eq!(

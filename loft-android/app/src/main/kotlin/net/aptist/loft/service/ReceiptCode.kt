@@ -20,6 +20,8 @@ enum class ReceiptCode(val text: Int, val successful: Boolean = false) {
     EMPTY_ROUTING_SELECTION(R.string.err_empty_routing_selection), INVALID_PACKAGE_NAME(R.string.err_invalid_package_name),
     ROUTING_SELECTION_TOO_LARGE(R.string.err_routing_selection_too_large), GENERATION_EXHAUSTED(R.string.err_generation_exhausted),
     DATA_PLANE_UNAVAILABLE(R.string.err_data_plane_unavailable), STATE_UNAVAILABLE(R.string.err_state_unavailable),
+    STORAGE_UNAVAILABLE(R.string.err_storage_unavailable), STORAGE_RECOVERY_REQUIRED(R.string.err_storage_recovery),
+    STORAGE_REOPENED(R.string.ok_storage_reopened, true),
     CONTROL_TOO_LARGE(R.string.err_control_too_large), INVALID_COMMAND(R.string.err_invalid_command),
     NATIVE_UNAVAILABLE(R.string.err_native_unavailable), RESOURCE_BUSY(R.string.err_resource_busy),
     VPN_PERMISSION_DENIED(R.string.err_vpn_permission), VPN_START_FAILED(R.string.err_vpn_start_failed),
@@ -59,6 +61,8 @@ enum class ReceiptCode(val text: Int, val successful: Boolean = false) {
                 is CoreException.GenerationExhausted -> GENERATION_EXHAUSTED
                 is CoreException.DataPlaneUnavailable -> DATA_PLANE_UNAVAILABLE
                 is CoreException.StateUnavailable -> STATE_UNAVAILABLE
+                is CoreException.StorageUnavailable -> STORAGE_UNAVAILABLE
+                is CoreException.StorageRecoveryRequired -> STORAGE_RECOVERY_REQUIRED
                 is CoreException.StaleGeneration -> STALE_GENERATION
                 is CoreException.ConnectionBusy -> CONNECTION_BUSY
                 is CoreException.NodeInUse -> NODE_IN_USE
@@ -76,7 +80,7 @@ enum class ReceiptCode(val text: Int, val successful: Boolean = false) {
 }
 
 enum class OperationKind {
-    IMPORT, REMOVE, SERVER, RESET_SERVER, ROUTING, CONNECT, STOP, NETWORK_PRIVACY;
+    IMPORT, REMOVE, SERVER, RESET_SERVER, ROUTING, CONNECT, STOP, NETWORK_PRIVACY, STORAGE_REOPEN;
     companion object {
         fun of(command: CoreCommand): OperationKind = when (command) {
             is CoreCommand.ImportNode -> IMPORT

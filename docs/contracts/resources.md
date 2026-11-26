@@ -4,8 +4,9 @@ This is the framework's initial resource contract, derived from the local v3.6 p
 
 | Work/resource | Owner, trigger and bound | Cancellation/release |
 | --- | --- | --- |
-| Domain core | One `AppCore` in `:vpn`; local creation/query is inert | Dispose after the shared owner has no live work; Activity recreation does not own it |
-| Configuration | Rust: 200 nodes/8 MiB retained charge; 512 KiB raw/decoded parser input | Atomic rejection; zeroizing owned buffers; session ends clear material |
+| Domain core | One `AppCore` in `:vpn`; the control worker opens the guest store | Dispose after the shared owner has no live work. An Activity recreation preserves the binding |
+| Configuration | Rust: 200 nodes/8 MiB retained charge, 512 KiB raw/decoded parser input | Reject atomically and clear temporary owned buffers. Durable configuration stays encrypted across process exits |
+| SQLCipher | One connection on the existing serial control worker, 64 MiB maximum database, 2 MiB page cache and bounded restore reads | Transactions precede published mutations. Stop ingress performs priority cancellation independently of disk and Keystore I/O. Final Rust confirmation acquires the state lock |
 | UI directory | One node page/50 rows plus bounded selection metadata; APP list page50, current Android11+ launcher-visible discovery | Query/binding epochs reject late results; page changes release rows; PM-reported UID members are frozen exactly, hidden/full-device inventory is not proved |
 | Ordinary control | One serial Android worker; 8 queued commands, each at most60 KiB | Queue-full is a typed busy result; Stop/revoke bypass the queue |
 | Snapshot delivery | One serialized publisher; at most60 KiB frame, monotonic capture sequence | Visibility unsubscribe and Binder death; explicit sequence exhaustion |

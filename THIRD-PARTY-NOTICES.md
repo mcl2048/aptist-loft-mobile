@@ -8,6 +8,8 @@ HyrakenX/Pro crypto notices describe the existing Rocca-S/Ascon/AEGIS lineage an
 
 Resolved Rust components and exact available texts are recorded in `docs/dependencies/rust-android-resolved.json` and `rust-license-inventory.json`; the graph includes host proc macros and is not a binary reachability claim. UniFFI's shared MPL2 text is retained. The Go inventory in `docs/dependencies/go-resolved.json` distinguishes runtime, tools/host graph inputs, cached license files and unresolved provenance. Available dependency texts are copied under `licenses/dependencies/` for the application license assets.
 
+The guest store uses rusqlite with the bundled SQLCipher and vendored OpenSSL build features. The locked graph records the SQLCipher amalgamation and OpenSSL source package. Their original native source notices accompany the Rust wrapper license texts in `licenses/dependencies/rust/`.
+
 The inventory records eleven uncached external graph modules and missing module-root texts for some local protocol/helper modules. Existing source headers and crypto notices remain preserved; no missing license is inferred from a dependency name. This framework inventory is a reproducible evidence record, not a complete legal or production-release certification.
 
 Go modules are locked by `go.mod/go.sum`, Rust crates by Cargo.lock, and Android runtime artifacts by fixed dependency versions. The final release dependency inventory records actual resolved inputs; third-party notice assets are read only when needed, not preloaded into the VPN runtime.

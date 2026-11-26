@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "release": "0.1.3-LYNX",
+  "scope": "API29 x86_64 QEMU TCG, ordinary application UID, Debug APK instrumentation",
+  "app_sha256": "7e00e089ac4ca0a351188e67c461ddbbe2d573e6e3a062f99561b78e65609d2c",
+  "build_receipt_sha256": "97d8936d6d9f0271de1d6a8cd38f816d4290286c2ea70f3843dc89af94f98a97",
+  "storage_and_regressions": {
+    "test_apk_sha256": "e5bd3d984a3087b2d9e00b856bc6373523264b6ee3280d5a874bd7efc35b1dd5",
+    "passed": 12,
+    "tests": [
+      {
+        "test": "wrappedDatabaseReopensAndRetainsCiphertextAfterKeyLoss",
+        "tests": 1,
+        "log_sha256": "c44140bda4dc673a4ebcc56d0b8ee53ca454ea6dccb64e83162fe8f5f41c4f1a"
+      },
+      {
+        "test": "activeEnvelopeCannotRecreateMissingDatabase",
+        "tests": 1,
+        "log_sha256": "c19d2a1056d073a6c1998d48857bf2db0ee013a6289c87e5cf512d15fb3038ac"
+      },
+      {
+        "test": "interruptedProvisioningRetriesWithTheSameKey",
+        "tests": 1,
+        "log_sha256": "f9f94a9ab5f79a00d89570cfa6e9f79f56a2836bb1d68edab3955116b69ad6ed"
+      },
+      {
+        "test": "tamperingWithTheProvisioningPhaseCannotAuthorizeDatabaseCreation",
+        "tests": 1,
+        "log_sha256": "1c5082bf840d63db9ae06e69e4ab41b143856e47b24a6eb4eea8e8053855202a"
+      },
+      {
+        "test": "androidDirectoryAliasIsResolvedWithoutResolvingTheDatabaseLeaf",
+        "tests": 1,
+        "log_sha256": "ae2925b9136cc0bba448b2823a947366f6bf18e428fd90389abeb88da76ac850"
+      },
+      {
+        "test": "binderWritesDurableLocalConfiguration",
+        "tests": 1,
+        "log_sha256": "094c94691e9bd44d29bf5b505debd784c101e4fe0320fa7e52917d1045c08867"
+      },
+      {
+        "test": "afterProcessRestartReadsDurableLocalConfiguration",
+        "tests": 1,
+        "log_sha256": "2bc6fa6707b5e5dae2eafeba307dd93f0bd9efa1ee012313dbdb58f6e076b455"
+      },
+      {
+        "test": "guestCreatesNoTunOrGoTransport",
+        "tests": 1,
+        "log_sha256": "84c1765b1987d8efc340ad19bcf4cf8a7fb0799b19ac8ee33a2c55ae9322c70d"
+      },
+      {
+        "test": "guestPolicyAndLocaleChangesRemainLocalWithInertChannels",
+        "tests": 1,
+        "log_sha256": "d6b107209b813725d5a87a709986ac46bc9d1dcb7292bc838576b54076df0567"
+      },
+      {
+        "test": "nativeCapabilitiesAndInertGoRequireNoTransport",
+        "tests": 1,
+        "log_sha256": "8eefc9427d1b1a5ae2c0e196d6acec2e4361763736904bc3f5f95e0ffdca8b38"
+      },
+      {
+        "test": "AndroidQueryCancellationTest",
+        "tests": 2,
+        "log_sha256": "4f770766eae41621f6366ee62c176f4c6ae7377a004ff5bfead1b53b0571a90b"
+      }
+    ],
+    "force_stop_between_independent_invocations": true
+  },
+  "rail": {
+    "test_apk_sha256": "af5287ebeb171d7f0883651cba156c8a92a7e23db9721c401dc64129ec76837f",
+    "passed": 1,
+    "log_sha256": "6a236e4ce736217e59bc92782e8a73affa465c5e656387413de87f84bd1b44ed",
+    "installed_test_apk_sha256": "af5287ebeb171d7f0883651cba156c8a92a7e23db9721c401dc64129ec76837f"
+  },
+  "earlier_failures": [
+    {
+      "stage": "directory alias before fix",
+      "log_sha256": "90b04244829f3b1a23bf859c26823fb1154c2b3a1e7fbdc60fcecb6abb4faf14"
+    },
+    {
+      "stage": "rail synthetic description node",
+      "log_sha256": "4005385653d84f0317626204ae212b53a522689afa6cfcdcb21b7c735829c35d"
+    },
+    {
+      "stage": "menu synthetic description node",
+      "log_sha256": "8924201d5c296caf211235f5b92ca6ed0400013d181aaf85d904e6613bde3863"
+    },
+    {
+      "stage": "test expected a Back affordance on Nodes",
+      "log_sha256": "32d5431521dce26ae19b910c44095fc05aa396ee2e86cc6664e7ae0b4b6e31b7"
+    }
+  ]
+}

@@ -97,8 +97,17 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
         if (callback != null) try { remote?.unsubscribe(callback) } catch (_: RemoteException) { }
     }
     fun execute(requestId: Long, command: CoreCommand): Boolean {
-        val control = remote ?: return false
         val payload = ControlCodec.encode(command)
+        return try { commandReceipt(requestId) { control, callback -> control.execute(requestId, payload, callback) } }
+        finally { payload.fill(0) }
+    }
+
+    fun reopenStorage(requestId: Long): Boolean = commandReceipt(requestId) { control, callback ->
+        control.reopenStorage(requestId, callback)
+    }
+
+    private fun commandReceipt(requestId: Long, send: (ILoftControl, ILoftEvents) -> Unit): Boolean {
+        val control = remote ?: return false
         val bindingTicket = bindingGeneration
         val callback = object : ILoftEvents.Stub() {
             override fun onSnapshot(payload: ByteArray) = Unit
@@ -115,9 +124,8 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
                 }
             }
         }
-        return try { control.execute(requestId, payload, callback); true }
+        return try { send(control, callback); true }
         catch (_: RemoteException) { lost(ReceiptCode.STATE_UNAVAILABLE); false }
-        finally { payload.fill(0) }
     }
     fun queryNodePage(requestId: Long, offset: UInt, generation: ULong): Boolean {
         val control = remote ?: return false

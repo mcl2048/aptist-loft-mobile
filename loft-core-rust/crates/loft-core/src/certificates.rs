@@ -12,21 +12,22 @@ pub(crate) fn validate_pro_material(
     pem: &[u8],
     sni: &str,
     pin: &[u8; 32],
+    now: Option<ASN1Time>,
 ) -> Result<(), CoreError> {
     let certificates = certificates(pem)?;
-    validate_server_certificates(&certificates, sni, pin)
+    validate_server_certificates(&certificates, sni, pin, now)
 }
 
 pub(crate) fn validate_x_material(
     material: &XMaterial,
     sni: &str,
     pin: &[u8; 32],
+    now: Option<ASN1Time>,
 ) -> Result<(), CoreError> {
     let server = certificates(&material.server_certificate.0)?;
-    validate_server_certificates(&server, sni, pin)?;
+    validate_server_certificates(&server, sni, pin, now)?;
     let client = certificates(&material.client_certificate.0)?;
     let authorities = certificates(&material.client_ca.0)?;
-    let now = ASN1Time::now();
     let leaf = checked_certificate(&client[0], now)?;
     if leaf
         .extended_key_usage()
@@ -84,8 +85,8 @@ fn validate_server_certificates(
     certificates: &[CertificateDer<'_>],
     sni: &str,
     pin: &[u8; 32],
+    now: Option<ASN1Time>,
 ) -> Result<(), CoreError> {
-    let now = ASN1Time::now();
     let leaf = checked_certificate(&certificates[0], now)?;
     if leaf
         .extended_key_usage()
@@ -103,13 +104,15 @@ fn validate_server_certificates(
 
 fn checked_certificate<'a>(
     der: &'a CertificateDer<'_>,
-    now: ASN1Time,
+    now: Option<ASN1Time>,
 ) -> Result<X509Certificate<'a>, CoreError> {
     let (remainder, certificate) =
         X509Certificate::from_der(der.as_ref()).map_err(|_| CoreError::InvalidCertificate)?;
     if !remainder.is_empty()
-        || now < certificate.validity().not_before
-        || now >= certificate.validity().not_after
+        || certificate.validity().not_before >= certificate.validity().not_after
+        || now.is_some_and(|now| {
+            now < certificate.validity().not_before || now >= certificate.validity().not_after
+        })
         || certificate.extensions_map().is_err()
     {
         return Err(CoreError::InvalidCertificate);
@@ -119,7 +122,7 @@ fn checked_certificate<'a>(
 
 fn validate_chain_links(
     certificates: &[CertificateDer<'_>],
-    now: ASN1Time,
+    now: Option<ASN1Time>,
 ) -> Result<(), CoreError> {
     for certificate in certificates {
         checked_certificate(certificate, now)?;
@@ -135,6 +138,17 @@ fn validate_chain_links(
             || child.verify_signature(Some(parent.public_key())).is_err()
         {
             return Err(CoreError::InvalidCertificate);
+        }
+    }
+    Ok(())
+}
+
+/// Stored certificates remain manageable after expiry, but they cannot open a new VPN.
+pub(crate) fn validate_certificate_times(pem: &[&[u8]]) -> Result<(), CoreError> {
+    let now = Some(ASN1Time::now());
+    for chain in pem {
+        for certificate in certificates(chain)? {
+            checked_certificate(&certificate, now)?;
         }
     }
     Ok(())

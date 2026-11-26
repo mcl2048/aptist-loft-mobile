@@ -3,6 +3,7 @@ use crate::origin::{Endpoint, normalize_host, parse_endpoint};
 use crate::{CoreError, NodeSummary, ProtocolKind};
 use base64::{Engine, engine::general_purpose::STANDARD};
 use std::{collections::BTreeMap, fmt};
+use x509_parser::time::ASN1Time;
 use zeroize::Zeroizing;
 
 pub const MAX_NODE_INPUT_BYTES: usize = 512 * 1024;
@@ -151,6 +152,21 @@ pub(crate) struct NodeConfig {
 }
 
 impl NodeConfig {
+    pub(crate) fn validate_certificate_times(&self) -> Result<(), CoreError> {
+        use crate::certificates::validate_certificate_times;
+        match &self.protocol {
+            ProtocolConfig::Socks5(_) => Ok(()),
+            ProtocolConfig::HyrakenX { material, .. } => validate_certificate_times(&[
+                &material.server_certificate.0,
+                &material.client_ca.0,
+                &material.client_certificate.0,
+            ]),
+            ProtocolConfig::HyrakenPro { certificate, .. } => {
+                validate_certificate_times(&[&certificate.0])
+            }
+        }
+    }
+
     pub(crate) fn canonical_uri(&self) -> Result<Zeroizing<String>, CoreError> {
         let mut uri = Zeroizing::new(String::new());
         match &self.protocol {
@@ -398,8 +414,7 @@ impl NodeCandidate {
 
 type Query = BTreeMap<String, Zeroizing<Vec<u8>>>;
 
-pub(crate) fn parse_node(raw: String) -> Result<NodeCandidate, CoreError> {
-    let raw = Zeroizing::new(raw);
+pub(crate) fn parse_node(raw: &str, now: Option<ASN1Time>) -> Result<NodeCandidate, CoreError> {
     if raw.len() > MAX_NODE_INPUT_BYTES {
         return Err(CoreError::InputTooLarge);
     }
@@ -494,7 +509,7 @@ pub(crate) fn parse_node(raw: String) -> Result<NodeCandidate, CoreError> {
                     &mut budget,
                 )?,
             };
-            validate_x_material(&material, &sni, &pin)?;
+            validate_x_material(&material, &sni, &pin, now)?;
             ProtocolConfig::HyrakenX {
                 seed,
                 sni,
@@ -533,7 +548,7 @@ pub(crate) fn parse_node(raw: String) -> Result<NodeCandidate, CoreError> {
                 MAX_PUBLIC_CERT_BYTES,
                 &mut budget,
             )?;
-            validate_pro_material(&certificate.0, &sni, &pin)?;
+            validate_pro_material(&certificate.0, &sni, &pin, now)?;
             ProtocolConfig::HyrakenPro {
                 seed,
                 sni,

@@ -25,8 +25,8 @@
     <string name="enterprise_account">Firmenkonto</string>
     <string name="framework_title">App-Grundgerüst</string>
     <string name="framework_body">Lokale Knoten, VPN-Steuerung und Konfigurationsentwürfe sind enthalten. Anmeldung, Mail und Sicherheitsprüfungen benötigen noch ihre Adapter.</string>
-    <string name="temporary_title">Temporäre Sitzungsspeicherung</string>
-    <string name="temporary_body">Importierte Knoten und Routing-Einstellungen bleiben nur in dieser Sitzung. Sie gehen beim Sitzungsende oder Dienststopp verloren. Verschlüsselte Speicherung ist noch nicht angebunden.</string>
+    <string name="storage_title">Verschlüsselter lokaler Speicher</string>
+    <string name="storage_body">LOFT speichert importierte Knoten, gespeicherte Routing- und Datenschutz-Einstellungen sowie den Serverkandidaten verschlüsselt auf diesem Gerät.</string>
     <string name="connection_status">Verbindungsstatus</string>
     <string name="disconnected">Nicht verbunden</string>
     <string name="no_nodes">Keine Knoten hinzugefügt</string>
@@ -38,12 +38,12 @@
     <string name="choose_node">Knoten auswählen</string>
     <string name="node_list">Knoten</string>
     <string name="import_link">Link importieren</string>
-    <string name="node_count">%1$d Knoten in dieser Sitzung</string>
+    <string name="node_count">%1$d gespeicherte Knoten</string>
     <string name="first_page_only">Die ersten %1$d Knoten werden angezeigt. Weitere Seiten benötigen den Speicheradapter.</string>
     <string name="node_details">Knotendetails</string>
     <string name="select_candidate">Kandidat auswählen</string>
     <string name="remove_node">Knoten entfernen</string>
-    <string name="remove_node_confirmation">Diesen temporären lokalen Knoten entfernen? Entfernte Zugangsdaten werden dabei nicht widerrufen.</string>
+    <string name="remove_node_confirmation">Diesen gespeicherten Knoten vom Gerät entfernen? Der Zugriff auf den entfernten Server bleibt gültig.</string>
     <string name="protocol">Protokoll</string>
     <string name="endpoint">Zieladresse</string>
     <string name="credentials">Zugangsdaten</string>
@@ -57,9 +57,9 @@
     <string name="import_limit">Dieses Grundgerüst akzeptiert vollständige Links bis 60 KiB. Längere Links benötigen einen begrenzten Dateiadapter; Zugangsdaten dürfen nicht gekürzt werden.</string>
     <string name="read_clipboard">Zwischenablage lesen</string>
     <string name="camera_unavailable">QR-Scannen ist noch nicht angebunden. Verwenden Sie einen vollständigen Link.</string>
-    <string name="review_import">Temporären Knoten hinzufügen</string>
-    <string name="confirm_import_title">Knoten für diese Sitzung hinzufügen?</string>
-    <string name="confirm_import_body">Der vollständige Link wird vor dem Hinzufügen geprüft. Dabei wird keine Verbindung aufgebaut, keine entfernte Konfiguration geladen und kein Zugang dauerhaft gespeichert.</string>
+    <string name="review_import">Knoten hinzufügen</string>
+    <string name="confirm_import_title">Diesen Knoten speichern?</string>
+    <string name="confirm_import_body">LOFT prüft den vollständigen Link und speichert ihn verschlüsselt auf dem Gerät. Beim Speichern wird keine Verbindung aufgebaut.</string>
     <string name="cancel">Abbrechen</string>
     <string name="confirm">Bestätigen</string>
     <string name="discard_title">Änderungen verwerfen?</string>
@@ -70,9 +70,9 @@
     <string name="routing_mode">Nur ausgewählte Apps</string>
     <string name="routing_selected_help">Entwurf: Ausgewählte Apps und alle Apps mit derselben UID nutzen das VPN. Andere UID-Gruppen verbinden direkt. Änderungen gelten bei der nächsten Verbindung.</string>
     <string name="routing_full_help">Entwurf: Alle Apps nutzen den VPN-Bereich. Änderungen gelten bei der nächsten Verbindung.</string>
-    <string name="routing_saved">Sitzungseinstellung; das aktive VPN behält seinen festgelegten Bereich</string>
+    <string name="routing_saved">Einstellung gespeichert. Der aktive VPN-Bereich bleibt bestehen.</string>
     <string name="draft_selected_count">Entwurf: %1$d Apps ausgewählt</string>
-    <string name="confirmed_selected_count">Sitzungseinstellung: %1$d Apps</string>
+    <string name="confirmed_selected_count">Gespeicherte Einstellung (%1$d Apps)</string>
     <string name="search_apps">App-Name oder Paket suchen</string>
     <string name="selected_only">Nur ausgewählte Apps anzeigen</string>
     <string name="visible_scope">Es werden nur sichtbare Apps dieses Android-Profils aufgelistet. Andere Profile und verborgene Pakete sind nicht enthalten.</string>
@@ -122,7 +122,7 @@
     <string name="language_ja">日本語</string>
     <string name="language_de">Deutsch</string>
     <string name="privacy">Datenschutz und Speicherung</string>
-    <string name="privacy_body">Nur Design- und Spracheinstellungen werden dauerhaft gespeichert. Knotenzugang, Importtext und Konfigurationsentwürfe kommen nicht in Einstellungen oder Sicherungen.</string>
+    <string name="privacy_body">Design und Sprache werden separat gespeichert. Gespeicherte Konfigurationen werden verschlüsselt und von Android-Sicherungen ausgeschlossen. Nicht übermittelte Entwürfe bleiben im Arbeitsspeicher.</string>
     <string name="long_running">Netzwerk und Hintergrund</string>
     <string name="long_running_body">Ein aktives oder gesperrtes VPN hält einen Vordergrunddienst. Verdeckte Abfragen, Verkehrstimer oder Wake Locks starten nicht. Always-on und Akkuverhalten müssen noch am Gerät geprüft werden.</string>
     <string name="diagnostics_title">Verbindungsdiagnose</string>
@@ -136,11 +136,11 @@
     <string name="service_lost_body">Der lokale Dienst ist nicht verfügbar. Temporäre Knoten könnten verloren sein. Öffnen Sie den Dienst erneut, um den aktuellen Zustand zu lesen.</string>
     <string name="reopen_service">Lokalen Dienst erneut öffnen</string>
     <string name="working">Natives Ergebnis wird erwartet</string>
-    <string name="ok_node_imported">Temporärer Knoten hinzugefügt; keine Verbindung gestartet.</string>
+    <string name="ok_node_imported">Knoten auf diesem Gerät gespeichert.</string>
     <string name="ok_node_removed">Temporärer Knoten entfernt.</string>
     <string name="ok_server_staged">Adresskandidat angenommen; Server nicht geprüft.</string>
     <string name="ok_server_reset">Serverkandidat gelöscht.</string>
-    <string name="ok_routing_staged">Routing-Einstellung für diese Sitzung gespeichert. Sie gilt bei der nächsten VPN-Verbindung.</string>
+    <string name="ok_routing_staged">Routing-Einstellung gespeichert. Sie gilt ab der nächsten VPN-Verbindung.</string>
     <string name="ok_control_stopped">VPN-Deskriptoren und eigene Ressourcen sind geschlossen.</string>
     <string name="err_input_too_large">Eingabe oder dekodierte Daten sind zu groß. Besorgen Sie einen vollständigen unterstützten Link innerhalb der Grenze.</string>
     <string name="err_invalid_uri">Der Link ist ungültig. Fügen Sie einen vollständigen Knotenlink ein.</string>
@@ -152,9 +152,9 @@
     <string name="err_invalid_credential">Zugangsdaten sind ungültig. Besorgen Sie einen vollständigen gültigen Link.</string>
     <string name="err_invalid_certificate">Zertifikat oder Schlüssel konnte nicht geprüft werden. Aktualisieren Sie die vollständigen Daten.</string>
     <string name="err_invalid_option">Eine Protokolloption ist ungültig oder inkompatibel.</string>
-    <string name="err_duplicate_node">Diese vollständige Knotenkonfiguration ist bereits in der Sitzung vorhanden.</string>
-    <string name="err_node_capacity_reached">Die Knotengrenze der Sitzung ist erreicht. Entfernen Sie zuerst einen temporären Knoten.</string>
-    <string name="err_node_not_found">Der Knoten ist in dieser Sitzung nicht mehr vorhanden. Wählen Sie einen anderen.</string>
+    <string name="err_duplicate_node">Diese vollständige Knotenkonfiguration ist bereits gespeichert.</string>
+    <string name="err_node_capacity_reached">Die Höchstzahl gespeicherter Knoten ist erreicht. Entfernen Sie einen Knoten, bevor Sie einen weiteren importieren.</string>
+    <string name="err_node_not_found">Dieser Knoten ist nicht mehr gespeichert. Wählen Sie einen anderen Knoten aus.</string>
     <string name="err_invalid_server_address">Geben Sie eine Domain oder einen HTTPS-Ursprung ohne Zugangsdaten, Pfad, Abfrage oder Fragment ein.</string>
     <string name="err_empty_routing_selection">Wählen Sie mindestens eine sichtbare App vor dem Speichern dieses Modus.</string>
     <string name="err_invalid_package_name">Ein App-Paketname ist ungültig. Aktualisieren Sie die sichtbare App-Auswahl.</string>
@@ -211,7 +211,7 @@
     <string name="err_engine_stop_incomplete">Ressourcenabschluss nicht bestätigt. Der VPN-Vordergrunddienst bleibt bestehen; Stoppen erneut versuchen.</string>
     <string name="err_publication_exhausted">Die Sequenz für die Statusübertragung ist ausgeschöpft. VPN-Weiterleitung deaktiviert; stoppen und Sitzung erneut öffnen.</string>
     <string name="vpn_notification_unavailable">VPN beibehalten – Status nicht verfügbar</string>
-    <string name="node_page_loaded">Knotenseite aus dieser Sitzung gelesen.</string>
+    <string name="node_page_loaded">Gespeicherte Knoten geladen.</string>
     <string name="err_invalid_node_page">Diese Knotenseite ist nicht verfügbar. Liste aktualisieren.</string>
     <string name="node_page_loading">Knotenseite wird gelesen…</string>
     <string name="node_page_number">Seite %1$d von %2$d</string>
@@ -255,4 +255,7 @@
     <string name="mail_notification_title">Neue E-Mail verfügbar</string>
     <string name="mail_notification_body">E-Mail mit der aktuell autorisierten Sitzung öffnen.</string>
     <string name="mail_event_unavailable">Remote-E-Mail-Ereignisse sind nicht konfiguriert. Dieser Kanal bleibt bis zu einem echten autorisierten Dienstereignis inaktiv.</string>
+    <string name="err_storage_unavailable">Der verschlüsselte Speicher ist vorübergehend nicht verfügbar. Entsperren Sie das Gerät, prüfen Sie den freien Speicherplatz und öffnen Sie den Dienst erneut.</string>
+    <string name="err_storage_recovery">LOFT hat die verschlüsselten Dateien beibehalten. Öffnen Sie den Dienst erneut. Falls die Wiederherstellung weiterhin fehlschlägt, löschen Sie den LOFT-Speicher in den Android-Einstellungen und importieren Sie die ursprünglichen Knotenlinks erneut.</string>
+    <string name="ok_storage_reopened">Verschlüsselter Speicher wurde erneut geöffnet.</string>
 </resources>

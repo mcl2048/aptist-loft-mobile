@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
+    <!-- The encrypted database, SQLite sidecars and key envelope are under noBackupFilesDir. -->
     <cloud-backup disableIfNoEncryptionCapabilities="true">
         <exclude domain="root" path="." />
         <exclude domain="file" path="." />

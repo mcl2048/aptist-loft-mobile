@@ -4,11 +4,11 @@ import json
 from pathlib import Path
 import tomllib
 
-# These crypto/config validators were reviewed at the framework boundary.
+# Reviewed crypto, configuration validation and data-only serialization.
 # New direct dependencies require a conscious policy and source review; platform,
 # HTTP, database and binding implementations belong in adapter crates.
 APPROVED_DOMAIN_DEPENDENCIES = frozenset({
-    "base64", "rustls", "sha2", "x509-parser", "zeroize",
+    "base64", "rustls", "serde", "sha2", "x509-parser", "zeroize",
 })
 
 

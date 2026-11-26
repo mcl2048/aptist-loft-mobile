@@ -25,8 +25,8 @@
     <string name="enterprise_account">企業アカウント</string>
     <string name="framework_title">アプリのフレームワーク</string>
     <string name="framework_body">ローカルノード、VPN 制御、設定の下書きを利用できます。サインイン、メール、安全性の確認には各アダプターが必要です。</string>
-    <string name="temporary_title">このセッションだけの一時保存</string>
-    <string name="temporary_body">インポートしたノードとルーティング設定はこのセッションだけに保存されます。アプリのセッション終了やサービス停止で失われます。暗号化保存は未接続です。</string>
+    <string name="storage_title">暗号化ローカルストレージ</string>
+    <string name="storage_body">インポートしたノード、保存済みのルーティング設定とネットワークプライバシー設定、サーバー候補はこの端末上で暗号化して保存されます。</string>
     <string name="connection_status">接続状態</string>
     <string name="disconnected">未接続</string>
     <string name="no_nodes">ノードがありません</string>
@@ -38,12 +38,12 @@
     <string name="choose_node">ノードを選ぶ</string>
     <string name="node_list">ノード一覧</string>
     <string name="import_link">リンクをインポート</string>
-    <string name="node_count">このセッションに %1$d ノード</string>
+    <string name="node_count">保存済みノード %1$d 件</string>
     <string name="first_page_only">先頭の %1$d ノードを表示しています。続きのページには保存アダプターが必要です。</string>
     <string name="node_details">ノード詳細</string>
     <string name="select_candidate">候補を選択</string>
     <string name="remove_node">ノードを削除</string>
-    <string name="remove_node_confirmation">この一時ローカルノードを削除しますか？リモートのアクセス情報は失効しません。</string>
+    <string name="remove_node_confirmation">この端末から保存済みノードを削除しますか？ リモートサーバーへのアクセス権は引き続き有効です。</string>
     <string name="protocol">プロトコル</string>
     <string name="endpoint">接続先</string>
     <string name="credentials">認証情報</string>
@@ -57,9 +57,9 @@
     <string name="import_limit">このフレームワークは最大 60 KiB の完全なリンクに対応します。長いリンクには制限付きファイルアダプターが必要です。認証情報を短縮しないでください。</string>
     <string name="read_clipboard">クリップボードを読む</string>
     <string name="camera_unavailable">このフレームワークでは QR 読み取りが未接続です。完全なリンクを使用してください。</string>
-    <string name="review_import">一時ノードを追加</string>
-    <string name="confirm_import_title">このセッションにノードを追加しますか？</string>
-    <string name="confirm_import_body">追加前に完全なリンクを検証します。接続、リモート設定取得、認証情報の永続保存は行いません。</string>
+    <string name="review_import">ノードを追加</string>
+    <string name="confirm_import_title">このノードを保存しますか？</string>
+    <string name="confirm_import_body">LOFT は完全なリンクを検証し、暗号化ローカルストレージに保存します。保存時に接続は開始されません。</string>
     <string name="cancel">キャンセル</string>
     <string name="confirm">確認</string>
     <string name="discard_title">編集内容を破棄しますか？</string>
@@ -70,9 +70,9 @@
     <string name="routing_mode">選択アプリのみ</string>
     <string name="routing_selected_help">下書き: 選択したアプリと同じ UID のすべてのアプリが VPN を使い、他の UID グループは直接接続します。変更は次の接続で適用されます。</string>
     <string name="routing_full_help">下書き: すべてのアプリが VPN の範囲に入ります。変更は次の接続で適用されます。</string>
-    <string name="routing_saved">セッション設定。動作中の VPN は確定した範囲を保持します</string>
+    <string name="routing_saved">設定は保存済みです。接続中の VPN には現在の設定が引き続き適用されます。</string>
     <string name="draft_selected_count">下書きで %1$d アプリ選択</string>
-    <string name="confirmed_selected_count">セッション設定：%1$d アプリ</string>
+    <string name="confirmed_selected_count">保存済み設定（%1$d 個のアプリ）</string>
     <string name="search_apps">アプリ名やパッケージを検索</string>
     <string name="selected_only">選択アプリのみ表示</string>
     <string name="visible_scope">この Android プロファイルで見えるアプリのみ表示します。他のプロファイルや非表示パッケージは対象外です。</string>
@@ -122,7 +122,7 @@
     <string name="language_ja">日本語</string>
     <string name="language_de">Deutsch</string>
     <string name="privacy">プライバシーと保存</string>
-    <string name="privacy_body">永続保存するのはテーマと言語設定だけです。ノード認証情報、インポート文、設定下書きは設定ファイルやバックアップに書き込みません。</string>
+    <string name="privacy_body">テーマと言語は別に保存されます。保存した設定は暗号化され、Android のバックアップ対象から除外されます。未送信の編集内容はメモリに保持されます。</string>
     <string name="long_running">ネットワークとバックグラウンド</string>
     <string name="long_running_body">動作中または遮断中の VPN は前景サービスを保持します。隠れたポーリング、通信タイマー、ウェイクロックは開始しません。常時接続とバッテリー動作は端末での検証が必要です。</string>
     <string name="diagnostics_title">接続診断</string>
@@ -136,11 +136,11 @@
     <string name="service_lost_body">ローカルサービスを利用できません。一時ノードは失われた可能性があります。サービスを再起動して現在の状態を確認してください。</string>
     <string name="reopen_service">ローカルサービスを再起動</string>
     <string name="working">ネイティブ処理結果を待機中</string>
-    <string name="ok_node_imported">一時ノードを追加しました。接続は開始していません。</string>
+    <string name="ok_node_imported">ノードをこの端末に保存しました。</string>
     <string name="ok_node_removed">一時ノードを削除しました。</string>
     <string name="ok_server_staged">アドレス候補を受理しました。サーバーは未検証です。</string>
     <string name="ok_server_reset">サーバー候補を消去しました。</string>
-    <string name="ok_routing_staged">ルーティング設定をこのセッションに保存しました。次の VPN 接続で適用されます。</string>
+    <string name="ok_routing_staged">ルーティング設定を保存しました。次回の VPN 接続時に適用されます。</string>
     <string name="ok_control_stopped">VPN の記述子と所有するリソースを終了しました。</string>
     <string name="err_input_too_large">入力または復号情報が上限を超えています。対応する完全なリンクを制限内で取得してください。</string>
     <string name="err_invalid_uri">リンク形式が正しくありません。完全なノードリンクを貼り付けてください。</string>
@@ -152,9 +152,9 @@
     <string name="err_invalid_credential">認証情報が無効です。完全で有効なリンクを取得してください。</string>
     <string name="err_invalid_certificate">証明書または鍵情報を検証できません。完全な情報を更新してください。</string>
     <string name="err_invalid_option">プロトコル設定が無効または非互換です。</string>
-    <string name="err_duplicate_node">この完全なノード設定はセッションに存在します。</string>
-    <string name="err_node_capacity_reached">セッションのノード数が上限です。追加前に一時ノードを削除してください。</string>
-    <string name="err_node_not_found">このノードはセッションにありません。別のノードを選んでください。</string>
+    <string name="err_duplicate_node">このノード構成はすでに保存されています。</string>
+    <string name="err_node_capacity_reached">保存済みノード数が上限に達しました。ノードを削除してから、インポートしてください。</string>
+    <string name="err_node_not_found">このノードは保存されていません。別のノードを選択してください。</string>
     <string name="err_invalid_server_address">認証情報、パス、クエリー、フラグメントを含まないドメインまたは HTTPS オリジンを入力してください。</string>
     <string name="err_empty_routing_selection">選択アプリモードを保存する前に、表示可能なアプリを 1 つ以上選んでください。</string>
     <string name="err_invalid_package_name">アプリのパッケージ名が無効です。表示可能なアプリの選択を更新してください。</string>
@@ -211,7 +211,7 @@
     <string name="err_engine_stop_incomplete">リソースの終了を確認できません。前景 VPN の所有を保持したまま、停止を再試行してください。</string>
     <string name="err_publication_exhausted">状態転送のシーケンスが上限に達しました。VPN 転送を無効にしたため、停止してセッションを開き直してください。</string>
     <string name="vpn_notification_unavailable">VPN を保持中。状態を取得できません</string>
-    <string name="node_page_loaded">このセッションのノードページを読み込みました。</string>
+    <string name="node_page_loaded">保存済みノードを読み込みました。</string>
     <string name="err_invalid_node_page">このノードページは利用できません。一覧を更新してください。</string>
     <string name="node_page_loading">ノードページを読み込み中…</string>
     <string name="node_page_number">%2$d ページ中 %1$d ページ</string>
@@ -255,4 +255,7 @@
     <string name="mail_notification_title">新着メールがあります</string>
     <string name="mail_notification_body">メールを開き、現在の認証済みセッションで確認してください。</string>
     <string name="mail_event_unavailable">リモートのメールイベントは未設定です。実際の認証済みサービスイベントが届くまで通知しません。</string>
+    <string name="err_storage_unavailable">暗号化ストレージを一時的に利用できません。端末のロックを解除し、空き容量を確認してから、サービスを開き直してください。</string>
+    <string name="err_storage_recovery">LOFT は暗号化ファイルを保持しました。サービスを開き直して再試行してください。復元できない場合は Android 設定で LOFT のストレージを消去し、元のノードリンクを再インポートしてください。</string>
+    <string name="ok_storage_reopened">暗号化ストレージを開き直しました。</string>
 </resources>

@@ -25,6 +25,13 @@ class ArchitectureBoundaryTests(unittest.TestCase):
         workspace = tomllib.loads('[workspace.dependencies]\nbridge = { package = "uniffi", version = "=0.32.2" }\n')
         self.assertTrue(guard.violations(manifest, workspace))
 
+    def test_allows_domain_serialization_but_rejects_sqlcipher(self):
+        manifest = tomllib.loads('[dependencies]\nserde = { workspace = true }\n')
+        workspace = tomllib.loads('[workspace.dependencies]\nserde = { version = "=1.0.228", features = ["derive"] }\n')
+        self.assertEqual(guard.violations(manifest, workspace), [])
+        manifest["dependencies"]["database"] = {"package": "rusqlite", "version": "=0.43.0"}
+        self.assertEqual(guard.violations(manifest, workspace), ["dependencies:database:unapproved_domain_dependency"])
+
     def test_rejects_target_specific_platform_dependencies(self):
         manifest = tomllib.loads('[target.\'cfg(target_os = "android")\'.dependencies]\nndk = "=0.9.0"\n')
         self.assertTrue(guard.violations(manifest, {}))

@@ -1,33 +1,33 @@
-# LOFT mobile · 0.1.2-LYNX
+# LOFT mobile · 0.1.3-LYNX
 
 LOFT is a native Android application framework with Rust-owned business state and source-pinned Go VPN adapters. Task `loftmobile-1125-01` builds the foundation against local `guide/guide.md` v3.6 and `guide/ui-design.md`. The complete P0–P5 product roadmap has separate implementation and device gates.
 
-The signed ARM64 Release is delivered locally at `/home/coder/LOFT-mobile/bin/loft.apk`:version `0.1.2-LYNX`, Android versionCode `3`,21,507,686bytes, SHA256 `64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e`. It uses the local development signing identity. Actual package, declared minSdk29/targetSdk36 manifest, signature and all4 native ZIP/ELF16KiB checks passed on that exact file; [delivery receipt](docs/validation/apk-0.1.2-release.json) records source/build/scan identity. Production identity and physical-device acceptance are separate gates.
+Task `loftmobile-1125-02` adds the icon-only native module rail and encrypted guest persistence. The rail retains localized accessibility names, selected state and the full module titles in secondary navigation. The guest store retains complete imported SOCKS5, HyrakenX and Hyraken Pro configuration, including credentials, certificates and protocol parameters. Saved routing, privacy and server drafts also survive restart. An Android Keystore key wraps the SQLCipher database key. [Storage contract](docs/contracts/encrypted-storage.md) · [Current task report](report/loftmobile-1125-02-progress.md)
 
-ARM64 Release/R8/resource shrink/lint passed with78 APP and115 foundation JVM tests; lint has0 errors/32 warnings. The paired x86 Debug APK passed8 actual API29 guest, X/Pro default DNS→original-hostname HTTPS/Stop, connection-request cancellation and foreground-notification checks. Minified x86 Release Rust/JNA/private-service/UI startup and an independent static Go JNI reflection probe also passed; their Go runtime/TUN/node remained unconstructed. The signed ARM64 artifact and each Android execution scope remain distinct.
+The signed ARM64 Release is at `bin/loft.apk`, versionCode `4`, with SHA256 `9bed65cc3677d0cc1edee048f58d8ee739bb72f393ef0fcc809b6edc81c695f4`. It uses the local development certificate from 0.1.2. The current build passed 79 app and 117 foundation JVM tests. API 29 covered force-stop restoration and accessibility on the paired x86 Debug app, plus guest startup on the minified x86 Release. [Exact APK verification](docs/validation/apk-0.1.3-release.json) · [Build evidence](docs/validation/build-0.1.3.json) · [Android instrumentation](docs/validation/android-0.1.3-runtime.json)
 
 The private `:vpn` process owns one Rust core, the Android TUN and the lazy Go runtime. Compose displays immutable receipts; closing the UI, changing language/theme or resizing a Fold window does not own the VPN lifetime. Guest startup is local and has no Portal or cloud dependency.
 
 | Available foundation | Actual boundary |
 | --- | --- |
-| Strict SOCKS5/X/Pro link parsing | Atomic, bounded imports; certificate/name/pin/key checks; redacted metadata; session-local credentials |
+| Strict SOCKS5/X/Pro link parsing | Atomic, bounded imports; certificate/name/pin/key checks; redacted metadata; credentials stay encrypted across restarts |
 | Complete bounded node directory | 200 nodes exposed in 50-row generation-bound pages; stable selection across pages |
 | Rust VPN state and private IPC | Frozen startup scope, one-use credential delivery, actual routing/privacy/closure receipts; priority Stop and stale-callback fences |
 | Source-pinned IPv4 VPN adapter | gVisor TUN, protected/bound physical sockets, TCP/UDP admission and ownership; real authentication and host packet tests |
 | App routing foundation | Exact PackageManager-reported UID/package Builder scope; empty/lockdown conflict rejection, drafts separate from applied routing; hidden-package/device scope remains unverified |
 | Shared network privacy | Node-domain Fake-IP, original FQDN restoration, current-client DNS/RTC proof, IPv6 rejection and bounded passive TTL/lease recovery |
-| Native UI | Persistent module rail, four locales, themes, window/hinge/tabletop layouts and retained presentation drafts |
+| Native UI | Persistent icon-only module rail, four locales, themes, window/hinge/tabletop layouts and retained presentation drafts |
 | Optional account/mail/Shield | Honest dependency states; no simulated login, inbox, malware verdict or server trust |
 | Notification foundation | Real VPN foreground lease, native icon and priority Stop; actual permission/channel reporting; default-denied mail event boundary |
 | Release foundation | Fixed tools, generated native bindings, architecture/source/secret guards, R8/lint/native/signature checks and validation records |
 
-Default DNS uses `198.18.0.2` inside the VPN to return bounded synthetic routing aliases. The shared engine restores the original hostname before the selected proxy opens the connection; a Fake-IP answer is not a public resolver answer. The latest matching API29 APK passed uncached VPN DNS→alias→original-hostname certificate/TLS/HTTP200→Stop on both private X/Pro nodes. Explicit `wire_tcp` mode instead needs a permitted literal IPv4 resolver and never falls back to physical business DNS. Historical public TCP/UDP53 failures belong to that forwarding-probe path and do not establish a broken node DNS subsystem or a current default-mode failure.
+Default DNS uses `198.18.0.2` inside the VPN to return bounded synthetic routing aliases. The shared engine restores the original hostname before the selected proxy opens the connection; a Fake-IP answer is not a public resolver answer. The 0.1.2 API29 test APK passed uncached VPN DNS→alias→original-hostname certificate/TLS/HTTP200→Stop on both private X/Pro nodes. Explicit `wire_tcp` mode instead needs a permitted literal IPv4 resolver and never falls back to physical business DNS. Historical public TCP/UDP53 failures belong to that forwarding-probe path and do not establish a broken node DNS subsystem or a current default-mode failure.
 
 DNS and recognized WebRTC traffic use shared `proxy_only`/`block` rules before all transport adapters, with exact policy epoch, owner/shared-UID scope and current TUN/client proof. Stop, loss and Abort revoke enforcement claims. Packet filtering cannot promise to hide browser SDP address enumeration or cover APPs deliberately outside the selected VPN scope. Hydra uses the existing X/Pro shaping hooks independently and defaults to Disabled; QUBF transports remain future adapters.
 
 The added-memory ledger is 8 MiB, including a fixed 528 KiB non-domain address quarantine reservation; dynamic capacity is 7,847,936 bytes. Mappings are limited to 256 entries/256 KiB and retain identity through live I/O and advertised TTL. Passive recovery needs no periodic restart or extra polling. These allocation limits do not establish handset PSS or battery performance.
 
-QR, the 512 KiB Android FD-import path, SQLCipher/Keystore persistence, live TUN/candidate replacement, automatic reconnect, Rust BFF/OAuth, own-user mail, Shield/attestation and Gateway policy integration remain explicit later capabilities. The current Portal only supports confidential OAuth; its administrator clientSecret and user bearer do not belong in this APP's BFF path. A normalized server candidate is not a verified enterprise server.
+QR, the 512 KiB Android FD-import path, live TUN/candidate replacement, automatic reconnect, Rust BFF/OAuth, own-user mail, Shield/attestation and Gateway policy integration remain explicit later capabilities. The current Portal only supports confidential OAuth; its administrator clientSecret and user bearer do not belong in this APP's BFF path. A normalized server candidate is not a verified enterprise server.
 
 Portal `notifyUnread` writes a database marker, not a mobile event. Real new-mail push still needs a successful-publication event source, Rust subscription authority and an actual configured provider. The framework does not poll mail or initialize an unconfigured push service. API29 passed actual Blocked/Connected foreground notifications, four-language text, hidden-UI continuity and notification PendingIntent Stop/removal; API33+ denial, status-bar rendering and physical background survival remain separate acceptance.
 
@@ -56,7 +56,7 @@ Gateway8.0.32-LYNX is pinned to `231f14813f2b45cb6f0bde984181c57cba1d02fd`; Port
 
 [Requirements and remaining acceptance](docs/requirements.md), [task progress](report/loftmobile-1125-01-progress.md), [trust boundaries](docs/threat-model/framework.md) and [privacy](docs/privacy/framework.md) distinguish host, Android and physical-device results. The repaired node-directory finding retains its [original and post-fix evidence](docs/validation/spec-compliance/requirements/REQ-NODE-01.md).
 
-The current source/artifact records are:
+The preceding 0.1.2-LYNX release has its own source and artifact records.
 
 | Executed check | Receipt and scope |
 | --- | --- |
@@ -73,6 +73,6 @@ The current source/artifact records are:
 
 Actual native guest UI is recorded at [673dp](docs/validation/ui/loft-0.1.2-guest-vpn-673dp.png) and [1440dp](docs/validation/ui/loft-0.1.2-guest-vpn-1440dp.png). Their metadata records physical pixels/density and the real Activity window; both show the persistent rail and inactive protection, with no private nodes imported. These are API29 x86 Debug captures, separate from physical Fold or ARM64 Release execution.
 
-Root Python38 tests and the direct-dependency architecture guard also passed at the recorded checkpoint. The one `basic-toml` notice is absent from the normal Android `loft-ffi` dependency graph. The [task report](report/loftmobile-1125-01-progress.md) records current source/build/API/artifact results and retained failures. Source publication uses a normal main commit preserving remote history; the exact confirmed remote SHA is in Root's final independent receipt/answer. No physical-device or72-hour certification is claimed.
+The 0.1.2 checkpoint also passed 38 Python tests and the direct-dependency architecture guard. The `basic-toml` notice concerns a host-only tooling dependency. The older task report records its build, API and artifact results alongside the original failures. [0.1.2 task report](report/loftmobile-1125-01-progress.md)
 
 The combined application/Go adapter uses compatible GPL terms; the independent Rust workspace keeps Apache2 metadata. Read [third-party notices](THIRD-PARTY-NOTICES.md) and the source/license inventory before distribution.

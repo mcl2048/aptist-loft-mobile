@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -86,6 +87,7 @@ fun LoftApp(model: LoftViewModel, onExit: () -> Unit, onTheme: (ThemeChoice) -> 
                     Pane(layout.primary) {
                         Column(Modifier.fillMaxSize()) {
                             AppHeader(state, model)
+                            StorageFailure(state, model)
                             PrimaryContent(state, model, layout.secondary != null, onTheme, onLocale, onConnect, Modifier.weight(1f))
                         }
                     }
@@ -111,7 +113,7 @@ private fun Pane(bounds: PaneBounds, content: @Composable BoxScope.() -> Unit) {
 @Composable
 private fun ModuleRail(state: LoftUiState, model: LoftViewModel, layout: AdaptiveLayout, height: Float, modifier: Modifier) {
     val modules = ModuleCatalog.rail(mailAvailable = false).filterNot { it == ModuleId.SETTING }
-    Column(modifier.background(LocalLoftColors.current.rail).clipToBounds()) {
+    Column(modifier.background(LocalLoftColors.current.rail).clipToBounds().selectableGroup()) {
         val gap = layout.horizontalRailGap
         if (gap == null) {
             RailBrand(model)
@@ -144,24 +146,24 @@ private fun ModuleRail(state: LoftUiState, model: LoftViewModel, layout: Adaptiv
 }
 @Composable private fun RailModules(modules: List<ModuleId>, state: LoftUiState, model: LoftViewModel, modifier: Modifier) {
     Column(modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
-        modules.forEach { RailButton(it, state.presentation.navigation.module, model) }
+        modules.forEach { module ->
+            key(module.stableId) { RailButton(module, state.presentation.navigation.module, model) }
+        }
     }
 }
 @Composable private fun RailButton(module: ModuleId, selected: ModuleId, model: LoftViewModel) {
     val active = selected == module
     val fullTitle = stringResource(moduleTitle(module))
-    Box(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-        if (active) Box(Modifier.align(Alignment.CenterStart).width(3.dp).height(28.dp).background(MaterialTheme.colorScheme.primary, RoundedCornerShape(2.dp)))
-        Column(Modifier.fillMaxWidth().padding(horizontal = 4.dp).clip(RoundedCornerShape(10.dp))
-            .background(if (active) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
-            .clickable { model.navigate(ModuleCatalog.entry(module)) }
-            .semantics(mergeDescendants = true) { role = Role.Tab; this.selected = active; contentDescription = fullTitle }
-            .heightIn(min = 56.dp).padding(vertical = 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(painterResource(moduleIcon(module)), null, Modifier.size(22.dp),
+    Box(Modifier.fillMaxWidth().heightIn(min = 56.dp)
+        .selectable(selected = active, role = Role.Tab, onClick = { model.navigate(ModuleCatalog.entry(module)) })
+        .semantics { contentDescription = fullTitle }, contentAlignment = Alignment.Center) {
+        if (active) Box(Modifier.align(Alignment.CenterStart).width(3.dp).height(24.dp)
+            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(2.dp)))
+        Box(Modifier.padding(horizontal = 4.dp).size(44.dp)
+            .background(if (active) MaterialTheme.colorScheme.primaryContainer else Color.Transparent, RoundedCornerShape(14.dp)),
+            contentAlignment = Alignment.Center) {
+            Icon(painterResource(moduleIcon(module)), null, Modifier.size(24.dp),
                 tint = if (active) MaterialTheme.colorScheme.onPrimaryContainer else LocalLoftColors.current.secondaryText)
-            Text(stringResource(moduleShortTitle(module)), style = MaterialTheme.typography.labelSmall,
-                color = if (active) MaterialTheme.colorScheme.onPrimaryContainer else LocalLoftColors.current.secondaryText,
-                modifier = Modifier.clearAndSetSemantics { })
         }
     }
 }
@@ -192,7 +194,7 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
             PrimaryButton(R.string.continue_guest, { model.navigate(Page.VPN_HOME) })
             OutlinedButton(onClick = { model.navigate(Page.ACCOUNT) }, colors = ButtonDefaults.outlinedButtonColors(contentColor = LocalLoftColors.current.link),
                 modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(stringResource(R.string.enterprise_account)) }
-            if (!dual) { TemporaryStorage(); Explanation(R.string.framework_title, R.string.framework_body) }
+            if (!dual) { LocalStorage(); Explanation(R.string.framework_title, R.string.framework_body) }
             ServiceState(state, model)
         }
         Page.VPN_HOME -> ScrollPage(modifier) {
@@ -227,7 +229,8 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
                 }
                 if (connection == ConnectionState.DISCONNECTED) {
                     if (state.native.core.nodeCount == 0u) PrimaryButton(R.string.add_node, { model.navigate(Page.IMPORT_NODE) })
-                    else PrimaryButton(R.string.connect, onConnect, state.pendingRequest == null && state.stopRequest == null && !state.vpnPermissionPending)
+                    else PrimaryButton(R.string.connect, onConnect, state.canChangeConfiguration && state.pendingRequest == null &&
+                        state.stopRequest == null && !state.vpnPermissionPending)
                 } else PrimaryButton(R.string.stop_vpn, model::stopControl, state.stopRequest == null)
                 if (!dual) { SelectedNodeSummary(state, model); RoutingSummary(state, model) }
             } else { ServiceState(state, model); PrimaryButton(R.string.stop_vpn, model::stopControl, state.stopRequest == null) }
@@ -250,10 +253,10 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
                 modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.read_clipboard)) }
             if (state.importConfirmation) {
                 Explanation(R.string.confirm_import_title, R.string.confirm_import_body)
-                PrimaryButton(R.string.confirm, model::confirmImport, state.pendingRequest == null && state.availability == ServiceAvailability.AVAILABLE)
+                PrimaryButton(R.string.confirm, model::confirmImport, state.pendingRequest == null && state.canChangeConfiguration)
                 LinkButton(onClick = model::cancelImportConfirmation, enabled = state.pendingRequest == null) { Text(stringResource(R.string.cancel)) }
             } else PrimaryButton(R.string.review_import, model::reviewImport, state.importText.isNotBlank() && state.pendingRequest == null)
-            if (!dual) { Text(stringResource(R.string.import_limit), style = MaterialTheme.typography.bodySmall); TemporaryStorage() }
+            if (!dual) { Text(stringResource(R.string.import_limit), style = MaterialTheme.typography.bodySmall); LocalStorage() }
         }
         Page.ACCOUNT -> ScrollPage(modifier) {
             PageTitle(R.string.account_title)
@@ -265,8 +268,9 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
                 label = { Text(stringResource(R.string.server_address)) }, modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, keyboardType = KeyboardType.Uri), enabled = state.pendingRequest == null)
             Text(stringResource(R.string.server_help), style = MaterialTheme.typography.bodySmall)
-            PrimaryButton(R.string.validate_address, model::stageServer, state.serverText.isNotBlank() && state.pendingRequest == null && state.availability == ServiceAvailability.AVAILABLE)
-            LinkButton(onClick = model::resetServer, enabled = state.pendingRequest == null && state.native?.core?.serverAddress != null) { Text(stringResource(R.string.reset_candidate)) }
+            PrimaryButton(R.string.validate_address, model::stageServer, state.serverText.isNotBlank() && state.pendingRequest == null && state.canChangeConfiguration)
+            LinkButton(onClick = model::resetServer, enabled = state.canChangeConfiguration && state.pendingRequest == null &&
+                state.native?.core?.serverAddress != null) { Text(stringResource(R.string.reset_candidate)) }
             SelectionContainer { Text(state.native?.core?.serverAddress ?: stringResource(R.string.no_server)) }
             if (state.native?.core?.serverAddress != null) Text(stringResource(R.string.server_not_verified), color = LocalLoftColors.current.warning)
             if (!dual) { LoginDependency(model); MailDependency(model) }
@@ -308,15 +312,15 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
         Spacer(Modifier.height(12.dp))
         when (state.presentation.navigation.page) {
             Page.NODES, Page.NODE_DETAILS -> NodeDetails(state, model)
-            Page.ROUTING -> { RoutingSummary(state, model); RoutingSave(state, model); TemporaryStorage() }
+            Page.ROUTING -> { RoutingSummary(state, model); RoutingSave(state, model); LocalStorage() }
             Page.VPN_HOME -> { SelectedNodeSummary(state, model); RoutingSummary(state, model); Explanation(R.string.software_checks, R.string.software_unknown) }
-            Page.IMPORT_NODE -> { Explanation(R.string.temporary_title, R.string.temporary_body); Text(stringResource(R.string.import_limit)); Text(stringResource(R.string.camera_unavailable)) }
+            Page.IMPORT_NODE -> { Explanation(R.string.storage_title, R.string.storage_body); Text(stringResource(R.string.import_limit)); Text(stringResource(R.string.camera_unavailable)) }
             Page.ACCOUNT -> { LoginDependency(model); MailDependency(model) }
             Page.MAIL -> { Explanation(R.string.privacy, R.string.mail_privacy); LoginDependency(model) }
             Page.SHIELD -> { Explanation(R.string.device_trust, R.string.device_unknown); Text(stringResource(R.string.shield_scope)) }
             Page.SETTINGS -> PrivacyAndBackground()
-            Page.AUDIT, Page.DIAGNOSTICS -> { Explanation(R.string.framework_title, R.string.framework_body); TemporaryStorage() }
-            Page.WELCOME -> { Explanation(R.string.framework_title, R.string.framework_body); TemporaryStorage() }
+            Page.AUDIT, Page.DIAGNOSTICS -> { Explanation(R.string.framework_title, R.string.framework_body); LocalStorage() }
+            Page.WELCOME -> { Explanation(R.string.framework_title, R.string.framework_body); LocalStorage() }
         }
     }
 }
@@ -332,7 +336,7 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
         }
         val native = state.native
         if (native == null) item { ServiceState(state, model) }
-        else if (native.core.nodeCount == 0u) item { Text(stringResource(R.string.no_nodes)); TemporaryStorage() }
+        else if (native.core.nodeCount == 0u) item { Text(stringResource(R.string.no_nodes)); LocalStorage() }
         if (state.nodePageLoading) item { Text(stringResource(R.string.node_page_loading)) }
         state.nodePageError?.let { error -> item { Notice(error) } }
         if (native != null) item {
@@ -493,7 +497,7 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
     Row(Modifier.fillMaxWidth().heightIn(min = 48.dp).selectable(selected, role = Role.RadioButton, onClick = onClick).semantics(mergeDescendants = true) { },
         verticalAlignment = Alignment.CenterVertically) { RadioButton(selected, onClick = null); Text(stringResource(title), modifier = Modifier.weight(1f)) }
 }
-@Composable private fun PrivacyAndBackground() { Explanation(R.string.privacy, R.string.privacy_body); TemporaryStorage(); Explanation(R.string.long_running, R.string.long_running_body) }
+@Composable private fun PrivacyAndBackground() { Explanation(R.string.privacy, R.string.privacy_body); LocalStorage(); Explanation(R.string.long_running, R.string.long_running_body) }
 @Composable private fun Diagnostics(state: LoftUiState, model: LoftViewModel) {
     PageTitle(R.string.diagnostics_title)
     NativeNotice(state)
@@ -593,7 +597,7 @@ private fun notificationLabel(value: NotificationAccessStatus): Int = when (valu
 @Composable private fun Explanation(title: Int, body: Int) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) { SectionTitle(title); Text(stringResource(body)); HorizontalDivider(color = LocalLoftColors.current.divider) }
 }
-@Composable private fun TemporaryStorage() { Explanation(R.string.temporary_title, R.string.temporary_body) }
+@Composable private fun LocalStorage() { Explanation(R.string.storage_title, R.string.storage_body) }
 @Composable private fun InfoRow(title: Int, value: String) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(stringResource(title), style = MaterialTheme.typography.bodySmall, color = LocalLoftColors.current.secondaryText)
@@ -616,14 +620,29 @@ private fun notificationLabel(value: NotificationAccessStatus): Int = when (valu
     }
 }
 @Composable private fun NativeNotice(state: LoftUiState) {
-    state.notice?.let { Notice(it) }
+    state.notice?.takeUnless { it == state.storageOpenFailure }?.let { Notice(it) }
     if (state.pendingRequest != null) Text(stringResource(R.string.working), style = MaterialTheme.typography.bodySmall)
 }
 @Composable private fun ServiceState(state: LoftUiState, model: LoftViewModel) {
     if (state.availability == ServiceAvailability.OPENING) Text(stringResource(R.string.service_starting))
-    if (state.availability == ServiceAvailability.UNAVAILABLE) {
+    if (state.availability == ServiceAvailability.UNAVAILABLE && state.storageOpenFailure == null) {
         Explanation(R.string.service_lost_title, R.string.service_lost_body)
         PrimaryButton(R.string.reopen_service, model::reopenService)
+    }
+}
+@Composable private fun StorageFailure(state: LoftUiState, model: LoftViewModel) {
+    val failure = state.storageOpenFailure ?: return
+    val connection = state.native?.core?.connectionState
+    val idle = connection == null || connection == ConnectionState.DISCONNECTED
+    Column(Modifier.fillMaxWidth().heightIn(max = 200.dp).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
+        Notice(failure)
+        if (idle) {
+            LinkButton(onClick = model::reopenService, enabled = state.pendingRequest == null && state.stopRequest == null) {
+                Text(stringResource(R.string.reopen_service))
+            }
+        } else {
+            LinkButton(onClick = model::stopControl, enabled = state.stopRequest == null) { Text(stringResource(R.string.stop_vpn)) }
+        }
     }
 }
 private fun protocolName(node: NodeSummary): String = when (node.protocol) {
@@ -636,10 +655,6 @@ private fun moduleIcon(module: ModuleId): Int = when (module) {
 private fun moduleTitle(module: ModuleId): Int = when (module) {
     ModuleId.WELCOME -> R.string.module_welcome; ModuleId.VPN -> R.string.module_vpn; ModuleId.SHIELD -> R.string.module_shield
     ModuleId.MAIL -> R.string.module_mail; ModuleId.AUDIT -> R.string.module_audit; ModuleId.SETTING -> R.string.module_setting; ModuleId.ACCOUNT -> R.string.module_account
-}
-private fun moduleShortTitle(module: ModuleId): Int = when (module) {
-    ModuleId.WELCOME -> R.string.rail_welcome; ModuleId.VPN -> R.string.rail_vpn; ModuleId.SHIELD -> R.string.rail_shield
-    ModuleId.MAIL -> R.string.rail_mail; ModuleId.AUDIT -> R.string.rail_audit; ModuleId.SETTING -> R.string.rail_setting; ModuleId.ACCOUNT -> R.string.module_account
 }
 private fun pageTitle(page: Page): Int = when (page) {
     Page.NODES -> R.string.node_list; Page.NODE_DETAILS -> R.string.node_details; Page.IMPORT_NODE -> R.string.import_link

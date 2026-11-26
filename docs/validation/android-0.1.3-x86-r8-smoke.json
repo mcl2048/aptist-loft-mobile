@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "version": "0.1.3-LYNX",
+  "passed": true,
+  "checked_at_utc": "2026-11-26T10:46:19.467073+00:00",
+  "artifact": {
+    "path": "tmp/loftmobile-1125-02/checks/x86-r8-release-signed.apk",
+    "sha256": "e21c9a7855431b2a4570379afdfc105d37c9814e6721c57764a4bc8f198a24b5",
+    "bytes": 29269561,
+    "abi": "x86_64",
+    "debuggable": false,
+    "signing": "development"
+  },
+  "installed_artifact_sha256": "e21c9a7855431b2a4570379afdfc105d37c9814e6721c57764a4bc8f198a24b5",
+  "build_receipt_sha256": "97d8936d6d9f0271de1d6a8cd38f816d4290286c2ea70f3843dc89af94f98a97",
+  "canonical_arm64_sha256": "64c9ae2370eaf1df45533ea2fb3e93d0961287d381501cac39e0785ff785a81e",
+  "canonical_arm64_unchanged": true,
+  "ordinary_application_uid": true,
+  "private_core_service_and_process_observed": true,
+  "actual_rust_guest_snapshot_observed": "Not connected + No nodes added + inactive protection; source UI exposes these only after a decoded immutable native snapshot",
+  "no_jni_r8_startup_loading_failure": true,
+  "native_libraries": [
+    {
+      "path": "lib/x86_64/libandroidx.graphics.path.so",
+      "sha256": "4e56c996f13670e70082658de7880c4020eabf4f25e43387f88ed78a713fc9f0"
+    },
+    {
+      "path": "lib/x86_64/libgojni.so",
+      "sha256": "0a6774b753ba8d857c699c98b3b8456c19ccb022811518094865cb2fc828a152"
+    },
+    {
+      "path": "lib/x86_64/libjnidispatch.so",
+      "sha256": "288eafff19a70e833498201071c3d724f03f32ee8ff64a14fca50b57d975db70"
+    },
+    {
+      "path": "lib/x86_64/libloft_ffi.so",
+      "sha256": "e90bd3ad753535fb03e62de4bbceeb808029a2b25ab4f0f5a38e6e3cee9d8dd6"
+    }
+  ],
+  "visible_rail": [
+    {
+      "label": "Open account and server settings",
+      "bounds": [
+        18,
+        34,
+        54,
+        70
+      ]
+    },
+    {
+      "label": "Home",
+      "bounds": [
+        0,
+        80,
+        72,
+        136
+      ]
+    },
+    {
+      "label": "Network",
+      "bounds": [
+        0,
+        136,
+        72,
+        192
+      ]
+    },
+    {
+      "label": "Protection",
+      "bounds": [
+        0,
+        192,
+        72,
+        248
+      ]
+    },
+    {
+      "label": "Records",
+      "bounds": [
+        0,
+        248,
+        72,
+        304
+      ]
+    },
+    {
+      "label": "Settings",
+      "bounds": [
+        0,
+        796,
+        72,
+        852
+      ]
+    }
+  ],
+  "png": "docs/validation/ui/loft-0.1.3-x86-r8-guest.png",
+  "png_sha256": "fec9a3e32cbf66401e97e6ec2589200ad0e2b632f93714c199059ccfb9f6cb10",
+  "actual_pixels": [
+    673,
+    900
+  ],
+  "density_dpi": 160,
+  "host_elapsed_seconds": 199.633,
+  "secret_scan": {
+    "result": "PASS",
+    "inspected": 1675,
+    "scope": "git_index_and_artifact_members",
+    "private_inputs_available": true,
+    "failures": []
+  },
+  "scope": "API29 TCG minified x86 Release ordinary-UID startup/actual Rust snapshot/UI smoke only; Go transport remains lazy and no node was imported",
+  "not_arm64_fold_doze_battery_72h_or_new_node_regression": true
+}

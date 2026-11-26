@@ -11,7 +11,7 @@ import net.aptist.loft.ipc.ILoftEvents
 /** Private UI binding; the process owner also serves LoftVpnService. */
 class LoftCoreService : Service() {
     private lateinit var owner: LoftRuntimeOwner
-    private var uiLease = false
+    private val controllerToken = Any()
     private val binder = object : ILoftControl.Stub() {
         override fun subscribe(observer: ILoftEvents) { enforceCaller(); owner.subscribe(observer) }
         override fun unsubscribe(observer: ILoftEvents) { enforceCaller(); owner.unsubscribe(observer) }
@@ -22,19 +22,21 @@ class LoftCoreService : Service() {
             enforceCaller(); owner.queryNodePage(requestId, offset, expectedGeneration.toULong(), observer)
         }
         override fun setPresentationLocale(locale: String) { enforceCaller(); owner.setPresentationLocale(locale) }
+        override fun reopenStorage(requestId: Long, receiptObserver: ILoftEvents) {
+            enforceCaller(); owner.reopenStorage(requestId, receiptObserver)
+        }
     }
     override fun onCreate() {
         super.onCreate()
         owner = LoftRuntimeOwner.get(applicationContext)
-        uiLease = owner.retainUi()
+        owner.attachUi(controllerToken)
     }
     override fun onBind(intent: Intent?): IBinder = binder
     private fun enforceCaller() {
         if (Binder.getCallingUid() != Process.myUid()) throw SecurityException("Private LOFT control service")
     }
     override fun onDestroy() {
-        owner.clearObservers()
-        if (uiLease) owner.releaseUi()
+        owner.detachUi(controllerToken)
         super.onDestroy()
     }
 }

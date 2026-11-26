@@ -8,4 +8,5 @@ interface ILoftControl {
     void execute(long requestId, in byte[] command, ILoftEvents receiptObserver);
     void queryNodePage(long requestId, int offset, long expectedGeneration, ILoftEvents observer);
     oneway void setPresentationLocale(String locale);
+    oneway void reopenStorage(long requestId, ILoftEvents receiptObserver);
 }

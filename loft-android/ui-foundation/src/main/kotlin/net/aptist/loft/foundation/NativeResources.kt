@@ -5,19 +5,29 @@ class NativeResources<C : AutoCloseable, G : AutoCloseable>(
     private val coreFactory: () -> C,
     private val goFactory: () -> G,
 ) : AutoCloseable {
+    private val openLock = Any()
     private var core: C? = null
     private var go: G? = null
     private var uiLeases = 0
     private var vpnLeases = 0
-    @Synchronized fun retainUi(): C {
-        val resource = core ?: coreFactory().also { core = it }
-        uiLeases = Math.addExact(uiLeases, 1)
-        return resource
+    fun retainUi(): C = retainCore(vpnLease = false)
+    fun retainVpn(): C = retainCore(vpnLease = true)
+    fun retainExistingUi(): C? = retainExisting(vpnLease = false)
+
+    private fun retainCore(vpnLease: Boolean): C = retainExisting(vpnLease) ?: synchronized(openLock) {
+        retainExisting(vpnLease) ?: coreFactory().also { resource ->
+            synchronized(this) {
+                core = resource
+                addLease(vpnLease)
+            }
+        }
     }
-    @Synchronized fun retainVpn(): C {
-        val resource = core ?: coreFactory().also { core = it }
-        vpnLeases = Math.addExact(vpnLeases, 1)
-        return resource
+
+    @Synchronized private fun retainExisting(vpnLease: Boolean): C? = core?.also { addLease(vpnLease) }
+
+    private fun addLease(vpnLease: Boolean) {
+        if (vpnLease) vpnLeases = Math.addExact(vpnLeases, 1)
+        else uiLeases = Math.addExact(uiLeases, 1)
     }
     @Synchronized fun currentCore(): C = checkNotNull(core)
     @Synchronized fun explicitGo(): G {
@@ -28,6 +38,11 @@ class NativeResources<C : AutoCloseable, G : AutoCloseable>(
         if (uiLeases == 0) return
         uiLeases--
         closeIfIdle()
+    }
+    @Synchronized fun releaseSoleUiLease(): Boolean {
+        if (uiLeases != 1 || vpnLeases != 0) return false
+        releaseUi()
+        return true
     }
     @Synchronized fun releaseGo() {
         go?.close()
@@ -47,9 +62,11 @@ class NativeResources<C : AutoCloseable, G : AutoCloseable>(
         core?.close()
         core = null
     }
-    @Synchronized override fun close() {
-        releaseGo()
-        core?.close()
-        core = null; uiLeases = 0; vpnLeases = 0
+    override fun close() = synchronized(openLock) {
+        synchronized(this) {
+            releaseGo()
+            core?.close()
+            core = null; uiLeases = 0; vpnLeases = 0
+        }
     }
 }

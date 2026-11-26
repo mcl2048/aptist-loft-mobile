@@ -7,6 +7,9 @@ import org.junit.After
 import org.junit.rules.TemporaryFolder
 import java.io.FileInputStream
 import java.io.IOException
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class NativeResourcesTest {
     @get:Rule val temporary = TemporaryFolder()
@@ -27,6 +30,31 @@ class NativeResourcesTest {
             assertEquals(20, owner.currentCore().read())
             assertFalse(marker.exists())
         }
+    }
+
+    @Test fun checkingExistingOwnershipDoesNotWaitForSlowCoreOpen() {
+        val input = coreFile()
+        val goInput = goFile()
+        val opening = CountDownLatch(1)
+        val release = CountDownLatch(1)
+        val worker = Executors.newFixedThreadPool(2)
+        try {
+            NativeResources({
+                opening.countDown()
+                check(release.await(5, TimeUnit.SECONDS))
+                open(input)
+            }, { open(goInput) }).use { owner ->
+                val opened = worker.submit<FileInputStream> { owner.retainUi() }
+                try {
+                    assertTrue(opening.await(2, TimeUnit.SECONDS))
+                    val absent = worker.submit<Boolean> {
+                        runCatching { owner.currentCore() }.exceptionOrNull() is IllegalStateException
+                    }
+                    assertTrue(absent.get(1, TimeUnit.SECONDS))
+                } finally { release.countDown() }
+                assertEquals(10, opened.get(2, TimeUnit.SECONDS).read())
+            }
+        } finally { worker.shutdownNow() }
     }
 
     // Catches a Go load/init failure invalidating an otherwise usable Rust core.
@@ -66,6 +94,24 @@ class NativeResourcesTest {
             assertEquals(10, original.read())
             assertTrue(owner.releaseVpn(confirmedReleased = true))
             expectClosed(original)
+        }
+    }
+
+    @Test fun explicitReopenWaitsForVpnAndOtherOwnerLeases() {
+        val input = coreFile()
+        val goInput = goFile()
+        NativeResources({ open(input) }, { open(goInput) }).use { owner ->
+            val core = owner.retainUi()
+            owner.retainVpn()
+            assertFalse(owner.releaseSoleUiLease())
+            assertTrue(owner.releaseVpn(confirmedReleased = true))
+            assertSame(core, owner.retainExistingUi())
+            assertFalse(owner.releaseSoleUiLease())
+            owner.releaseUi()
+            assertTrue(owner.releaseSoleUiLease())
+            expectClosed(core)
+            assertNull(owner.retainExistingUi())
+            assertEquals(10, owner.retainUi().read())
         }
     }
 

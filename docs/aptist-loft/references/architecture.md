@@ -4,7 +4,7 @@ The Android MVP uses native Compose, stable welcome/vpn/shield/mail/audit/settin
 
 The full plan additionally calls for SOCKS5/hyrakenx/hyraken-pro QR/link import, selected-app proxy with unselected apps direct, physical socket protection, encrypted storage, Shield software/attestation policies, optional Portal BFF login and own-user mail. They are staged P0–P5 work: a framework release must identify what is implemented, planned and unverified.
 
-The current framework implements session-local three-protocol link parsing, the200-node/50-row directory, actual VPN ownership/Stop, shared node-domain Fake-IP/RTC rules and native notification boundaries. QR, large FD imports, encrypted restart persistence, live TUN replacement/reconnect, BFF login/mail and Shield remain later adapters. Exact verified status belongs in the active Readme, requirements and task report; do not infer completion from the roadmap's desired UI.
+The current framework implements three-protocol link parsing, a Keystore-wrapped SQLCipher guest store, the 200-node/50-row directory, VPN ownership and Stop, shared node-domain Fake-IP/RTC rules and native notification boundaries. QR, large FD imports, live TUN replacement/reconnect, BFF login/mail and Shield remain later adapters. The active Readme, requirements and task report record verified status.
 
 The source inputs on this server are:
 
@@ -19,4 +19,4 @@ GhostX protocol/config adapters and `class-loft-saas-gateway.php` provide the in
 
 Portal provides `/api/idp`, exact issuer discovery, authorize, Basic token redemption, JWKS, UserInfo and mail list/detail/attachments. Confidential BFF credentials remain server-side. A pure Portal deployment does not yet provide LOFT's proposed `/.well-known/loft-app` or `/v1` endpoints. Public native OAuth requires a separately implemented and reviewed provider extension.
 
-Physical quotas, UDP payload boundaries, lifetime/half-close semantics and source-account authorization are source-derived constraints; SQLCipher/Keystore, identity registration and gateway enforcement remain later implementations. Actual protected-FD and routing execution, mobile resources and 72-hour battery acceptance need their own evidence even when the adapter source/host tests pass.
+Physical quotas, UDP payload boundaries, lifetime and half-close semantics and source-account authorization are source-derived constraints. Guest persistence is local to the private VPN owner. Identity registration and Gateway enforcement remain later work. Actual protected-FD and routing execution, mobile resources and 72-hour battery acceptance need device evidence.

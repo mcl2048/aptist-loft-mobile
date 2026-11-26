@@ -25,8 +25,8 @@
     <string name="enterprise_account">企业账户</string>
     <string name="framework_title">应用框架</string>
     <string name="framework_body">此版本包含本地节点、VPN 控制和配置草稿。登录、邮件和安全检查仍需相应适配器。</string>
-    <string name="temporary_title">本次会话临时存储</string>
-    <string name="temporary_body">导入节点与路由偏好仅保留在本次会话，应用会话结束或服务进程停止后即丢失。加密存储尚未接入。</string>
+    <string name="storage_title">本地加密存储</string>
+    <string name="storage_body">LOFT 在此设备上加密保存导入的节点、已保存的路由与网络隐私设置，以及候选服务器地址。</string>
     <string name="connection_status">连接状态</string>
     <string name="disconnected">未连接</string>
     <string name="no_nodes">尚未添加节点</string>
@@ -38,12 +38,12 @@
     <string name="choose_node">选择节点</string>
     <string name="node_list">节点列表</string>
     <string name="import_link">导入链接</string>
-    <string name="node_count">本次会话共 %1$d 个节点</string>
+    <string name="node_count">已保存 %1$d 个节点</string>
     <string name="first_page_only">当前展示前 %1$d 个节点，更多节点分页需接入存储适配器。</string>
     <string name="node_details">节点详情</string>
     <string name="select_candidate">选择候选</string>
     <string name="remove_node">移除节点</string>
-    <string name="remove_node_confirmation">移除此临时本地节点？此操作不会撤销远端访问材料。</string>
+    <string name="remove_node_confirmation">从此设备移除该节点？远端服务器上的访问权限仍然有效。</string>
     <string name="protocol">协议</string>
     <string name="endpoint">节点地址</string>
     <string name="credentials">认证材料</string>
@@ -57,9 +57,9 @@
     <string name="import_limit">此框架支持不超过 60 KiB 的完整链接。更长链接需要受限文件适配器，切勿缩短认证材料。</string>
     <string name="read_clipboard">读取剪贴板</string>
     <string name="camera_unavailable">此框架尚未接入二维码扫描，请使用完整链接。</string>
-    <string name="review_import">添加临时节点</string>
-    <string name="confirm_import_title">将此节点加入本次会话？</string>
-    <string name="confirm_import_body">添加前将校验完整链接。此操作不会建立连接、领取远程配置或持久化认证材料。</string>
+    <string name="review_import">添加节点</string>
+    <string name="confirm_import_title">保存此节点？</string>
+    <string name="confirm_import_body">LOFT 会校验完整链接并将其保存在本地加密存储中。保存时不会建立连接。</string>
     <string name="cancel">取消</string>
     <string name="confirm">确认</string>
     <string name="discard_title">放弃这些修改？</string>
@@ -70,9 +70,9 @@
     <string name="routing_mode">仅所选 APP</string>
     <string name="routing_selected_help">草稿：选中的应用及共享其 UID 的全部应用使用 VPN；其他 UID 组直连。更改将在下次连接时应用。</string>
     <string name="routing_full_help">草稿：所有应用均使用 VPN 范围。更改将在下次连接时应用。</string>
-    <string name="routing_saved">会话偏好；当前 VPN 会继续使用已冻结的范围</string>
+    <string name="routing_saved">偏好已保存。当前 VPN 保持原有路由范围。</string>
     <string name="draft_selected_count">草稿已选 %1$d 个 APP</string>
-    <string name="confirmed_selected_count">会话偏好：%1$d 个 APP</string>
+    <string name="confirmed_selected_count">已保存偏好（%1$d 个应用）</string>
     <string name="search_apps">搜索应用名称或包名</string>
     <string name="selected_only">仅显示已选 APP</string>
     <string name="visible_scope">仅列出当前 Android 资料内可见的 APP，其他资料与不可见包不在本选择范围内。</string>
@@ -122,7 +122,7 @@
     <string name="language_ja">日本語</string>
     <string name="language_de">Deutsch</string>
     <string name="privacy">隐私与存储</string>
-    <string name="privacy_body">仅持久化主题与语言偏好。节点认证材料、导入文本与配置草稿不会写入偏好或备份。</string>
+    <string name="privacy_body">主题和语言单独保存。已保存配置经过加密且排除在 Android 备份之外。未提交的草稿仅保留在内存中。</string>
     <string name="long_running">网络与后台行为</string>
     <string name="long_running_body">工作中或阻断中的 VPN 会保留前台服务，不会启动隐藏轮询、流量计时器或唤醒锁。常开 VPN 和电池行为仍需设备验证。</string>
     <string name="diagnostics_title">连接诊断</string>
@@ -136,11 +136,11 @@
     <string name="service_lost_body">本地服务不可用，临时节点可能已丢失。重新打开服务以读取当前状态。</string>
     <string name="reopen_service">重新打开本地服务</string>
     <string name="working">正在等待原生回执</string>
-    <string name="ok_node_imported">临时节点已添加，未发起连接。</string>
+    <string name="ok_node_imported">节点已保存到此设备。</string>
     <string name="ok_node_removed">临时节点已移除。</string>
     <string name="ok_server_staged">地址候选已接受，服务器尚未验证。</string>
     <string name="ok_server_reset">服务器候选已清除。</string>
-    <string name="ok_routing_staged">路由偏好已保存至此会话，将在下次 VPN 连接时应用。</string>
+    <string name="ok_routing_staged">路由偏好已保存，将在下次 VPN 连接时应用。</string>
     <string name="ok_control_stopped">VPN 描述符和自有资源已关闭。</string>
     <string name="err_input_too_large">输入或解码材料超限，请获取大小符合要求的完整支持链接。</string>
     <string name="err_invalid_uri">链接格式错误，请粘贴完整节点链接。</string>
@@ -152,9 +152,9 @@
     <string name="err_invalid_credential">认证材料无效，请获取完整有效链接。</string>
     <string name="err_invalid_certificate">证书或密钥材料校验失败，请更新完整材料。</string>
     <string name="err_invalid_option">协议选项无效或不兼容。</string>
-    <string name="err_duplicate_node">此完整节点配置已存在于本次会话。</string>
-    <string name="err_node_capacity_reached">本次会话节点数量已达上限，请先移除临时节点。</string>
-    <string name="err_node_not_found">本次会话中已无此节点，请重新选择。</string>
+    <string name="err_duplicate_node">此完整节点配置已保存。</string>
+    <string name="err_node_capacity_reached">已保存节点数量达到上限。请先移除一个节点，再导入新节点。</string>
+    <string name="err_node_not_found">该节点已不在保存列表中。请选择其他节点。</string>
     <string name="err_invalid_server_address">请输入不含认证信息、路径、查询参数或片段的域名或 HTTPS 源地址。</string>
     <string name="err_empty_routing_selection">保存仅所选 APP 模式前，请至少选择一个可见 APP。</string>
     <string name="err_invalid_package_name">应用包名无效，请重新读取可见 APP 选择。</string>
@@ -211,7 +211,7 @@
     <string name="err_engine_stop_incomplete">资源关闭尚未确认。前台 VPN 所有者会继续保留，请重试停止。</string>
     <string name="err_publication_exhausted">快照传输序列已耗尽。VPN 转发已禁用；请停止后重新打开会话。</string>
     <string name="vpn_notification_unavailable">VPN 仍被保留，状态不可用</string>
-    <string name="node_page_loaded">已读取此会话的节点页。</string>
+    <string name="node_page_loaded">已读取保存的节点。</string>
     <string name="err_invalid_node_page">此节点页不可用，请刷新列表。</string>
     <string name="node_page_loading">正在读取节点页…</string>
     <string name="node_page_number">第 %1$d 页，共 %2$d 页</string>
@@ -255,4 +255,7 @@
     <string name="mail_notification_title">有新邮件</string>
     <string name="mail_notification_body">打开邮件，以当前授权会话读取。</string>
     <string name="mail_event_unavailable">尚未配置远端邮件事件。只有真实且授权的服务事件到达时，此渠道才会通知。</string>
+    <string name="err_storage_unavailable">本地加密存储暂不可用。请解锁设备、检查剩余空间，再重新打开服务。</string>
+    <string name="err_storage_recovery">LOFT 已保留加密文件。请重新打开服务以重试。如果仍无法恢复，请在 Android 设置中清除 LOFT 的存储数据，再重新导入原始节点链接。</string>
+    <string name="ok_storage_reopened">已重新打开本地加密存储。</string>
 </resources>
