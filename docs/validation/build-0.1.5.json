@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "release": "0.1.5-LYNX",
+  "verified_at_utc": "2026-11-26T23:12:36.012535+00:00",
+  "source_file_count": 750,
+  "source_manifest_sha256": "793b82b2a28b1665935d78dc540610114117b50bc0997aff674b6a84f33a4ffc",
+  "cargo_lock": {
+    "path": "loft-core-rust/Cargo.lock",
+    "bytes": 35979,
+    "sha256": "815972eef26d1aeaaf66799b324348d2a70d1b82b76ef7133a64182cf90272c4"
+  },
+  "hub_cargo_lock": {
+    "path": "hub/Cargo.lock",
+    "bytes": 31768,
+    "sha256": "164b83408e4085f23d20bbda77f55c68bf5ffe590b18f32a956396f0467b19d9"
+  },
+  "wrangler_lock": {
+    "path": "hub-install/package-lock.json",
+    "bytes": 68404,
+    "sha256": "42f21245d95da567cd84f095df9dfd3cbae29424250eba9055ca679ceffa3947"
+  },
+  "deployed_worker_wasm": {
+    "path": "hub/build/index_bg.wasm",
+    "bytes": 1604881,
+    "sha256": "6e208e183a8dbce405d4aec366991bd0161463853ca7f6345424fe22e35eee12"
+  },
+  "go_source_lock": {
+    "path": "loft-vpn-engine-go/third_party/SOURCE-LOCK.json",
+    "bytes": 174573,
+    "sha256": "c5ab09647fff170c0c2e01fdcc24d23a732343d8ef167d13b83bd7d6c5642312"
+  },
+  "rust_workspace_tests_passed": 118,
+  "production_hub": {
+    "legacy_short_contract": true,
+    "durable_identity_without_mail": true,
+    "mail_unauthorized_before_reconsent": true,
+    "mail_reconsent_same_hub_bearer": true,
+    "inbox_items": 0,
+    "opaque_vault_create_read_conflict": true,
+    "portal_revocation_clears_mail_only": true,
+    "hub_logout_revokes_identity_and_vault_access": true
+  },
+  "go_normal": {
+    "top_level": 114,
+    "subtests": 145,
+    "log_sha256": "fb1b328c1e44297b3ddebcb1c168cab8908bdacb124712c5ed8150fc4db913a1"
+  },
+  "go_race": {
+    "top_level": 114,
+    "subtests": 145,
+    "log_sha256": "a3e53cb697878acabc68f13889fb26cff8ad8e00717e2efc75ee63a1dd106c13"
+  },
+  "arm64": {
+    "command": "bash scripts/build-android.sh",
+    "log_sha256": "1763bb33cee8a1a91663d233a74615bbb8f002e765c7492190a93382097710a9",
+    "native_inputs": [
+      {
+        "path": "loft-android/app/build/generated/jniLibs/arm64-v8a/libloft_ffi.so",
+        "bytes": 9332408,
+        "sha256": "a3d8a632749b977721b08d14e95e4716723968ab1e1d6e27e7877249fada618c"
+      },
+      {
+        "path": "loft-android/app/build/generated/gomobile/loft-engine.aar",
+        "bytes": 11187553,
+        "sha256": "c046094f80ac771b65ba99cfbb637f236fc6f5eb37ad2ed89abdc1ebf8ec3106"
+      },
+      {
+        "path": "loft-android/app/build/generated/uniffi/net/aptist/loft/core/generated/loft_ffi.kt",
+        "bytes": 204690,
+        "sha256": "aacb9f2bfcd3085f99aa4bf44ce6a767dbd7000bd238de137450a9e2984bc858"
+      }
+    ],
+    "unsigned": {
+      "path": "loft-android/app/build/outputs/apk/release/app-release-unsigned.apk",
+      "bytes": 29012426,
+      "sha256": "17bb2b9d3886d901a7673a2ea642f317c676cbff6d59d2b53e40490861872b3f"
+    },
+    "app_jvm": {
+      "tests": 87,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "foundation_jvm": {
+      "tests": 118,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lint": {
+      "Warning": 51,
+      "Error": 0,
+      "Fatal": 0
+    }
+  },
+  "x86_64": {
+    "scope": "Debug JVM/build checkpoint before final camera manifest and detached KDF",
+    "log_sha256": "6849d8e2504a9d01cdb676e9560fa6d2ecafcde025f6451120b81a605633abd3",
+    "native_inputs": [
+      {
+        "path": "tmp/loftmobile-1126-02/native-x86_64/jniLibs/x86_64/libloft_ffi.so",
+        "bytes": 9453392,
+        "sha256": "332284647827c0b45fe60a5dabbb450e57162b3fc94696731324bb333218758b"
+      },
+      {
+        "path": "tmp/loftmobile-1126-02/native-x86_64/gomobile/loft-engine.aar",
+        "bytes": 12011389,
+        "sha256": "c45dfe721150d6365cba701e120dfe34976f5588b0f800da265ae9677ab739af"
+      },
+      {
+        "path": "tmp/loftmobile-1126-02/native-x86_64/uniffi/net/aptist/loft/core/generated/loft_ffi.kt",
+        "bytes": 204690,
+        "sha256": "aacb9f2bfcd3085f99aa4bf44ce6a767dbd7000bd238de137450a9e2984bc858"
+      }
+    ],
+    "app_jvm": {
+      "tests": 87,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "app": {
+      "path": "tmp/loftmobile-1126-02/android-x86/app/outputs/apk/debug/app-debug.apk",
+      "bytes": 60211255,
+      "sha256": "3cd697311717807ca15c950290e87fc35a2c602a67bf8b9a46ec92e0de51e048"
+    },
+    "instrumentation": {
+      "path": "tmp/loftmobile-1126-02/android-x86/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+      "bytes": 953079,
+      "sha256": "882d4d885ce61020624e92cab78cd6b6aa1fd8d69fdd098a043a45e92b152663"
+    }
+  }
+}

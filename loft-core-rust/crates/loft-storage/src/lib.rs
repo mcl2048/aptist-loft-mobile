@@ -2,7 +2,7 @@
 
 use loft_core::{
     CoreError, LoadedLocalConfig, LocalConfigEdit, LocalConfigStore, LocalSettings,
-    MAX_NODE_INPUT_BYTES, MAX_NODES,
+    MAX_NODE_INPUT_BYTES, MAX_NODES, PrivateRecord, VAULT_IMAGE_LIMIT,
 };
 use rusqlite::{
     Connection, Error, ErrorCode, OpenFlags, Row, TransactionBehavior, config::DbConfig,
@@ -15,7 +15,8 @@ const PAGE_BYTES: u64 = 4096;
 const MAX_PAGES: i32 = 16_384;
 const MAX_SETTINGS_BYTES: usize = 8192;
 const APPLICATION_ID: u32 = u32::from_be_bytes(*b"LOFT");
-const SCHEMA_VERSION: u32 = 1;
+const SCHEMA_VERSION: u32 = 2;
+const HUB_SESSION_LIMIT: usize = 8192;
 
 const SCHEMA: &str = "
     CREATE TABLE local_config (
@@ -28,6 +29,13 @@ const SCHEMA: &str = "
         id BLOB NOT NULL PRIMARY KEY CHECK (length(id) = 8),
         uri BLOB NOT NULL CHECK (length(uri) BETWEEN 1 AND 524288)
     ) STRICT, WITHOUT ROWID;";
+const PRIVATE_SCHEMA: &str = "
+    CREATE TABLE local_private (
+        kind INTEGER NOT NULL PRIMARY KEY CHECK (kind IN (1, 2)),
+        data BLOB NOT NULL CHECK (
+            length(data) BETWEEN 1 AND CASE kind WHEN 1 THEN 245760 ELSE 8192 END
+        )
+    ) STRICT;";
 
 /// One device-local anonymous configuration store. The Android service supplies the
 /// private directory path and a random key unwrapped by Keystore for this open only.
@@ -91,6 +99,15 @@ impl SqlCipherStore {
         }
         match (application, version) {
             (APPLICATION_ID, SCHEMA_VERSION) => check_cipher_integrity(&transaction)?,
+            (APPLICATION_ID, 1) => {
+                check_cipher_integrity(&transaction)?;
+                transaction
+                    .execute_batch(PRIVATE_SCHEMA)
+                    .map_err(sql_error)?;
+                transaction
+                    .pragma_update(None, "user_version", SCHEMA_VERSION)
+                    .map_err(sql_error)?;
+            }
             (0, 0) if allow_create => initialize(&transaction)?,
             _ => return Err(CoreError::StorageRecoveryRequired),
         }
@@ -162,6 +179,9 @@ fn initialize(connection: &Connection) -> Result<(), CoreError> {
         return Err(CoreError::StorageRecoveryRequired);
     }
     connection.execute_batch(SCHEMA).map_err(sql_error)?;
+    connection
+        .execute_batch(PRIVATE_SCHEMA)
+        .map_err(sql_error)?;
     connection
         .pragma_update(None, "application_id", APPLICATION_ID)
         .map_err(sql_error)?;
@@ -260,6 +280,47 @@ impl LocalConfigStore for SqlCipherStore {
         Ok(())
     }
 
+    fn load_private(&self, record: PrivateRecord) -> Result<Option<Zeroizing<Vec<u8>>>, CoreError> {
+        let (id, limit) = private_record(record);
+        let mut statement = self
+            .connection
+            .prepare("SELECT data FROM local_private WHERE kind = ?1")
+            .map_err(read_error)?;
+        let mut rows = statement.query([id]).map_err(read_error)?;
+        let Some(row) = rows.next().map_err(read_error)? else {
+            return Ok(None);
+        };
+        let bytes = row
+            .get_ref(0)
+            .and_then(|value| Ok(value.as_blob()?))
+            .map_err(read_error)?;
+        if !(1..=limit).contains(&bytes.len()) {
+            return Err(CoreError::StorageRecoveryRequired);
+        }
+        Ok(Some(Zeroizing::new(bytes.to_vec())))
+    }
+
+    fn commit_private(
+        &mut self,
+        record: PrivateRecord,
+        data: Option<&[u8]>,
+    ) -> Result<(), CoreError> {
+        let (id, limit) = private_record(record);
+        let transaction = self
+            .connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .map_err(sql_error)?;
+        match data {
+            Some(bytes) if (1..=limit).contains(&bytes.len()) => transaction.execute(
+                "INSERT INTO local_private VALUES (?1, ?2) ON CONFLICT(kind) DO UPDATE SET data=excluded.data",
+                params![id, bytes],
+            ).map_err(sql_error)?,
+            Some(_) => return Err(CoreError::StorageUnavailable),
+            None => transaction.execute("DELETE FROM local_private WHERE kind = ?1", [id]).map_err(sql_error)?,
+        };
+        transaction.commit().map_err(commit_error)
+    }
+
     fn commit(&mut self, generation: u64, edit: LocalConfigEdit<'_>) -> Result<(), CoreError> {
         let transaction = self
             .connection
@@ -282,24 +343,36 @@ impl LocalConfigStore for SqlCipherStore {
                 }
                 transaction.execute("UPDATE local_config SET generation = ?1 WHERE singleton = 1 AND generation < ?1", params![generation])
             }
-            LocalConfigEdit::Settings(settings) => transaction.execute(
+            LocalConfigEdit::Settings { settings, clear_hub } => {
+                if clear_hub {
+                    transaction.execute("DELETE FROM local_private WHERE kind = 2", []).map_err(sql_error)?;
+                }
+                transaction.execute(
                 "UPDATE local_config SET generation = ?1, settings = ?2 WHERE singleton = 1 AND generation < ?1",
                 params![generation, encode_settings(settings)?],
-            ),
+                )
+            }
         }.map_err(sql_error)?;
         if updated != 1 {
             return Err(CoreError::StorageRecoveryRequired);
         }
-        transaction.commit().map_err(|error| {
-            match error.sqlite_error_code() {
-                Some(ErrorCode::DatabaseBusy | ErrorCode::DatabaseLocked | ErrorCode::DiskFull) => {
-                    CoreError::StorageUnavailable
-                }
-                // A commit with an unknown write outcome requires a fresh authenticated open
-                // before allowing the old in-memory configuration to start a VPN.
-                _ => CoreError::StorageRecoveryRequired,
-            }
-        })
+        transaction.commit().map_err(commit_error)
+    }
+}
+
+fn private_record(record: PrivateRecord) -> (u32, usize) {
+    match record {
+        PrivateRecord::Vault => (1, VAULT_IMAGE_LIMIT),
+        PrivateRecord::Hub => (2, HUB_SESSION_LIMIT),
+    }
+}
+
+fn commit_error(error: Error) -> CoreError {
+    match error.sqlite_error_code() {
+        Some(ErrorCode::DatabaseBusy | ErrorCode::DatabaseLocked | ErrorCode::DiskFull) => {
+            CoreError::StorageUnavailable
+        }
+        _ => CoreError::StorageRecoveryRequired,
     }
 }
 
@@ -331,6 +404,35 @@ mod tests {
     };
 
     const FIXTURE_KEY: [u8; 32] = [57; 32];
+
+    #[test]
+    fn authenticated_schema_one_upgrades_and_keeps_guest_preferences() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("legacy.db");
+        let db = SqlCipherStore::open(&path, &FIXTURE_KEY, true).unwrap();
+        let mut core = CoreState::with_local_storage(Arc::new(AtomicBool::new(false)), db).unwrap();
+        core.stage_server("saved.example".to_owned()).unwrap();
+        drop(core);
+        let connection = Connection::open(&path).unwrap();
+        set_key(&connection, &FIXTURE_KEY).unwrap();
+        connection
+            .execute_batch("DROP TABLE local_private; PRAGMA user_version = 1")
+            .unwrap();
+        drop(connection);
+
+        let db = SqlCipherStore::open(&path, &FIXTURE_KEY, false).unwrap();
+        assert_eq!(
+            pragma::<u32>(&db.connection, "user_version").unwrap(),
+            SCHEMA_VERSION
+        );
+        let mut core = CoreState::with_local_storage(Arc::new(AtomicBool::new(false)), db).unwrap();
+        assert_eq!(
+            core.snapshot().server_address.as_deref(),
+            Some("https://saved.example")
+        );
+        assert!(core.vault_list(false, 0, None).unwrap().entries.is_empty());
+        assert!(core.hub_snapshot().session.is_none());
+    }
 
     #[test]
     fn exclusive_connection_releases_on_close() {

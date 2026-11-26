@@ -82,7 +82,7 @@ func (c *Client) WarmUp(ctx context.Context) error {
 		return net.ErrClosed
 	}
 	defer func() { <-c.dialGate }()
-	_, err := c.sessionFor(ctx, false)
+	_, _, err := c.sessionFor(ctx, false)
 	return err
 }
 
@@ -114,11 +114,21 @@ func (c *Client) DialContext(ctx context.Context, network, target string) (net.C
 	if err := ctx.Err(); err != nil {
 		return nil, err
 	}
-	s, err := c.sessionFor(ctx, network == "xudp")
+	s, reused, err := c.sessionFor(ctx, network == "xudp")
 	if err != nil {
 		return nil, err
 	}
 	stream, err := s.open(ctx, network, target)
+	if err != nil && reused && c.url != nil && !s.active() && errors.Is(err, net.ErrClosed) && ctx.Err() == nil && c.ctx.Err() == nil {
+		// Pooled physical session went stale between selection and frameOpen
+		// (e.g., idle NAT drop or peer recycle). Evict it and try once more.
+		s.abort()
+		s, _, err = c.sessionFor(ctx, network == "xudp")
+		if err != nil {
+			return nil, err
+		}
+		stream, err = s.open(ctx, network, target)
+	}
 	if err != nil {
 		// Return a nil interface instead of boxing a nil *Stream into net.Conn.
 		return nil, err
@@ -149,12 +159,12 @@ func validateTarget(target string) error {
 	return nil
 }
 
-func (c *Client) sessionFor(ctx context.Context, packetKinds ...bool) (*session, error) {
+func (c *Client) sessionFor(ctx context.Context, packetKinds ...bool) (*session, bool, error) {
 	packetOnly := len(packetKinds) > 0 && packetKinds[0]
 	c.mu.Lock()
 	if c.closed {
 		c.mu.Unlock()
-		return nil, net.ErrClosed
+		return nil, false, net.ErrClosed
 	}
 	active := 0
 	totalStreams := 0
@@ -193,7 +203,7 @@ func (c *Client) sessionFor(ctx context.Context, packetKinds ...bool) (*session,
 	needNew := active < minSessions || (c.cfg.ElasticMux && active < desired && (c.lastExpand.IsZero() || time.Since(c.lastExpand) >= 2*time.Second)) || selected == nil
 	if !needNew {
 		c.mu.Unlock()
-		return selected, nil
+		return selected, true, nil
 	}
 	if active >= maxSessions {
 		// A missing packet kind may replace an idle session, within the same budget.
@@ -210,10 +220,11 @@ func (c *Client) sessionFor(ctx context.Context, packetKinds ...bool) (*session,
 		}
 		c.mu.Unlock()
 		if idle == nil {
-			return nil, errors.New("hyrakenpro: session capacity exhausted")
+			return nil, false, errors.New("hyrakenpro: session capacity exhausted")
 		}
 		_ = idle.Close()
-		return c.createSession(ctx, packetOnly)
+		s, err := c.createSession(ctx, packetOnly)
+		return s, false, err
 	}
 	count := 1
 	if active < minSessions {
@@ -232,7 +243,7 @@ func (c *Client) sessionFor(ctx context.Context, packetKinds ...bool) (*session,
 		var err error
 		first, err = c.createSession(ctx, packetOnly)
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 	} else {
 		// dialGate still owns the whole bounded construction. Each worker uses the
@@ -276,7 +287,7 @@ func (c *Client) sessionFor(ctx context.Context, packetKinds ...bool) (*session,
 					result.session.Close()
 				}
 			}
-			return nil, canceled
+			return nil, false, canceled
 		}
 		var firstErr error
 		for _, result := range results[:count] {
@@ -291,11 +302,11 @@ func (c *Client) sessionFor(ctx context.Context, packetKinds ...bool) (*session,
 			if firstErr == nil {
 				firstErr = net.ErrClosed
 			}
-			return nil, firstErr
+			return nil, false, firstErr
 		}
 		// Preserve partial-success behavior and its existing elastic expansion clock.
 		if firstErr != nil {
-			return first, nil
+			return first, false, nil
 		}
 	}
 	if c.cfg.ElasticMux && active >= minSessions {
@@ -303,7 +314,7 @@ func (c *Client) sessionFor(ctx context.Context, packetKinds ...bool) (*session,
 		c.lastExpand = time.Now()
 		c.mu.Unlock()
 	}
-	return first, nil
+	return first, false, nil
 }
 
 func (c *Client) createSession(ctx context.Context, packetKinds ...bool) (*session, error) {

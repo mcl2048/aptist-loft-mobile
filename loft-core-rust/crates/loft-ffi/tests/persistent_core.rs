@@ -213,3 +213,69 @@ fn an_expired_previously_saved_node_can_be_removed_after_restart() {
         digest
     );
 }
+
+#[test]
+fn vault_records_and_archival_survive_sqlcipher_reopen() {
+    use loft_ffi::{VaultDraft, VaultKind};
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("device-vault.db");
+    let path_text = path.to_str().unwrap().to_owned();
+    let secret = b"synthetic credential stored only in SQLCipher";
+    let core = AppCore::open_persistent(path_text.clone(), vec![51; 32], true).unwrap();
+    let entry = core
+        .vault_save(VaultDraft {
+            id: None,
+            kind: VaultKind::Password,
+            label: "Fixture".into(),
+            account: "".into(),
+            issuer: "".into(),
+            secret: Some(secret.to_vec()),
+            algorithm: None,
+            digits: None,
+            period: None,
+        })
+        .unwrap();
+    core.vault_archive(entry.id.clone(), true).unwrap();
+    drop(core);
+    assert!(
+        !std::fs::read(path)
+            .unwrap()
+            .windows(secret.len())
+            .any(|bytes| bytes == secret)
+    );
+    let core = AppCore::open_persistent(path_text, vec![51; 32], false).unwrap();
+    assert_eq!(
+        core.vault_list(true, 0, None).unwrap().entries[0].id,
+        entry.id
+    );
+    core.vault_archive(entry.id.clone(), false).unwrap();
+    assert_eq!(core.vault_reveal(entry.id, 0).unwrap().value, secret);
+}
+
+#[test]
+fn durable_identity_restores_from_sqlcipher_and_logout_stays_local_without_network() {
+    use loft_ffi::HubAction;
+
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("durable-account.db");
+    let path_text = path.to_str().unwrap().to_owned();
+    let core = AppCore::open_persistent(path_text.clone(), vec![91; 32], true).unwrap();
+    core.stage_server("hub.example".into()).unwrap();
+    let discovery = core.hub_begin(HubAction::Discover, None, false).unwrap();
+    let media = Some("application/json".to_string());
+    core.hub_finish(discovery.request_id, 200, media.clone(), br#"{"version":1,"product":"loft","authMode":"portal_bff","issuer":"https://portal.example/api/idp","modules":["mail"]}"#.to_vec()).unwrap();
+    let login = core.hub_begin(HubAction::SignIn, None, false).unwrap();
+    core.hub_finish(login.request_id, 201, media.clone(), br#"{"transactionId":"AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE","authorizationUrl":"https://portal.example/api/idp/authorize?state=fixture","expiresAt":1800000300,"expiresIn":300}"#.to_vec()).unwrap();
+    let complete = core.hub_begin(HubAction::Complete, None, false).unwrap();
+    core.hub_finish(complete.request_id, 200, media, br#"{"status":"complete","sessionToken":"AgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgI","issuer":"https://portal.example/api/idp","subject":"fixture-subject","mailRead":false,"expiresAt":0,"expiresIn":0,"durable":true}"#.to_vec()).unwrap();
+    drop(core);
+    let core = AppCore::open_persistent(path_text.clone(), vec![91; 32], false).unwrap();
+    let session = core.hub_snapshot().unwrap().session.unwrap();
+    assert_eq!(session.subject, "fixture-subject");
+    assert!(!session.mail_available);
+    let revoke = core.hub_begin(HubAction::Logout, None, false).unwrap();
+    core.hub_abandon(revoke.request_id).unwrap();
+    drop(core);
+    let core = AppCore::open_persistent(path_text, vec![91; 32], false).unwrap();
+    assert!(core.hub_snapshot().unwrap().session.is_none());
+}

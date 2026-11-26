@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if (ROOT / 'third_party/SOURCE-LOCK.json').exists():
     raise SystemExit('existing owned source snapshot: update source pins and mobile patches through a reviewed refresh, not an overwrite')
 GATEWAY = Path('/home/coder/Loft-Gateway')
-PIN = '231f14813f2b45cb6f0bde984181c57cba1d02fd'
+PIN = '98644864d2426627cd151a0561e5035e46f6b79c'
 PRODUCTION_SUFFIXES = {'.go', '.s', '.S', '.h', '.c', '.proto'}
 MODULE_FILES = {'go.mod', 'go.sum', 'LICENSE', 'LICENSE.md', 'COPYING', 'NOTICE', 'THIRD_PARTY_NOTICES.md', 'UPSTREAM-SHA256SUMS', 'README.loft.md'}
 COMPONENTS = (

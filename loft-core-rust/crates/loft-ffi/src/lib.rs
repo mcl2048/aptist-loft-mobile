@@ -18,6 +18,8 @@ use zeroize::Zeroizing;
 
 mod hub;
 pub use hub::*;
+mod vault;
+pub use vault::*;
 
 uniffi::setup_scaffolding!();
 

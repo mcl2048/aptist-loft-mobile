@@ -160,5 +160,5 @@ func VPNRuntimeInfo() string {
 		TransportReady  bool   `json:"transport_ready"`
 		IPv6            bool   `json:"ipv6_forwarded"`
 		DNSMode         string `json:"dns_mode"`
-	}{SchemaVersion: 1, Scope: "vpn_transport_runtime", EngineVersion: engineVersion, SourcePin: gatewaySourcePin, GVisor: vpn.GVisorBuilt, DataPlaneLinked: vpn.GVisorBuilt, GoMaxProcs: runtime.GOMAXPROCS(0), DNSMode: "node_domain_fake_ip"})
+	}{SchemaVersion: 1, Scope: "vpn_transport_runtime", EngineVersion: engineVersion, SourcePin: vpnGatewaySourcePin, GVisor: vpn.GVisorBuilt, DataPlaneLinked: vpn.GVisorBuilt, GoMaxProcs: runtime.GOMAXPROCS(0), DNSMode: "node_domain_fake_ip"})
 }

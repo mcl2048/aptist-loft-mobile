@@ -14,4 +14,6 @@ interface ILoftControl {
     oneway void executeHub(long requestId, String action, @nullable String input, boolean mailAccess,
         in @nullable ParcelFileDescriptor destination, ILoftHubEvents observer);
     oneway void cancelHubWork(long requestId);
+    oneway void executeVault(long requestId, in byte[] command, ILoftHubEvents observer);
+    oneway void cancelVaultWork(long requestId);
 }

@@ -1,10 +1,14 @@
-# LOFT mobile · 0.1.4-LYNX
+# LOFT mobile · 0.1.5-LYNX
 
 LOFT is a native Android application framework with Rust-owned business state and source-pinned Go VPN adapters. Task `loftmobile-1125-01` builds the foundation against local `guide/guide.md` v3.6 and `guide/ui-design.md`. The complete P0–P5 product roadmap has separate implementation and device gates.
 
+Task `loftmobile-1126-02` adds durable Hub login, a native offline TOTP and password vault, and the Gateway 8.0.34 transport refresh. The vault supports camera or manual TOTP import, editing, archive and restore, and explicit encrypted sync. It stays usable after signing out. Hub uses the original Portal grant for mail, so expired mail access requests consent independently. [Vault contract](docs/contracts/vault.md) · [Hub contract](docs/contracts/hub.md) · [Task report](report/loftmobile-1126-02-progress.md)
+
 Task `loftmobile-1126-01` adds LOFT Hub. A Cloudflare Pages endpoint forwards to a Rust Worker, which verifies Portal OAuth and holds short-lived encrypted authorization state in D1. In Android, enter a Hub HTTPS origin as the server address candidate, verify and activate it, then use the system browser to sign in to Portal. Explicit mail consent enables read-only inbox, trash, message and attachment access for the signed-in account. [Hub contract](docs/contracts/hub.md) · [Linux installer](hub-install/Readme.md) · [Task report](report/loftmobile-1126-01-progress.md)
 
-The first deployment is [aptist-loft-hub.pages.dev](https://aptist-loft-hub.pages.dev). The signed ARM64 Release is `bin/loft.apk`, versionCode `5`, SHA256 `8b62eb2ae82c218cee91fe7c335c17d66b08d3afb126d210c1e48c1ace06fc18`. It uses the local development certificate and passed 83 APP and 117 foundation JVM tests, APK signature, native alignment and the index/artifact secret scan. [Build evidence](docs/validation/build-0.1.4.json) · [Exact APK verification](docs/validation/apk-0.1.4-release.json)
+The first deployment is [aptist-loft-hub.pages.dev](https://aptist-loft-hub.pages.dev). The 0.1.4 ARM64 Release used versionCode `5`, SHA256 `8b62eb2ae82c218cee91fe7c335c17d66b08d3afb126d210c1e48c1ace06fc18`. It uses the local development certificate and passed 83 APP and 117 foundation JVM tests, APK signature, native alignment and the index/artifact secret scan. [Build evidence](docs/validation/build-0.1.4.json) · [Exact APK verification](docs/validation/apk-0.1.4-release.json)
+
+The 0.1.5-LYNX ARM64 Release is `bin/loft.apk`, versionCode 6, SHA256 `84d722ef75d875c7f244798af1b61b9090493102df68c78b8f895bca67d1c45b`. The exact file uses LOFT’s local development certificate and passed signature, alignment and credential verification. [APK receipt](docs/validation/apk-0.1.5-release.json) · [Build receipt](docs/validation/build-0.1.5.json)
 
 Task `loftmobile-1125-02` adds the icon-only native module rail and encrypted guest persistence. The rail retains localized accessibility names, selected state and the full module titles in secondary navigation. The guest store retains complete imported SOCKS5, HyrakenX and Hyraken Pro configuration, including credentials, certificates and protocol parameters. Saved routing, privacy and server drafts also survive restart. An Android Keystore key wraps the SQLCipher database key. [Storage contract](docs/contracts/encrypted-storage.md) · [Current task report](report/loftmobile-1125-02-progress.md)
 
@@ -32,7 +36,7 @@ DNS and recognized WebRTC traffic use shared `proxy_only`/`block` rules before a
 
 The added-memory ledger is 8 MiB, including a fixed 528 KiB non-domain address quarantine reservation; dynamic capacity is 7,847,936 bytes. Mappings are limited to 256 entries/256 KiB and retain identity through live I/O and advertised TTL. Passive recovery needs no periodic restart or extra polling. These allocation limits do not establish handset PSS or battery performance.
 
-QR, the 512 KiB Android FD-import path, live TUN replacement, automatic reconnect, Shield/attestation and Gateway policy integration remain roadmap items. Portal confidential OAuth keeps the administrator client secret and upstream user bearer in the Worker. The APP confirms compatibility over HTTPS and uses a short-lived Hub-only session after user consent.
+QR, the 512 KiB Android FD-import path, live TUN replacement, automatic reconnect, Shield/attestation and Gateway policy integration remain roadmap items. Portal confidential OAuth keeps the administrator client secret and upstream user bearer in the Worker. The APP confirms compatibility over HTTPS and stores a durable Hub-only session after user consent. Portal mail access retains its own short deadline.
 
 Portal `notifyUnread` writes a database marker, not a mobile event. Real new-mail push still needs a successful-publication event source, Rust subscription authority and an actual configured provider. The framework does not poll mail or initialize an unconfigured push service. API29 passed actual Blocked/Connected foreground notifications, four-language text, hidden-UI continuity and notification PendingIntent Stop/removal; API33+ denial, status-bar rendering and physical background survival remain separate acceptance.
 
@@ -57,7 +61,7 @@ Native builds require `with_gvisor` and matching UniFFI/library inputs. The Grad
 
 ## Source and verification
 
-Gateway8.0.32-LYNX is pinned to `231f14813f2b45cb6f0bde984181c57cba1d02fd`; Portal2.2.0-PUMA review input is `4ab2b37d08f9d7e304ae4d420d36d15c54dffa36`. Both are read-only source inputs. The owned Go snapshot preserves the existing X/Pro authentication and payload boundaries: X1–1024-byte application UDP; Pro0–65,507, including empty packets. Pro's66,023-byte XUDP envelope is not application payload. Ordinary SOCKS5 has no tunnel encryption.
+The linked Gateway adapter is pinned to 8.0.34-LYNX at `98644864d2426627cd151a0561e5035e46f6b79c`; Portal2.2.0-PUMA review input is `4ab2b37d08f9d7e304ae4d420d36d15c54dffa36`. Both are read-only source inputs. The owned Go snapshot preserves the existing X/Pro authentication and payload boundaries: X1–1024-byte application UDP; Pro0–65,507, including empty packets. Pro's66,023-byte XUDP envelope is not application payload. Ordinary SOCKS5 has no tunnel encryption.
 
 [Requirements and remaining acceptance](docs/requirements.md), [task progress](report/loftmobile-1125-01-progress.md), [trust boundaries](docs/threat-model/framework.md) and [privacy](docs/privacy/framework.md) distinguish host, Android and physical-device results. The repaired node-directory finding retains its [original and post-fix evidence](docs/validation/spec-compliance/requirements/REQ-NODE-01.md).
 

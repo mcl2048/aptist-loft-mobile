@@ -1,6 +1,6 @@
 # LOFT framework requirement status
 
-The 0.1.4-LYNX task adds LOFT Hub for Portal OAuth and own-user mail. The 0.1.3 and 0.1.2 checkpoints retain their original device and source scope. [Current task report](../report/loftmobile-1126-01-progress.md)
+The 0.1.5-LYNX task adds durable Hub enrollment, an offline TOTP and password vault, and the Gateway 8.0.34 refresh. [Current task report](../report/loftmobile-1126-02-progress.md)
 
 | Requirement | Implementation / owner | Verified boundary and remaining work |
 | --- | --- | --- |
@@ -17,7 +17,8 @@ The 0.1.4-LYNX task adds LOFT Hub for Portal OAuth and own-user mail. The 0.1.3 
 | DNS resource/lifetime |256 maps/256 KiB; fixed528 KiB quarantine inside total8 MiB | Full normal/race passed stable renewal, maximum-expiry/atomic leases, final-reply I/O and passive exhausted-pool recovery. Independent actual Map/Budget RED→GREEN is retained. Dynamic budget7,847,936 bytes; no domain history or periodic restart |
 | Selected APP routing | Rust draft/frozen PM-reported shared-UID Builder set | Empty/lockdown conflict denied; exact reported-member freeze checked. Android11+ MAIN+LAUNCHER-only/noQUERY_ALL does not prove hidden/full-device enumeration; live rebuild/rollback and selected/unselected UID/work-profile/DNS matrix pending |
 | Stop / Drain / Abort | Go owned jobs, Rust fence, Android FD/start owner | Current host ownership/loss/late-join suites passed. Latest API29 real loopback failure/held-TUN/Blocked FGS→priority Stop/resource+notification removal and both-node connection-request cancellation passed. System revoke/device fault matrix remains separate; fixed metadata and ended counters are not active proof |
-| Optional server/login | Rust origin discovery, profile and session + native account page + Pages/Worker/D1 | System-browser confidential OAuth, original APP proof and source-bounded session. Portal client secret and upstream bearer remain in Hub. [Hub contract](contracts/hub.md) |
+| Optional server/login | Rust origin discovery, profile and session + native account page + Pages/Worker/D1 | System-browser confidential OAuth, original APP proof and durable Hub enrollment with explicit logout. Portal mail grant has a separate source deadline. Portal client secret and upstream bearer remain in Hub. [Hub contract](contracts/hub.md) |
+| Offline TOTP and passwords | Rust + SQLCipher + native camera and device authentication | Local edits and archival, one visible reveal, optional Argon2id/AES-GCM backup with owner-scoped compare-and-swap. [Vault contract](contracts/vault.md) |
 | Own-user mail | Rust Hub + private service + Compose | Explicit `mail.read`, source-account inbox/trash pagination, safe native text and explicit content/attachment save. Live and synthetic execution scopes are in the task report |
 | VPN/mail notifications | real VPN FGS channel/icon/Stop; independent default-denied mail channel | Latest API29 Blocked and real X Connected tests confirm native icon, NMS FGS flag/AMS foreground, four actual notification languages, hidden-UI scope continuity and notification PendingIntent Stop/removal. API33+/channel denial/status-bar rendering/physical survival unexecuted. Real mail requires source events/Rust subscription authority/provider; Portal notifyUnread is a database marker |
 | Shield / Gateway DNS-Firewall | explicit dependency/evidence boundaries | Unknown rather than safe verdict; software checks, attestation, network-policy/lease/revocation enforcement and real gateway receipts remain later tasks |

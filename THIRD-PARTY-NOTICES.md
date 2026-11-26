@@ -2,7 +2,7 @@
 
 The linked Android application uses GPL-3.0-or-later sing/sing-tun code. The combined application and Go adapter are delivered under compatible GPL terms; independent Rust crates retain the Apache-2.0 metadata. Full GPL and Apache texts are in `licenses/`. Original component notices remain applicable.
 
-Gateway input: `/home/coder/Loft-Gateway` commit `231f14813f2b45cb6f0bde984181c57cba1d02fd` (8.0.32-LYNX). Selected protocol/QUIC/Hydra/traffic-profile and SOCKS source is copied under `loft-vpn-engine-go/third_party`; upstream files are not modified. The source manifest records copied hashes and local adapter/stack differences. The QUIC fork retains its MIT license. GhostX/sing copyright and name/association restrictions are retained, without implying endorsement.
+Gateway input: `/home/coder/Loft-Gateway` commit `98644864d2426627cd151a0561e5035e46f6b79c` (8.0.34-LYNX). Selected protocol/QUIC/Hydra/traffic-profile and SOCKS source is copied under `loft-vpn-engine-go/third_party`; upstream files are not modified. The source manifest records copied hashes and local adapter/stack differences. The QUIC fork retains its MIT license. GhostX/sing copyright and name/association restrictions are retained, without implying endorsement.
 
 HyrakenX/Pro crypto notices describe the existing Rocca-S/Ascon/AEGIS lineage and its original validation material. They do not constitute an independent mobile cryptographic audit. Test-only C references and private test nodes are not linked into the APK. Original notices and referenced license texts accompany the selected source snapshot.
 
@@ -15,3 +15,5 @@ The inventory records eleven uncached external graph modules and missing module-
 Go modules are locked by `go.mod/go.sum`, Rust crates by Cargo.lock, and Android runtime artifacts by fixed dependency versions. The final release dependency inventory records actual resolved inputs; third-party notice assets are read only when needed, not preloaded into the VPN runtime.
 
 APTIST Portal is a read-only architecture/API reference at commit `4ab2b37d08f9d7e304ae4d420d36d15c54dffa36`. Its credentials, deployment files, source and mail content are not copied into this application.
+
+The offline scanner uses AndroidX CameraX 1.5.3 and ZXing Core 3.5.4 under Apache 2.0. The vault adds RustCrypto argon2 0.5.3 under MIT or Apache 2.0 and data-encoding 2.11.1 under MIT and uses the existing ring 0.17.14 provider. Exact versions are recorded in Gradle and Cargo.lock. [CameraX](https://developer.android.com/jetpack/androidx/releases/camera) · [ZXing](https://github.com/zxing/zxing/tree/zxing-3.5.4)

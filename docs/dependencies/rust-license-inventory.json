@@ -18,6 +18,21 @@
       ]
     },
     {
+      "name": "argon2",
+      "version": "0.5.3",
+      "declared_license": "MIT OR Apache-2.0",
+      "files": [
+        {
+          "path": "licenses/dependencies/rust/argon2-0.5.3/LICENSE-APACHE",
+          "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5"
+        },
+        {
+          "path": "licenses/dependencies/rust/argon2-0.5.3/LICENSE-MIT",
+          "sha256": "33f702959c0ea91c08b21b65cf1f08b6c122ec9e6db0b5db784a7b367d942330"
+        }
+      ]
+    },
+    {
       "name": "asn1-rs",
       "version": "0.7.2",
       "declared_license": "MIT OR Apache-2.0",
@@ -84,6 +99,21 @@
       ]
     },
     {
+      "name": "base64ct",
+      "version": "1.8.3",
+      "declared_license": "Apache-2.0 OR MIT",
+      "files": [
+        {
+          "path": "licenses/dependencies/rust/base64ct-1.8.3/LICENSE-APACHE",
+          "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5"
+        },
+        {
+          "path": "licenses/dependencies/rust/base64ct-1.8.3/LICENSE-MIT",
+          "sha256": "2d1c57bff28344b9e698f51063bc8509799cc4c99a4e0cf2aa3f7e7c3e1f9a9d"
+        }
+      ]
+    },
+    {
       "name": "bitflags",
       "version": "2.13.2",
       "declared_license": "MIT OR Apache-2.0",
@@ -95,6 +125,21 @@
         {
           "path": "licenses/dependencies/rust/bitflags-2.13.2/LICENSE-MIT",
           "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+        }
+      ]
+    },
+    {
+      "name": "blake2",
+      "version": "0.10.6",
+      "declared_license": "MIT OR Apache-2.0",
+      "files": [
+        {
+          "path": "licenses/dependencies/rust/blake2-0.10.6/LICENSE-APACHE",
+          "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5"
+        },
+        {
+          "path": "licenses/dependencies/rust/blake2-0.10.6/LICENSE-MIT",
+          "sha256": "9c768944eb4a0422ca2efc25ea9fb2fb9e7fbd3fdb04e86b87366339cb7466db"
         }
       ]
     },
@@ -702,6 +747,21 @@
       ]
     },
     {
+      "name": "password-hash",
+      "version": "0.5.0",
+      "declared_license": "MIT OR Apache-2.0",
+      "files": [
+        {
+          "path": "licenses/dependencies/rust/password-hash-0.5.0/LICENSE-APACHE",
+          "sha256": "a9040321c3712d8fd0b09cf52b17445de04a23a10165049ae187cd39e5c86be5"
+        },
+        {
+          "path": "licenses/dependencies/rust/password-hash-0.5.0/LICENSE-MIT",
+          "sha256": "233b95ccbf90dc67e32f3e8995c489f6312d9191ebd141a931c3b684f1e3be6d"
+        }
+      ]
+    },
+    {
       "name": "pkg-config",
       "version": "0.3.34",
       "declared_license": "MIT OR Apache-2.0",
@@ -758,6 +818,21 @@
         {
           "path": "licenses/dependencies/rust/quote-1.0.47/LICENSE-MIT",
           "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        }
+      ]
+    },
+    {
+      "name": "rand_core",
+      "version": "0.6.4",
+      "declared_license": "MIT OR Apache-2.0",
+      "files": [
+        {
+          "path": "licenses/dependencies/rust/rand_core-0.6.4/LICENSE-APACHE",
+          "sha256": "6df43f6f4b5d4587f3d8d71e45532c688fd168afa5fe89d571cb32fa09c4ef51"
+        },
+        {
+          "path": "licenses/dependencies/rust/rand_core-0.6.4/LICENSE-MIT",
+          "sha256": "209fbbe0ad52d9235e37badf9cadfe4dbdc87203179c0899e738b39ade42177b"
         }
       ]
     },

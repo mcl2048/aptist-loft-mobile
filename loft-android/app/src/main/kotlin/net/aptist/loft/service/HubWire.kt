@@ -27,13 +27,13 @@ internal object HubWire {
     internal fun encode(result: HubResult): ByteArray {
         val bytes = ByteArrayOutputStream()
         DataOutputStream(bytes).use { out ->
-            out.writeByte(1)
+            out.writeByte(2)
             with(result.snapshot) {
                 out.writeLong(generation.toLong())
                 out.optional(origin); out.optional(issuer)
                 out.writeBoolean(mailSupported); out.writeBoolean(transactionPending)
                 out.writeBoolean(session != null)
-                session?.let { out.text(it.subject); out.optional(it.email); out.writeBoolean(it.mailAccess); out.writeInt(it.expiresInSeconds.toInt()) }
+                session?.let { out.text(it.subject); out.optional(it.email); out.writeBoolean(it.mailAccess); out.writeInt(it.expiresInSeconds.toInt()); out.writeBoolean(it.mailAvailable) }
             }
             out.optional(result.browserUrl)
             out.writeBoolean(result.page != null)
@@ -56,11 +56,17 @@ internal object HubWire {
     internal fun decode(bytes: ByteArray): HubResult {
         if (bytes.size !in 1..MAX_BYTES) throw IOException()
         val input = DataInputStream(ByteArrayInputStream(bytes))
-        if (input.readUnsignedByte() != 1) throw IOException()
+        if (input.readUnsignedByte() != 2) throw IOException()
         val generation = input.readLong().toULong()
         val origin = input.optional(); val issuer = input.optional()
         val mailSupported = input.flag(); val transactionPending = input.flag()
-        val session = if (input.flag()) HubSession(input.text(), input.optional(), input.flag(), input.readInt().toUInt()) else null
+        val session = if (input.flag()) {
+            val subject = input.text()
+            val email = input.optional()
+            val mailAccess = input.flag()
+            val remaining = input.readInt().toUInt()
+            HubSession(subject, email, mailAccess, input.flag(), remaining)
+        } else null
         val snapshot = HubSnapshot(generation, origin, issuer, mailSupported, transactionPending, session)
         val browser = input.optional()
         val page = if (input.flag()) {

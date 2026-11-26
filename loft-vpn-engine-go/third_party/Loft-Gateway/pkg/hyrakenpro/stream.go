@@ -180,7 +180,14 @@ func (s *Stream) readNext() ([]byte, error) {
 		}
 		select {
 		case <-s.remoteDone:
-			return nil, io.EOF
+			// The receive loop queues DATA before closing remoteDone for FIN.
+			// Those records may have arrived after the first queue probe.
+			select {
+			case data := <-s.rx:
+				return data, nil
+			default:
+				return nil, io.EOF
+			}
 		default:
 		}
 		ctx, cancel, changed := s.deadlineContext(false)
@@ -662,8 +669,9 @@ func (s *Stream) deadlineContext(write bool) (context.Context, context.CancelFun
 	}
 	s.deadlineMu.Unlock()
 	if deadline.IsZero() {
-		ctx, cancel := context.WithCancel(s.session.ctx)
-		return ctx, cancel, changed
+		// Preserve the session lifetime of the original child context. Stream
+		// waits observe s.done separately, and releasing a wait has no effect.
+		return s.session.ctx, func() {}, changed
 	}
 	ctx, cancel := context.WithDeadline(s.session.ctx, deadline)
 	return ctx, cancel, changed

@@ -42,7 +42,7 @@ func serverALPN(transport string) []string {
 // HTTP2Settings records the public HTTP/2 configuration. The same bounds apply
 // to both carriers; the inner mux has its own independent memory accounting.
 func HTTP2Settings() *http.HTTP2Config {
-	return &http.HTTP2Config{MaxConcurrentStreams: 1, MaxReadFrameSize: h2MaxReadFrameBytes, MaxReceiveBufferPerConnection: h2ReceiveConnectionBytes, MaxReceiveBufferPerStream: h2ReceiveStreamBytes, SendPingTimeout: 30 * time.Second, PingTimeout: 10 * time.Second, WriteByteTimeout: 15 * time.Second}
+	return &http.HTTP2Config{MaxConcurrentStreams: 1, MaxReadFrameSize: h2MaxReadFrameBytes, MaxReceiveBufferPerConnection: h2ReceiveConnectionBytes, MaxReceiveBufferPerStream: h2ReceiveStreamBytes, SendPingTimeout: 30 * time.Second, PingTimeout: 10 * time.Second, WriteByteTimeout: 45 * time.Second}
 }
 
 func dialPhysical(ctx context.Context, cfg ClientConfig, u *url.URL) (physicalConn, string, error) {

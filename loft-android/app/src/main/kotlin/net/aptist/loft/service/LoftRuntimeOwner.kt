@@ -45,6 +45,7 @@ class LoftRuntimeOwner private constructor(context: Context) {
     private val availabilityGuard = CoreAvailabilityGuard { unavailableNotice(); fault(active.get()) }
     private val commands = executor(8)
     private val hub = HubControl { core -> broadcast(capture(core)) }
+    private val vault = VaultControl { core -> broadcast(capture(core)) }
     private val starts = executor(1)
     private val events = executor(1)
     private val priority = executor(1)
@@ -114,6 +115,7 @@ class LoftRuntimeOwner private constructor(context: Context) {
     fun detachUi(token: Any) {
         if (!uiController.compareAndSet(token, null)) return
         hub.cancel()
+        vault.cancel()
         observerTargets().forEach { observers.unregister(it) }
         // If the queue is full, every already queued job runs the same cleanup.
         submitCommand { }
@@ -157,6 +159,27 @@ class LoftRuntimeOwner private constructor(context: Context) {
     fun unsubscribe(observer: ILoftEvents) { observers.unregister(observer) }
 
     fun cancelHubWork(requestId: Long) { hub.cancel(requestId) }
+
+    fun cancelVaultWork(requestId: Long) { vault.cancel(requestId) }
+
+    fun executeVault(requestId: Long, payload: ByteArray, observer: ILoftHubEvents) {
+        val command = try { VaultWire.readCommand(payload) } catch (_: java.io.IOException) { null }
+        finally { payload.fill(0) }
+        if (command == null || requestId <= 0) {
+            command?.clear()
+            HubControl.reply(requestId, observer, "invalid")
+            return
+        }
+        val work = VaultControl.Work(requestId, command, observer)
+        if (!vault.admit(work)) { vault.reject(work, "busy"); return }
+        if (!submitCommand {
+            val core = try { retainCoreOnWorker() }
+            catch (_: Exception) { vault.reject(work, "unavailable"); return@submitCommand }
+            catch (_: LinkageError) { vault.reject(work, "unavailable"); return@submitCommand }
+            if (command is VaultCommand.Sync) vault.sync(core, work) { resources.releaseUi() }
+            else try { vault.local(core, work) } finally { resources.releaseUi() }
+        }) vault.reject(work, "busy")
+    }
 
     fun executeHub(requestId: Long, name: String, input: String?, mailAccess: Boolean,
         destination: ParcelFileDescriptor?, observer: ILoftHubEvents) {

@@ -19,6 +19,7 @@ mod import;
 mod origin;
 mod persistence;
 mod privacy;
+mod vault;
 mod vpn;
 pub use hub::{
     HubAction, HubError, HubMailAttachment, HubMailMessage, HubMailPage, HubMailSummary,
@@ -26,11 +27,17 @@ pub use hub::{
 };
 pub use import::{MAX_NODE_INPUT_BYTES, MAX_NODE_LABEL_BYTES};
 pub use origin::{MAX_SERVER_INPUT_BYTES, normalize_server_origin};
-pub use persistence::{LoadedLocalConfig, LocalConfigEdit, LocalConfigStore, LocalSettings};
+pub use persistence::{
+    LoadedLocalConfig, LocalConfigEdit, LocalConfigStore, LocalSettings, PrivateRecord,
+};
 pub use privacy::{
     AppliedNetworkPrivacy, DnsMode, DnsPrivacyLimits, EffectivePackageUid, HydraConfig, HydraScope,
     LeakProtectionMode, NetworkPrivacyEnforcement, NetworkPrivacyPolicy, NetworkPrivacyReceipt,
     NetworkScopeIdentity,
+};
+pub use vault::{
+    VAULT_IMAGE_LIMIT, VaultAlgorithm, VaultDraft, VaultEntry, VaultError, VaultKind, VaultPage,
+    VaultReveal, VaultSyncReceipt, VaultSyncStep,
 };
 pub use vpn::{
     AppliedRouting, Ipv6Policy, VpnBlockedReceipt, VpnFailure, VpnReadyReceipt, VpnStartTicket,
@@ -167,6 +174,8 @@ pub struct CoreState {
     generation: u64,
     vpn: vpn::VpnLifecycle,
     hub: hub::HubState,
+    vault: vault::VaultState,
+    vault_sync: vault::SyncState,
     stop_signal: Arc<AtomicBool>,
 }
 
@@ -200,6 +209,8 @@ impl CoreState {
             generation: 0,
             vpn: vpn::VpnLifecycle::default(),
             hub: hub::HubState::default(),
+            vault: vault::VaultState::default(),
+            vault_sync: vault::SyncState::default(),
             stop_signal,
         }
     }

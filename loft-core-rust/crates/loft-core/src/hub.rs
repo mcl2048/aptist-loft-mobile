@@ -1,9 +1,9 @@
 //! Service-private Hub requests and redacted account receipts.
-use crate::{CoreState, normalize_server_origin};
+use crate::{CoreError, CoreState, PrivateRecord, normalize_server_origin};
 use base64::{Engine, engine::general_purpose::URL_SAFE_NO_PAD};
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use sha2::{Digest, Sha256};
-use std::time::{Duration, Instant};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use zeroize::Zeroizing;
 
 mod mail;
@@ -19,6 +19,7 @@ pub enum HubAction {
     Complete,
     Cancel,
     Logout,
+    Session,
     MailInbox,
     MailTrash,
     MailMessage,
@@ -72,6 +73,7 @@ pub struct HubSession {
     pub subject: String,
     pub email: Option<String>,
     pub mail_access: bool,
+    pub mail_available: bool,
     pub expires_in_seconds: u32,
 }
 
@@ -130,6 +132,10 @@ impl CoreState {
         input: Option<String>,
         mail_access: bool,
     ) -> Result<HubRequest, HubError> {
+        if action == HubAction::Logout && self.hub.durable_session().is_some() {
+            self.commit_private(PrivateRecord::Hub, None)
+                .map_err(hub_storage_error)?;
+        }
         let origin = self
             .local
             .server_candidate
@@ -146,13 +152,28 @@ impl CoreState {
         media_type: Option<&str>,
         body: Vec<u8>,
     ) -> Result<HubReceipt, HubError> {
-        self.hub.finish(
+        let before = self.hub.persisted(self.local.server_candidate.as_deref())?;
+        let result = self.hub.finish(
             self.local.server_candidate.as_deref(),
             request_id,
             status,
             media_type,
             Zeroizing::new(body),
-        )
+        );
+        let after = self.hub.persisted(self.local.server_candidate.as_deref())?;
+        if before != after
+            && let Err(error) =
+                self.commit_private(PrivateRecord::Hub, after.as_deref().map(Vec::as_slice))
+        {
+            self.hub.clear_scope();
+            if let Some(previous) = before {
+                self.hub
+                    .restored(self.local.server_candidate.as_deref(), &previous)
+                    .map_err(hub_storage_error)?;
+            }
+            return Err(hub_storage_error(error));
+        }
+        result
     }
 
     pub fn hub_abandon(&mut self, request_id: u64) {
@@ -166,9 +187,11 @@ impl CoreState {
         }
     }
 
-    pub fn hub_clear(&mut self) -> HubSnapshot {
+    pub fn hub_clear(&mut self) -> Result<HubSnapshot, HubError> {
+        self.commit_private(PrivateRecord::Hub, None)
+            .map_err(hub_storage_error)?;
         self.hub.clear_scope();
-        self.hub_snapshot()
+        Ok(self.hub_snapshot())
     }
 }
 
@@ -200,7 +223,9 @@ struct Session {
     subject: String,
     email: Option<String>,
     mail: bool,
-    deadline: Instant,
+    deadline: Option<Instant>,
+    expires_at: u64,
+    durable: bool,
     mail_state: mail::State,
 }
 
@@ -220,6 +245,7 @@ enum Operation {
     Complete,
     Cancel,
     Logout,
+    Session,
     Mail(mail::Operation),
 }
 
@@ -227,6 +253,79 @@ impl HubState {
     pub(crate) fn change_candidate(&mut self) {
         self.profile = None;
         self.clear_scope();
+    }
+
+    fn durable_session(&self) -> Option<&Session> {
+        self.session.as_ref().filter(|session| session.durable)
+    }
+
+    pub(crate) fn scope_generation(&self) -> u64 {
+        self.generation
+    }
+
+    pub(crate) fn scope_for_vault(&self, origin: &str) -> Result<(String, String), HubError> {
+        let profile = self.profile.as_ref().ok_or(HubError::NotSignedIn)?;
+        let session = self.durable_session().ok_or(HubError::NotSignedIn)?;
+        let incarnation = serde_json::to_vec(&[origin, &profile.issuer, &session.subject])
+            .map_err(|_| HubError::StateUnavailable)?;
+        let scope = URL_SAFE_NO_PAD.encode(Sha256::digest(incarnation));
+        Ok((scope, session.bearer.to_string()))
+    }
+
+    pub(crate) fn restored(&mut self, origin: Option<&str>, raw: &[u8]) -> Result<(), CoreError> {
+        let stored: StoredSession =
+            serde_json::from_slice(raw).map_err(|_| CoreError::StorageRecoveryRequired)?;
+        let source = stored.issuer.strip_suffix("/api/idp");
+        if origin != Some(stored.origin.as_str())
+            || !source.is_some_and(|source| {
+                normalize_server_origin(source).is_ok_and(|value| source == value)
+            })
+            || !safe_identity(&stored.subject)
+            || stored
+                .email
+                .as_ref()
+                .is_some_and(|email| !safe_identity(email))
+            || !token(&stored.bearer)
+        {
+            return Err(CoreError::StorageRecoveryRequired);
+        }
+        let remaining = stored.expires_at.saturating_sub(unix_now());
+        let deadline = (stored.mail && (1..=300).contains(&remaining))
+            .then(|| Instant::now() + Duration::from_secs(remaining));
+        self.profile = Some(Profile {
+            issuer: stored.issuer,
+            mail: true,
+        });
+        self.session = Some(Session {
+            bearer: stored.bearer,
+            subject: stored.subject,
+            email: stored.email,
+            mail: stored.mail,
+            deadline,
+            expires_at: stored.expires_at,
+            durable: true,
+            mail_state: mail::State::default(),
+        });
+        Ok(())
+    }
+
+    fn persisted(&self, origin: Option<&str>) -> Result<Option<Zeroizing<Vec<u8>>>, HubError> {
+        let Some(session) = self.durable_session() else {
+            return Ok(None);
+        };
+        let origin = origin.ok_or(HubError::StateUnavailable)?;
+        let profile = self.profile.as_ref().ok_or(HubError::StateUnavailable)?;
+        let record = StoredSession {
+            origin: origin.into(),
+            issuer: profile.issuer.clone(),
+            subject: session.subject.clone(),
+            email: session.email.clone(),
+            mail: session.mail,
+            expires_at: session.expires_at,
+            bearer: session.bearer.clone(),
+        };
+        let data = serde_json::to_vec(&record).map_err(|_| HubError::StateUnavailable)?;
+        Ok(Some(Zeroizing::new(data)))
     }
 
     fn advance(&mut self) {
@@ -245,9 +344,15 @@ impl HubState {
         if self
             .session
             .as_ref()
-            .is_some_and(|session| session.deadline <= now)
+            .and_then(|session| session.deadline)
+            .is_some_and(|deadline| deadline <= now)
         {
-            self.session = None;
+            if let Some(session) = self.session.as_mut().filter(|session| session.durable) {
+                session.deadline = None;
+                session.mail_state = mail::State::default();
+            } else {
+                self.session = None;
+            }
             self.generation = self.generation.saturating_add(1);
             if self
                 .active
@@ -285,11 +390,13 @@ impl HubState {
                 subject: session.subject.clone(),
                 email: session.email.clone(),
                 mail_access: session.mail,
-                expires_in_seconds: session
-                    .deadline
-                    .saturating_duration_since(Instant::now())
-                    .as_millis()
-                    .div_ceil(1000) as u32,
+                mail_available: session.mail && session.deadline.is_some(),
+                expires_in_seconds: session.deadline.map_or(0, |deadline| {
+                    deadline
+                        .saturating_duration_since(Instant::now())
+                        .as_millis()
+                        .div_ceil(1000) as u32
+                }),
             }),
         }
     }
@@ -360,7 +467,13 @@ impl HubState {
                 request.post(&StartBody {
                     proof_challenge: &challenge,
                     mail_read: mail_access,
+                    durable: true,
                 })?;
+                if mail_access {
+                    request.bearer = self
+                        .durable_session()
+                        .map(|session| session.bearer.to_string());
+                }
                 Operation::SignIn {
                     proof,
                     mail: mail_access,
@@ -403,13 +516,19 @@ impl HubState {
                 self.clear_scope();
                 Operation::Logout
             }
+            HubAction::Session => {
+                let session = self.session.as_ref().ok_or(HubError::NotSignedIn)?;
+                request.url.push_str("/v1/session");
+                request.bearer = Some(session.bearer.to_string());
+                Operation::Session
+            }
             action => {
                 let session = self.session.as_ref().ok_or(if session_was_live {
                     HubError::SessionExpired
                 } else {
                     HubError::NotSignedIn
                 })?;
-                if !session.mail {
+                if !session.mail || session.deadline.is_none() {
                     return Err(HubError::MailConsentRequired);
                 }
                 let operation = session.mail_state.operation(action, input)?;
@@ -506,6 +625,9 @@ impl HubState {
                     || complete.issuer != profile.issuer
                     || complete.mail_read != transaction.mail
                     || !token(&complete.session_token)
+                    || self.durable_session().is_some_and(|current| {
+                        transaction.mail && current.subject != complete.subject
+                    })
                     || !safe_identity(&complete.subject)
                     || complete
                         .email
@@ -519,16 +641,49 @@ impl HubState {
                     subject: complete.subject,
                     email: complete.email,
                     mail: complete.mail_read,
-                    deadline: deadline(
+                    deadline: grant_deadline(
                         active.started,
                         now,
                         complete.expires_at,
                         complete.expires_in,
+                        complete.durable,
                     )?,
+                    expires_at: complete.expires_at,
+                    durable: complete.durable,
                     mail_state: mail::State::default(),
                 };
                 self.clear_scope();
                 self.session = Some(session);
+            }
+            Operation::Session if status == 200 => {
+                let checked: CheckedSession = read_json(media_type, &body)?;
+                let current = self.session.as_mut().ok_or(HubError::SessionExpired)?;
+                let profile = self.profile.as_ref().ok_or(HubError::StaleRequest)?;
+                if checked.issuer != profile.issuer
+                    || checked.subject != current.subject
+                    || checked.durable != current.durable
+                    || checked
+                        .email
+                        .as_ref()
+                        .is_some_and(|email| !safe_identity(email))
+                {
+                    return Err(HubError::InvalidResponse);
+                }
+                let next = grant_deadline(
+                    active.started,
+                    now,
+                    checked.expires_at,
+                    checked.expires_in,
+                    checked.durable,
+                )?;
+                if current.expires_at != checked.expires_at || current.mail != checked.mail_read {
+                    current.mail_state = mail::State::default();
+                    self.generation = self.generation.saturating_add(1);
+                }
+                current.email = checked.email;
+                current.mail = checked.mail_read;
+                current.expires_at = checked.expires_at;
+                current.deadline = next;
             }
             Operation::Cancel | Operation::Logout if status == 204 && body.is_empty() => {}
             Operation::Mail(operation) if status == 200 => {
@@ -592,11 +747,24 @@ impl HubState {
                     HubError::AccessDenied
                 }
             }
-            (Operation::Mail(_), 401, _) => {
+            (Operation::Mail(_) | Operation::Session, 401, Some("session_expired")) => {
                 self.clear_scope();
                 HubError::SessionExpired
             }
-            (_, 403, Some("insufficient_scope")) => HubError::MailConsentRequired,
+            (Operation::SignIn { mail: true, .. }, 401, Some("session_expired")) => {
+                self.clear_scope();
+                HubError::SessionExpired
+            }
+            (Operation::Mail(_), 403, Some("mail_consent_required" | "insufficient_scope")) => {
+                if let Some(session) = self.session.as_mut().filter(|session| session.durable) {
+                    session.deadline = None;
+                    session.expires_at = 0;
+                    session.mail_state = mail::State::default();
+                    self.generation = self.generation.saturating_add(1);
+                }
+                HubError::MailConsentRequired
+            }
+            (Operation::Logout, 401, Some("session_expired")) => HubError::SessionExpired,
             (_, 403, _) => HubError::AccessDenied,
             (_, 404, _) => HubError::NotFound,
             (_, 410, Some("transaction_expired")) => HubError::TransactionExpired,
@@ -652,6 +820,7 @@ impl Descriptor {
 struct StartBody<'a> {
     proof_challenge: &'a str,
     mail_read: bool,
+    durable: bool,
 }
 
 #[derive(Serialize)]
@@ -688,6 +857,62 @@ struct Completed {
     mail_read: bool,
     expires_at: u64,
     expires_in: u32,
+    #[serde(default)]
+    durable: bool,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields, rename_all = "camelCase")]
+struct CheckedSession {
+    issuer: String,
+    subject: String,
+    email: Option<String>,
+    mail_read: bool,
+    expires_at: u64,
+    expires_in: u32,
+    #[serde(default)]
+    durable: bool,
+}
+
+#[derive(Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct StoredSession {
+    origin: String,
+    issuer: String,
+    subject: String,
+    email: Option<String>,
+    mail: bool,
+    expires_at: u64,
+    #[serde(serialize_with = "serialize_secret", deserialize_with = "secret")]
+    bearer: Zeroizing<String>,
+}
+
+fn serialize_secret<S: serde::Serializer>(value: &str, serializer: S) -> Result<S::Ok, S::Error> {
+    serializer.serialize_str(value)
+}
+
+fn unix_now() -> u64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs()
+}
+
+fn hub_storage_error(_: CoreError) -> HubError {
+    HubError::StateUnavailable
+}
+
+fn grant_deadline(
+    started: Instant,
+    now: Instant,
+    epoch: u64,
+    seconds: u32,
+    durable: bool,
+) -> Result<Option<Instant>, HubError> {
+    if durable && epoch == 0 && seconds == 0 {
+        return Ok(None);
+    }
+    deadline(started, now, epoch, seconds).map(Some)
 }
 
 #[derive(Deserialize)]

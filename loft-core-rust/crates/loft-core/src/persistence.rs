@@ -4,6 +4,7 @@ use crate::{
 };
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, atomic::AtomicBool};
+use zeroize::Zeroizing;
 
 /// Local anonymous preferences. Future account and module data require their own scopes.
 #[derive(Clone, Serialize, Deserialize)]
@@ -29,9 +30,23 @@ impl Default for LocalSettings {
 }
 
 pub enum LocalConfigEdit<'a> {
-    ImportNode { id: u64, uri: &'a str },
-    RemoveNode { id: u64 },
-    Settings(&'a LocalSettings),
+    ImportNode {
+        id: u64,
+        uri: &'a str,
+    },
+    RemoveNode {
+        id: u64,
+    },
+    Settings {
+        settings: &'a LocalSettings,
+        clear_hub: bool,
+    },
+}
+
+#[derive(Clone, Copy)]
+pub enum PrivateRecord {
+    Vault,
+    Hub,
 }
 
 pub struct LoadedLocalConfig {
@@ -49,6 +64,21 @@ pub trait LocalConfigStore: Send {
         visitor: &mut dyn FnMut(u64, &str) -> Result<(), CoreError>,
     ) -> Result<(), CoreError>;
     fn commit(&mut self, generation: u64, edit: LocalConfigEdit<'_>) -> Result<(), CoreError>;
+
+    fn load_private(
+        &self,
+        _record: PrivateRecord,
+    ) -> Result<Option<Zeroizing<Vec<u8>>>, CoreError> {
+        Ok(None)
+    }
+
+    fn commit_private(
+        &mut self,
+        _record: PrivateRecord,
+        _data: Option<&[u8]>,
+    ) -> Result<(), CoreError> {
+        Err(CoreError::StorageUnavailable)
+    }
 }
 
 impl CoreState {
@@ -86,6 +116,14 @@ impl CoreState {
         state.generation = config.generation;
         state.next_node_id = config.next_node_id;
         state.local = config.settings;
+        if let Some(data) = store.load_private(PrivateRecord::Vault)? {
+            state.vault = crate::vault::VaultState::restore(&data)?;
+        }
+        if let Some(data) = store.load_private(PrivateRecord::Hub)? {
+            state
+                .hub
+                .restored(state.local.server_candidate.as_deref(), &data)?;
+        }
         state.local_store = Some(Box::new(store));
         Ok(state)
     }
@@ -113,12 +151,35 @@ impl CoreState {
         Ok(())
     }
 
+    pub(crate) fn commit_private(
+        &mut self,
+        record: PrivateRecord,
+        data: Option<&[u8]>,
+    ) -> Result<(), CoreError> {
+        self.require_local_config()?;
+        if let Some(store) = &mut self.local_store {
+            let result = store.commit_private(record, data);
+            if result == Err(CoreError::StorageRecoveryRequired) {
+                self.local_storage_failed = true;
+            }
+            result?;
+        }
+        Ok(())
+    }
+
     pub(crate) fn commit_local_settings(
         &mut self,
         generation: u64,
         settings: LocalSettings,
     ) -> Result<(), CoreError> {
-        self.commit_local(generation, LocalConfigEdit::Settings(&settings))?;
+        let clear_hub = settings.server_candidate != self.local.server_candidate;
+        self.commit_local(
+            generation,
+            LocalConfigEdit::Settings {
+                settings: &settings,
+                clear_hub,
+            },
+        )?;
         self.local = settings;
         self.generation = generation;
         Ok(())

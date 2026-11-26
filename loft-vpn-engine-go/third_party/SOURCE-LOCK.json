@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "gateway_commit": "231f14813f2b45cb6f0bde984181c57cba1d02fd",
+  "gateway_commit": "98644864d2426627cd151a0561e5035e46f6b79c",
   "source_scope": "Pinned production Go/native sources, module/license files and explicit owned framed-I/O regression; deployment configurations, private inputs and credentials excluded.",
   "sing_tun_version": "v0.9.6-0.20260924001923-ddaa4ca25e3b",
   "sing_version": "v0.9.6-0.20260922013354-87c33f17688f",
@@ -275,9 +275,9 @@
     {
       "source": "pkg/hyrakenpro/carrier.go",
       "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/carrier.go",
-      "source_sha256": "83283afa1b4acf989ca801c1b6325c068c486aec317474a8f22fac6ee3368a6e",
+      "source_sha256": "a8e92515565a0be7709961649d0abec6007189be8f24e81f4b34c5b04ca0d8b8",
       "source_kind": "source_snapshot",
-      "owned_sha256": "83283afa1b4acf989ca801c1b6325c068c486aec317474a8f22fac6ee3368a6e"
+      "owned_sha256": "baeec7bb325bdd26468b2bbed97698a9a8c45ae64007a98608ba254a728c3367"
     },
     {
       "source": "pkg/hyrakenpro/chameleon.go",
@@ -289,7 +289,7 @@
     {
       "source": "pkg/hyrakenpro/config.go",
       "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/config.go",
-      "source_sha256": "e352caaac4f42034bc74f5599b665c6d485b7942250248b7d8efedac55006ad2",
+      "source_sha256": "869b860d50ecdf75fcd81b6619ad14dd7a7d0ae39f71f09ead5f4269a8244d90",
       "source_kind": "source_snapshot",
       "owned_sha256": "655a21deca9957221deff86b950d53edbd35cdbbfcd779661be669a2399ced94"
     },
@@ -359,16 +359,23 @@
     {
       "source": "pkg/hyrakenpro/session.go",
       "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/session.go",
-      "source_sha256": "1eb57df8c9606fb1675d4200d1312a013d3631acf5b6bcdcc3c1d31721e8808f",
+      "source_sha256": "66ac128dc2be31d0e795571ca21817c2689b96edadf97a7802b82cf85ce249f8",
       "source_kind": "source_snapshot",
       "owned_sha256": "01b50889deb16ea3569b327b92c876a040f2fa9b656823b60103741a6315283e"
     },
     {
       "source": "pkg/hyrakenpro/stream.go",
       "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/stream.go",
-      "source_sha256": "debff70d0ebbb3b93c7a10bffc596c1d6ab27888ace0951cdbe7a9afa585df63",
+      "source_sha256": "6f9baebc429586262be2ac640379c9e19a1c1622ad638e820ea2c0c67e7f0ad0",
       "source_kind": "source_snapshot",
-      "owned_sha256": "debff70d0ebbb3b93c7a10bffc596c1d6ab27888ace0951cdbe7a9afa585df63"
+      "owned_sha256": "6f9baebc429586262be2ac640379c9e19a1c1622ad638e820ea2c0c67e7f0ad0"
+    },
+    {
+      "source_kind": "mobile_addition",
+      "source": "LOFT mobile source refresh lifecycle regression",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/stream_lifecycle_test.go",
+      "source_sha256": null,
+      "owned_sha256": "b993c5a88a87100ea03c8df3a9822ac199e764d13f9e6651c15ec56087ae419a"
     },
     {
       "source": "pkg/hyrakenpro/tcp_profile.go",
@@ -408,9 +415,9 @@
     {
       "source": "pkg/hyrakenpro/transport.go",
       "destination": "third_party/Loft-Gateway/pkg/hyrakenpro/transport.go",
-      "source_sha256": "9afadb1e036e6b0d24a8d4db69a80e0bfe221c229564dd216949f016b151cbae",
+      "source_sha256": "80d20b5d155df2747a704c1ab5396bba82ab1c7a8f700fb68d4c1ccdcc97fd28",
       "source_kind": "source_snapshot",
-      "owned_sha256": "a13e748097117ec2182786875d1d35f8b62a43c1519e02c7fcd1a56dde62f522"
+      "owned_sha256": "9bd13aecfee84d182245d10f4eadce8603f8ceb960379d9d7218f55d4a18bea0"
     },
     {
       "source": "pkg/hyrakenpro/window_return.go",
@@ -3097,6 +3104,17 @@
         "third_party/Loft-Gateway/pkg/hyrakenpro/metrics_test.go"
       ],
       "reason": "Install existing Hydra before X logical streams and Pro ordinary sessions; record only fully accepted shaped DATA/PAD at actual producer completion, with full/partial framed-socket regressions. No wire version, authentication, encryption, timing delay or packet-only Pro shaping change."
+    },
+    {
+      "id": "hyrakenpro_mobile_lifecycle_refresh",
+      "files": [
+        "third_party/Loft-Gateway/pkg/hyrakenpro/carrier.go",
+        "third_party/Loft-Gateway/pkg/hyrakenpro/config.go",
+        "third_party/Loft-Gateway/pkg/hyrakenpro/session.go",
+        "third_party/Loft-Gateway/pkg/hyrakenpro/transport.go",
+        "third_party/Loft-Gateway/pkg/hyrakenpro/stream_lifecycle_test.go"
+      ],
+      "reason": "Adopt upstream bounded stale pooled-session retry, TCP FIN tail preservation and HTTP/2 timeout, retaining the Android-local Hydra policy and observations."
     }
   ],
   "owned_verification": "tools/verify_owned_sources.py verifies owned_sha256 and complete file/patch coverage; source paths and source_sha256 are informational provenance and are never read by the clean-checkout verifier."

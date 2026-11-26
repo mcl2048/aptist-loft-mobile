@@ -8,6 +8,8 @@ The private `:vpn` process owns the guest configuration store. Android supplies 
 | Settings | Staged app routing, network privacy policy and unverified server origin |
 | Device runtime | Recomputed after each service process start. TUN leases, attempts, verified routing and applied protection remain live receipts |
 | Appearance | Existing Android locale and theme preferences |
+| TOTP and password vault | Bounded encrypted private record distinct from account enrollment |
+| Durable Hub enrollment | Separate encrypted private record for the scoped APP bearer and identity |
 
 Writes validate inputs and commit the affected encrypted records before publishing a configuration change. Node removal retains the monotonic identity allocator. Reopen revalidates stored data at the domain boundary and reconstructs a disconnected owner. An expired certificate remains removable. New connections recheck certificate validity before issuing a service ticket. Restoring a server origin preserves its unverified status. The guest repository holds up to 200 nodes and an 8 MiB validated working set. SQLCipher caps the database at 64 MiB and uses a 2 MiB page cache, memory-backed temp storage and a rollback journal with `EXTRA` synchronization.
 
@@ -15,7 +17,7 @@ Writes validate inputs and commit the affected encrypted records before publishi
 
 The key envelope and database live in app-private, credential-protected `noBackupFilesDir` storage. The envelope authenticates its format and provisioning state. Once provisioning is complete, reopening requires the existing database and authenticated envelope. A failed open preserves the existing files. If a commit has an indeterminate outcome, the current owner fences configuration writes and VPN starts until an authenticated reopen reconciles the durable state. The Settings screen offers a local reopen action once the VPN is idle. If the key is permanently lost or recovery fails, the recovery instructions point to Android Settings to clear LOFT app data and re-import the nodes. That action also clears LOFT preferences.
 
-The store uses schema version checks and transactional schema creation. Unsupported schemas fail closed. A future migration must update the schema inside a transaction, test interruption and retain an explicit compatibility window. Backup and device transfer exclusions apply to the database, wrapping envelope and auxiliary files. An update signed with the same app identity can keep the existing store. Uninstall or Android Clear storage requires re-import unless a future explicit export and recovery facility has been designed and verified.
+The store uses schema version checks and transactional schema creation. Unsupported schemas fail closed. Schema 2 migrates authenticated schema 1 in a transaction and preserves node and settings rows. The TOTP vault and Hub enrollment have separate private record keys. Backup and device transfer exclusions apply to the database, wrapping envelope and auxiliary files. An update signed with the same app identity can keep the existing store. Uninstall or Android Clear storage requires re-import unless a future explicit export and recovery facility has been designed and verified.
 
 LOFT 0.1.2 kept imported nodes only in process memory. Users upgrading from that version need the original links for a one-time re-import into the encrypted store. Imports committed by 0.1.3 are available after process restart.
 

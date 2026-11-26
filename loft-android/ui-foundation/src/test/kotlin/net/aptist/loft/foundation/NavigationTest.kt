@@ -43,7 +43,7 @@ class NavigationTest {
     // Catches index-based preferences reordering the wrong compiled module.
     @Test fun moduleOrderUsesStableIdsAndIgnoresUnknownDuplicates() {
         assertEquals(
-            listOf(ModuleId.SHIELD, ModuleId.VPN, ModuleId.WELCOME, ModuleId.AUDIT, ModuleId.SETTING),
+            listOf(ModuleId.SHIELD, ModuleId.VPN, ModuleId.WELCOME, ModuleId.TOTP, ModuleId.AUDIT, ModuleId.SETTING),
             ModuleCatalog.rail(mailAvailable = false, savedOrder = listOf("shield", "vpn", "shield", "remote")),
         )
     }
@@ -54,5 +54,11 @@ class NavigationTest {
         assertTrue(ModuleCatalog.rail(mailAvailable = true).contains(ModuleId.MAIL))
         assertNull(ModuleCatalog.resolve("vpn", "remote-code"))
         assertEquals(Page.NODES, ModuleCatalog.resolve("vpn", "nodes"))
+    }
+
+    @Test fun authenticatorHasAStableOfflineEntry() {
+        assertEquals(Page.TOTP, ModuleCatalog.resolve("totp", "home"))
+        assertTrue(ModuleCatalog.rail(mailAvailable = false).contains(ModuleId.TOTP))
+        assertEquals(EntryPolicy.LOCAL_ENTRY, ModuleCatalog.registrations.single { it.id == ModuleId.TOTP }.policy)
     }
 }

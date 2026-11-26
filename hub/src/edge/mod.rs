@@ -1,6 +1,8 @@
+mod device;
 mod http;
 mod mail;
 mod portal;
+mod vault;
 
 use std::cell::Cell;
 
@@ -90,6 +92,10 @@ impl Config {
         digest(&format!("{}\n{kind}\n{value}", self.namespace))
     }
 
+    fn owner_hash(&self, subject: &str) -> String {
+        self.hash("portal-owner", subject)
+    }
+
     fn aad(&self, kind: &str, id: &str) -> String {
         format!("{}\n{kind}\n{id}", self.namespace)
     }
@@ -108,6 +114,8 @@ impl Config {
 struct Create {
     proof_challenge: String,
     mail_read: bool,
+    #[serde(default)]
+    durable: bool,
 }
 
 #[derive(Deserialize)]
@@ -154,7 +162,9 @@ async fn scheduled(_event: ScheduledEvent, env: Env, _context: ScheduleContext) 
 }
 
 async fn prune(db: &D1Database) -> Result<()> {
-    write(db, "DELETE FROM hub_login WHERE (expires_at <= ?1 AND phase != 'issued') OR (session_expires_at <= ?1 AND phase IN ('issued','ready'))", &[number(now())]).await
+    let at = number(now());
+    write(db, "DELETE FROM hub_login WHERE (expires_at <= ?1 AND phase != 'issued') OR (session_expires_at <= ?1 AND phase IN ('issued','ready'))", std::slice::from_ref(&at)).await?;
+    write(db, "UPDATE hub_device_session SET mail_box = NULL, mail_expires_at = NULL WHERE mail_expires_at <= ?1", &[at]).await
 }
 
 async fn route(mut request: Request, env: Env) -> Result<Response> {
@@ -205,6 +215,10 @@ async fn route(mut request: Request, env: Env) -> Result<Response> {
         (Method::Post, START) => start(&config, &db, &mut request, &signal).await,
         (Method::Get, CALLBACK) => callback(&config, &db, query, &signal).await,
         (Method::Get, "/v1/session") => {
+            let hash = bearer_hash(&config, &request)?;
+            if let Some(device) = device::find(&db, &hash).await? {
+                return device::response(&config, &hash, device, None);
+            }
             let stored = require_session(&config, &db, &request).await?;
             let mut session = config.open::<Session>("session", &stored.id, &stored.session_box)?;
             session.email =
@@ -216,12 +230,7 @@ async fn route(mut request: Request, env: Env) -> Result<Response> {
         }
         (Method::Post, "/v1/logout") => {
             let hash = bearer_hash(&config, &request)?;
-            write(
-                &db,
-                "DELETE FROM hub_login WHERE phase = 'issued' AND session_hash = ?1",
-                &[hash.into()],
-            )
-            .await?;
+            device::revoke(&db, &hash).await?;
             http::empty(204)
         }
         (Method::Post, path) if path.starts_with(START) => {
@@ -238,16 +247,14 @@ async fn route(mut request: Request, env: Env) -> Result<Response> {
             match action {
                 "complete" => complete(&config, &db, id, &proof, &signal).await,
                 "cancel" => {
-                    write(
-                        &db,
-                        include_str!("../sql/cancel.sql"),
-                        &[id.into(), proof.into()],
-                    )
-                    .await?;
+                    device::cancel(&db, id, &proof).await?;
                     http::empty(204)
                 }
                 _ => Err(NOT_FOUND),
             }
+        }
+        (Method::Get | Method::Put, path) if path.starts_with("/v1/vault/") => {
+            vault::access(&config, &db, &mut request, &path["/v1/vault/".len()..]).await
         }
         (Method::Get, path)
             if path == MAIL
@@ -255,11 +262,18 @@ async fn route(mut request: Request, env: Env) -> Result<Response> {
                     .strip_prefix(MAIL)
                     .is_some_and(|path| path.starts_with('/')) =>
         {
-            let stored = require_session(&config, &db, &request).await?;
-            let session: Session = config.open("session", &stored.id, &stored.session_box)?;
-            if !session.mail_read {
-                return Err(SCOPE);
-            }
+            let hash = bearer_hash(&config, &request)?;
+            let durable = device::find(&db, &hash).await?;
+            let session = if let Some(device) = durable.as_ref() {
+                device.mail_session(&config, &hash)?
+            } else {
+                let stored = require_session(&config, &db, &request).await?;
+                let session: Session = config.open("session", &stored.id, &stored.session_box)?;
+                if !session.mail_read {
+                    return Err(SCOPE);
+                }
+                session
+            };
             let _request = MailPermit::acquire(&MAIL_REQUESTS, 4)?;
             let result = if path == MAIL {
                 mail::list(&config, &session, query, &signal).await
@@ -275,9 +289,17 @@ async fn route(mut request: Request, env: Env) -> Result<Response> {
                     }
                     _ => Err(NOT_FOUND),
                 }
-            }?;
-            ensure_current(&db, &stored.session_hash).await?;
-            Ok(result)
+            };
+            if let Some(device) = durable.as_ref() {
+                if matches!(result, Err(error) if error.0 == 401) {
+                    device::invalidate_mail(&db, &hash, device).await?;
+                    return Err(http::CONSENT);
+                }
+                device.mail_current(&db, &hash).await?;
+            } else {
+                ensure_current(&db, &hash).await?;
+            }
+            result
         }
         _ => Err(NOT_FOUND),
     }
@@ -367,6 +389,21 @@ async fn start(
     if !opaque_token(&body.proof_challenge) {
         return Err(INVALID);
     }
+    let (renewal, renewal_hash) = if request
+        .headers()
+        .get("Authorization")
+        .map_err(|_| INVALID)?
+        .is_some()
+    {
+        if !body.mail_read || !body.durable {
+            return Err(INVALID);
+        }
+        let hash = bearer_hash(config, request)?;
+        let enrolled = device::find(db, &hash).await?.ok_or(SESSION)?;
+        (Some(device::renewal(request, enrolled)?), hash.into())
+    } else {
+        (None, JsValue::NULL)
+    };
     let _rate: u64 = first_col(
         db,
         include_str!("../sql/rate.sql"),
@@ -380,6 +417,8 @@ async fn start(
     let state = token()?;
     let transaction = Transaction {
         mail_read: body.mail_read,
+        durable: body.durable,
+        renewal,
         nonce: token()?,
         verifier: token()?,
     };
@@ -398,6 +437,7 @@ async fn start(
             number(expires_at),
             number(at),
             number(64),
+            renewal_hash,
         ],
     )
     .await?
@@ -432,7 +472,7 @@ async fn callback(
     if let Some(code) = code {
         let transaction: Transaction =
             config.open("transaction", &claimed.id, &claimed.auth_box)?;
-        match portal::exchange(config, &code, &transaction, token()?, signal).await {
+        match portal::exchange(config, &code, transaction, token()?, signal).await {
             Ok((session, expires_at)) => {
                 let sealed = config.seal("session", &claimed.id, &session)?;
                 let _id: String = first_col(
@@ -502,6 +542,18 @@ async fn complete(
     session.email = portal::userinfo(config, &session.portal_access, &session.subject, signal)
         .await?
         .email;
+    if session.durable {
+        return device::issue(
+            config,
+            db,
+            id,
+            proof,
+            &pending.phase,
+            &session,
+            pending.session_expires_at.ok_or(UNAVAILABLE)?,
+        )
+        .await;
+    }
     let stored: Stored = first(
         db,
         include_str!("../sql/complete.sql"),
@@ -538,17 +590,21 @@ fn response_session(
     http::json(200, &response)
 }
 
-fn bearer_hash(config: &Config, request: &Request) -> Result<String> {
+fn bearer_token(request: &Request) -> Result<String> {
     let authorization = request
         .headers()
         .get("Authorization")
         .map_err(|_| SESSION)?
         .ok_or(SESSION)?;
-    let token = authorization
+    authorization
         .strip_prefix("Bearer ")
         .filter(|value| opaque_token(value))
-        .ok_or(SESSION)?;
-    Ok(config.hash("session", token))
+        .map(str::to_owned)
+        .ok_or(SESSION)
+}
+
+fn bearer_hash(config: &Config, request: &Request) -> Result<String> {
+    Ok(config.hash("session", &bearer_token(request)?))
 }
 
 async fn require_session(config: &Config, db: &D1Database, request: &Request) -> Result<Stored> {

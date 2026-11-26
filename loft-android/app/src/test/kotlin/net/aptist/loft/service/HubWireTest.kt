@@ -12,7 +12,7 @@ import java.io.IOException
 
 class HubWireTest {
     private val profile = HubSnapshot(1u, "https://hub.invalid", "https://idp.invalid/api/idp", true, false,
-        HubSession("subject", "guest@example.invalid", true, 60u))
+        HubSession("subject", "guest@example.invalid", true, true, 60u))
     private val row = HubMailSummary("a".repeat(64), "Example Sender", "Example Recipient", "Review", "2026-01-01T00:00:00Z",
         false, "inbox", 1u, 100u)
 
@@ -22,6 +22,15 @@ class HubWireTest {
         assertEquals(profile, receipt.snapshot)
         assertEquals(page, receipt.page)
         assertFalse(checkNotNull(receipt.page).messages.single().read)
+    }
+
+    @Test fun expiredMailGrantPreservesAuthenticatedIdentity() {
+        val expired = profile.copy(session = profile.session?.copy(mailAvailable = false, expiresInSeconds = 0u))
+        val actual = HubWire.decode(HubWire.encode(HubResult(expired))).snapshot
+        assertNotNull(actual.session)
+        assertEquals("subject", actual.session?.subject)
+        assertTrue(actual.session?.mailAccess == true)
+        assertFalse(actual.session?.mailAvailable == true)
     }
 
     @Test fun completeBoundedDetailCarriesTheFileDescriptorsMetadataOnly() {

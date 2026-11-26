@@ -20,6 +20,10 @@ pub(super) struct Transaction {
     pub(super) verifier: String,
     pub(super) nonce: String,
     pub(super) mail_read: bool,
+    #[serde(default)]
+    pub(super) durable: bool,
+    #[serde(default)]
+    pub(super) renewal: Option<Renewal>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -29,8 +33,18 @@ pub(super) struct Session {
     pub(super) subject: String,
     pub(super) email: Option<String>,
     pub(super) mail_read: bool,
+    #[serde(default)]
+    pub(super) durable: bool,
+    #[serde(default)]
+    pub(super) renewal: Option<Renewal>,
 }
 
+#[derive(Serialize, Deserialize)]
+pub(super) struct Renewal {
+    pub(super) device_token: String,
+    pub(super) owner_hash: String,
+    pub(super) mail_revision: u32,
+}
 #[derive(Deserialize)]
 struct Discovery {
     issuer: String,
@@ -141,7 +155,7 @@ pub(super) fn authorization_url(
 pub(super) async fn exchange(
     config: &Config,
     code: &str,
-    transaction: &Transaction,
+    transaction: Transaction,
     loft_token: String,
     signal: &AbortSignal,
 ) -> Result<(Session, u64)> {
@@ -201,6 +215,13 @@ pub(super) async fn exchange(
     )
     .map_err(|_| DENIED)?;
     let identity = userinfo(config, &tokens.access_token, &claims.sub, signal).await?;
+    if transaction
+        .renewal
+        .as_ref()
+        .is_some_and(|renewal| renewal.owner_hash != config.owner_hash(&identity.sub))
+    {
+        return Err(DENIED);
+    }
     let expires_at = claims.exp.min(started + tokens.expires_in);
     if expires_at <= now() {
         return Err(SESSION);
@@ -212,6 +233,8 @@ pub(super) async fn exchange(
             subject: identity.sub,
             email: identity.email,
             mail_read: transaction.mail_read,
+            durable: transaction.durable,
+            renewal: transaction.renewal,
         },
         expires_at,
     ))

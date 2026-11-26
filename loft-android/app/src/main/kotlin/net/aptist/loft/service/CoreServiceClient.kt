@@ -179,6 +179,36 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
     internal fun cancelHub(requestId: Long) {
         try { remote?.cancelHubWork(requestId) } catch (_: RemoteException) { }
     }
+
+    internal fun executeVault(requestId: Long, command: VaultCommand, receive: (String, VaultResult?) -> Unit): Boolean {
+        val control = remote ?: run { command.clear(); return false }
+        val ticket = bindingGeneration
+        val payload = try { VaultWire.command(command) } catch (_: java.io.IOException) { return false }
+        finally { command.clear() }
+        val callback = object : ILoftHubEvents.Stub() {
+            override fun onResult(id: Long, code: String, result: ByteArray) {
+                if (Binder.getCallingUid() != Process.myUid() || id != requestId || code.length > 64 || result.size > VaultWire.MAX_FRAME) {
+                    result.fill(0)
+                    return
+                }
+                handler.post {
+                    try {
+                        if (closed || ticket != bindingGeneration) return@post
+                        val read = try { result.takeIf { it.isNotEmpty() }?.let(VaultWire::readResult) }
+                        catch (_: java.io.IOException) { receive("unavailable", null); return@post }
+                        receive(code, read)
+                    } finally { result.fill(0) }
+                }
+            }
+        }
+        return try { control.executeVault(requestId, payload, callback); true }
+        catch (_: RemoteException) { lost(ReceiptCode.STATE_UNAVAILABLE); false }
+        finally { payload.fill(0) }
+    }
+
+    internal fun cancelVault(requestId: Long) {
+        try { remote?.cancelVaultWork(requestId) } catch (_: RemoteException) { }
+    }
     private fun validCaller(payload: ByteArray): Boolean = Binder.getCallingUid() == Process.myUid() && payload.size <= ControlCodec.MAX_CONTROL_BYTES
     private fun acceptFrame(payload: ByteArray): Boolean {
         return try {

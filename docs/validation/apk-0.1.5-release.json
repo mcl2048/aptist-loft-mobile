@@ -1,0 +1,88 @@
+{
+  "path": "bin/loft.apk",
+  "sha256": "84d722ef75d875c7f244798af1b61b9090493102df68c78b8f895bca67d1c45b",
+  "bytes": 29017706,
+  "package": "net.aptist.loft",
+  "version_name": "0.1.5-LYNX",
+  "version_code": 6,
+  "min_sdk": 29,
+  "target_sdk": 36,
+  "debuggable": false,
+  "allow_backup": false,
+  "full_backup_content": false,
+  "uses_cleartext_traffic": false,
+  "data_extraction_rules_sha256": "e6d3a37a18eb3ac437c2bad69718ab0abce3a70d1e9832d4c785d1c7e56ad14a",
+  "manifest_sha256": "0f665d6f994e152523b11c0ec4bee29790292a93ca006ac65ecb8e8f7e59d6f1",
+  "signing_identity": "local development, same certificate as 0.1.2",
+  "optional_camera_features": [
+    "android.hardware.camera",
+    "android.hardware.camera.autofocus",
+    "android.hardware.camera.any"
+  ],
+  "signature_cert_sha256": "4fd578439fe8c3bb5ab2abc6c33e494753a965dc47e44d96e313962852a400fc",
+  "signature_sdk_ranges": {
+    "v3": [
+      "29",
+      "36"
+    ],
+    "v2": [
+      "24",
+      "27"
+    ]
+  },
+  "native_libraries": {
+    "lib/arm64-v8a/libandroidx.graphics.path.so": {
+      "sha256": "41e9a793c43a0f4fddb19e33f346bace464f30f888ba7b9eaf96294ea115bfb6",
+      "bytes": 10096,
+      "machine": "AArch64",
+      "load_segments": 3,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libgojni.so": {
+      "sha256": "7aeb00de1b67b7f98b7f2c58a85d404115b9b3761a0f7b5fefb225fb4a3bbbcb",
+      "bytes": 15937768,
+      "machine": "AArch64",
+      "load_segments": 4,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libimage_processing_util_jni.so": {
+      "sha256": "f0e4611db0d6b68942d8ba6977519f3dd1cdbffa87b7fc16d8006696ba954af4",
+      "bytes": 32544,
+      "machine": "AArch64",
+      "load_segments": 3,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libjnidispatch.so": {
+      "sha256": "ddfc6c965bbe366615c000ec1f06552ddf0bb2b4f9d921d0bff8c75b3cb2ca4c",
+      "bytes": 165992,
+      "machine": "AArch64",
+      "load_segments": 2,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libloft_ffi.so": {
+      "sha256": "2e32b74c412f435d25d5c28d69a0ac23fbf5fec47f15e819da77780f7a28cda7",
+      "bytes": 7673928,
+      "machine": "AArch64",
+      "load_segments": 4,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libsurface_util_jni.so": {
+      "sha256": "6cb2eac3c68e6a82ce2a5ea5aba86749eb8c609914392e125f6cdfbc208992f8",
+      "bytes": 4896,
+      "machine": "AArch64",
+      "load_segments": 2,
+      "alignment": "16KiB-compatible"
+    }
+  },
+  "secret_scan": {
+    "result": "PASS",
+    "inspected": 1782,
+    "scope": "git_index_and_artifact_members",
+    "private_inputs_available": true,
+    "failures": []
+  },
+  "checked_at_utc": "2026-11-26T23:14:01.957910+00:00",
+  "unsigned_sha256": "17bb2b9d3886d901a7673a2ea642f317c676cbff6d59d2b53e40490861872b3f",
+  "previous_canonical_sha256": "8b62eb2ae82c218cee91fe7c335c17d66b08d3afb126d210c1e48c1ace06fc18",
+  "candidate_sha256": "84d722ef75d875c7f244798af1b61b9090493102df68c78b8f895bca67d1c45b"
+}

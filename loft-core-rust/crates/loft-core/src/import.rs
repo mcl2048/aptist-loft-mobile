@@ -670,7 +670,7 @@ fn decode_bytes(
     Ok(decoded)
 }
 
-fn hex_digit(byte: u8) -> Option<u8> {
+pub(crate) fn hex_digit(byte: u8) -> Option<u8> {
     match byte {
         b'0'..=b'9' => Some(byte - b'0'),
         b'a'..=b'f' => Some(byte - b'a' + 10),

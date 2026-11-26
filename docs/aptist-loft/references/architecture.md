@@ -1,16 +1,16 @@
 # LOFT v3.6 architecture context
 
-The Android MVP uses native Compose, stable welcome/vpn/shield/mail/audit/setting/account module IDs, four locales (en, zh, ja, de) and light/dark themes. A private service owns business state in Rust, generated UniFFI bindings cross the language boundary, and gomobile packages the actual source-pinned Go VPN adapter and its retained legacy controller. The runtime adapter supplies TUN/resource facts rather than business authority. Kotlin has no second authoritative state machine.
+The Android MVP uses native Compose, stable welcome/vpn/shield/mail/audit/setting/account/totp module IDs, four locales (en, zh, ja, de) and light/dark themes. A private service owns business state in Rust, generated UniFFI bindings cross the language boundary, and gomobile packages the actual source-pinned Go VPN adapter and its retained legacy controller. The runtime adapter supplies TUN/resource facts rather than business authority. Kotlin has no second authoritative state machine.
 
 The full plan additionally calls for SOCKS5/hyrakenx/hyraken-pro QR/link import, selected-app proxy with unselected apps direct, physical socket protection, encrypted storage, Shield software/attestation policies, optional Portal BFF login and own-user mail. They are staged P0–P5 work: a framework release must identify what is implemented, planned and unverified.
 
-The current framework implements three-protocol link parsing, a Keystore-wrapped SQLCipher guest store, the 200-node/50-row directory, VPN ownership and Stop, shared node-domain Fake-IP/RTC rules and native notification boundaries. LOFT Hub supplies Portal browser authorization and own-user mail through Pages, Rust Workers and D1. QR, large FD imports, live TUN replacement/reconnect and Shield remain later adapters. The active Readme, requirements and task report record verified status.
+The current framework implements three-protocol link parsing, a Keystore-wrapped SQLCipher guest store, the 200-node/50-row directory, VPN ownership and Stop, shared node-domain Fake-IP/RTC rules and native notification boundaries. LOFT Hub supplies durable Portal browser enrollment, scoped mail and the offline vault backup through Pages, Rust Workers and D1. QR, large FD imports, live TUN replacement/reconnect and Shield remain later adapters. The active Readme, requirements and task report record verified status.
 
 The source inputs on this server are:
 
 | Input | Exact path and pin |
 | --- | --- |
-| HyrakenX core | `/home/coder/Loft-Gateway/modules/hyrakenx`; Gateway `231f14813f2b45cb6f0bde984181c57cba1d02fd` |
+| HyrakenX core | `/home/coder/Loft-Gateway/modules/hyrakenx`; Gateway `98644864d2426627cd151a0561e5035e46f6b79c` |
 | Hyraken Pro core | `/home/coder/Loft-Gateway/pkg/hyrakenpro`; same Gateway pin |
 | Node DNS/Firewall/Hydra | `/home/coder/Loft-Gateway/modules/dns`, `/home/coder/Loft-Gateway/modules/firewall`, `/home/coder/Loft-Gateway/modules/firewall/hydra` |
 | Portal IDP/Mail | `/home/coder/aptist-portal/modules/idp`, `/home/coder/aptist-portal/modules/mail`; Portal `4ab2b37d08f9d7e304ae4d420d36d15c54dffa36` |

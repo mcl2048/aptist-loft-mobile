@@ -334,3 +334,186 @@ fn explicit_upstream_session_rejection_clears_mail_scope_and_cached_cursor() {
     let snapshot = core.hub_snapshot();
     assert!(snapshot.generation > generation && snapshot.session.is_none());
 }
+
+#[test]
+fn durable_identity_without_a_portal_grant_stays_signed_in_and_can_logout() {
+    let mut core = CoreState::new();
+    prepare(&mut core);
+    start(&mut core, false);
+    let request = core.hub_begin(HubAction::Complete, None, false).unwrap();
+    let mut identity = completion(false, ISSUER, 0);
+    identity["durable"] = json!(true);
+    identity["expiresAt"] = json!(0);
+    let receipt = json_reply(&mut core, request.request_id, 200, identity).unwrap();
+    assert_eq!(receipt.snapshot.session.unwrap().expires_in_seconds, 0);
+    assert_eq!(
+        core.hub_begin(HubAction::MailInbox, None, false).err(),
+        Some(HubError::MailConsentRequired)
+    );
+    let logout = core.hub_begin(HubAction::Logout, None, false).unwrap();
+    assert!(logout.bearer.is_some());
+    assert!(core.hub_snapshot().session.is_none());
+}
+
+#[test]
+fn encrypted_vault_can_restore_to_a_second_owner_and_never_publishes_plaintext() {
+    const SECRET: &[u8] = b"synthetic password for encrypted sync";
+    const PASSPHRASE: &[u8] = b"fixture phrase of sufficient length";
+    fn sign_in(core: &mut CoreState) {
+        prepare(core);
+        start(core, false);
+        let request = core.hub_begin(HubAction::Complete, None, false).unwrap();
+        let mut identity = completion(false, ISSUER, 0);
+        identity["durable"] = json!(true);
+        identity["expiresAt"] = json!(0);
+        json_reply(core, request.request_id, 200, identity).unwrap();
+    }
+    let mut first = CoreState::new();
+    sign_in(&mut first);
+    let entry = first
+        .vault_save(loft_core::VaultDraft {
+            id: None,
+            kind: loft_core::VaultKind::Password,
+            label: "Fixture".into(),
+            account: "".into(),
+            issuer: "".into(),
+            secret: Some(SECRET.to_vec()),
+            algorithm: None,
+            digits: None,
+            period: None,
+        })
+        .unwrap();
+    let get = first.vault_sync_begin(PASSPHRASE.to_vec()).unwrap();
+    assert_eq!(get.method, "GET");
+    assert!(get.url.starts_with(&format!("{ORIGIN}/v1/vault/")));
+    assert!(get.bearer.is_some());
+    let put = first
+        .vault_sync_finish(
+            get.request_id,
+            404,
+            Some("application/json"),
+            br#"{"error":"not_found"}"#.to_vec(),
+        )
+        .unwrap()
+        .next_request
+        .unwrap();
+    assert_eq!(put.method, "PUT");
+    assert_eq!(put.url, get.url);
+    assert!(!put.body.windows(SECRET.len()).any(|bytes| bytes == SECRET));
+    assert!(
+        !put.body
+            .windows(PASSPHRASE.len())
+            .any(|bytes| bytes == PASSPHRASE)
+    );
+    let uploaded: Value = serde_json::from_slice(&put.body).unwrap();
+    assert_eq!(uploaded["baseRevision"], 0);
+    first
+        .vault_sync_finish(
+            put.request_id,
+            200,
+            Some("application/json"),
+            br#"{"revision":1}"#.to_vec(),
+        )
+        .unwrap();
+    let mut second = CoreState::new();
+    sign_in(&mut second);
+    let revision = json!({"revision":1,"ciphertext": uploaded["ciphertext"]})
+        .to_string()
+        .into_bytes();
+    let wrong = second
+        .vault_sync_begin(b"a different fixture passphrase".to_vec())
+        .unwrap();
+    assert_eq!(
+        second
+            .vault_sync_finish(
+                wrong.request_id,
+                200,
+                Some("application/json"),
+                revision.clone()
+            )
+            .err(),
+        Some(loft_core::VaultError::AuthenticationFailed)
+    );
+    assert!(
+        second
+            .vault_list(false, 0, None)
+            .unwrap()
+            .entries
+            .is_empty()
+    );
+    let get = second.vault_sync_begin(PASSPHRASE.to_vec()).unwrap();
+    let sync = second
+        .vault_sync_finish(get.request_id, 200, Some("application/json"), revision)
+        .unwrap();
+    assert!(sync.next_request.is_none());
+    assert_eq!(second.vault_reveal(&entry.id, 0).unwrap().value, SECRET);
+}
+
+#[test]
+fn unrelated_server_error_keeps_durable_account_and_logout_fences_pending_kdf() {
+    use loft_core::{VaultError, VaultSyncReceipt};
+
+    let mut core = CoreState::new();
+    prepare(&mut core);
+    start(&mut core, false);
+    let request = core.hub_begin(HubAction::Complete, None, false).unwrap();
+    let mut identity = completion(false, ISSUER, 0);
+    identity["durable"] = json!(true);
+    identity["expiresAt"] = json!(0);
+    json_reply(&mut core, request.request_id, 200, identity).unwrap();
+
+    let renew = core.hub_begin(HubAction::SignIn, None, true).unwrap();
+    assert!(renew.bearer.is_some());
+    json_reply(
+        &mut core,
+        renew.request_id,
+        201,
+        json!({
+            "transactionId": URL_SAFE_NO_PAD.encode([3; 32]),
+            "authorizationUrl": format!("{ISSUER}/authorize?state=fixture"),
+            "expiresAt": 1_800_000_120u64,
+            "expiresIn": 120
+        }),
+    )
+    .unwrap();
+    let cancel = core.hub_begin(HubAction::Cancel, None, false).unwrap();
+    core.hub_abandon(cancel.request_id);
+    assert!(core.hub_snapshot().session.is_some());
+    assert!(!core.hub_snapshot().transaction_pending);
+
+    let session = core.hub_begin(HubAction::Session, None, false).unwrap();
+    assert_eq!(
+        json_reply(
+            &mut core,
+            session.request_id,
+            401,
+            json!({"error":"not_for_this_client"})
+        )
+        .err(),
+        Some(HubError::InvalidResponse)
+    );
+    assert!(core.hub_snapshot().session.is_some());
+
+    let get = core
+        .vault_sync_begin(b"synthetic sufficient passphrase".to_vec())
+        .unwrap();
+    let receipt = core
+        .vault_sync_accept(
+            get.request_id,
+            404,
+            Some("application/json"),
+            br#"{"error":"not_found"}"#.to_vec(),
+        )
+        .unwrap();
+    let VaultSyncReceipt::Compute(work) = receipt else {
+        panic!("expected detached KDF work")
+    };
+    let logout = core.hub_begin(HubAction::Logout, None, false).unwrap();
+    core.hub_abandon(logout.request_id);
+    let result = work.compute();
+    assert_eq!(
+        core.vault_sync_commit(result).err(),
+        Some(VaultError::StaleGeneration)
+    );
+    assert!(core.hub_snapshot().session.is_none());
+}

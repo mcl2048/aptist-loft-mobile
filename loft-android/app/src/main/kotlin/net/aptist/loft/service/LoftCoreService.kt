@@ -32,6 +32,10 @@ class LoftCoreService : Service() {
             enforceCaller(); owner.executeHub(requestId, action, input, mailAccess, destination, observer)
         }
         override fun cancelHubWork(requestId: Long) { enforceCaller(); owner.cancelHubWork(requestId) }
+        override fun executeVault(requestId: Long, command: ByteArray, observer: ILoftHubEvents) {
+            enforceCaller(); owner.executeVault(requestId, command, observer)
+        }
+        override fun cancelVaultWork(requestId: Long) { enforceCaller(); owner.cancelVaultWork(requestId) }
     }
     override fun onCreate() {
         super.onCreate()

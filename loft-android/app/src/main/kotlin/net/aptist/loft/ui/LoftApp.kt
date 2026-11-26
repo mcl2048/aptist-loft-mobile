@@ -283,6 +283,7 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
             if (!dual) { Explanation(R.string.device_trust, R.string.device_unknown); Text(stringResource(R.string.shield_scope)) }
         }
         Page.MAIL -> ScrollPage(modifier) { PageTitle(R.string.mail_title); HubMail(state, model) }
+        Page.TOTP -> ScrollPage(modifier) { PageTitle(R.string.vault_title); VaultPageContent(state, model.vault) }
         Page.AUDIT -> LazyColumn(modifier.fillMaxSize().padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item { PageTitle(R.string.audit_title); Text(stringResource(R.string.audit_body)) }
             if (state.receipts.isEmpty()) item { Text(stringResource(R.string.no_receipts)) }
@@ -318,6 +319,7 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
             Page.IMPORT_NODE -> { Explanation(R.string.storage_title, R.string.storage_body); Text(stringResource(R.string.import_limit)); Text(stringResource(R.string.camera_unavailable)) }
             Page.ACCOUNT -> Text(stringResource(R.string.account_guest_body))
             Page.MAIL -> Explanation(R.string.privacy, R.string.hub_mail_privacy)
+            Page.TOTP -> Text(stringResource(R.string.vault_offline))
             Page.SHIELD -> { Explanation(R.string.device_trust, R.string.device_unknown); Text(stringResource(R.string.shield_scope)) }
             Page.SETTINGS -> PrivacyAndBackground()
             Page.AUDIT, Page.DIAGNOSTICS -> { Explanation(R.string.framework_title, R.string.framework_body); LocalStorage() }
@@ -495,9 +497,9 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
     if (profile.session == null) PrimaryButton(R.string.hub_sign_in, { model.signIn(false) }, enabled)
     else LinkButton(onClick = model::logoutHub, enabled = enabled) { Text(stringResource(R.string.hub_sign_out)) }
     if (profile.mailSupported) {
-        if (profile.session?.mailAccess != true) {
+        if (profile.session?.mailAvailable != true) {
             Text(stringResource(R.string.hub_mail_consent), style = MaterialTheme.typography.bodySmall)
-            PrimaryButton(R.string.hub_authorize_mail, { model.signIn(true) }, enabled)
+            PrimaryButton(if (profile.session?.mailAccess == true) R.string.hub_renew_mail else R.string.hub_authorize_mail, { model.signIn(true) }, enabled)
         } else LinkButton(onClick = { model.navigate(Page.MAIL) }, enabled = enabled) { Text(stringResource(R.string.mail_title)) }
     }
 }
@@ -505,7 +507,7 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
 @Composable private fun HubMail(state: LoftUiState, model: LoftViewModel) {
     val activity = LocalActivity.current as? MainActivity
     HubStatus(state)
-    if (state.hub?.session?.mailAccess != true) {
+    if (state.hub?.session?.mailAvailable != true) {
         Text(stringResource(if (state.hub?.mailSupported == true) R.string.hub_mail_consent else R.string.hub_mail_choose_server))
         LinkButton(onClick = { model.navigate(Page.ACCOUNT) }) { Text(stringResource(R.string.account_title)) }
         return
@@ -576,6 +578,7 @@ private fun mailDate(value: String, locale: String): String = runCatching {
         "invalid_request", "invalid_response", "stale_request" -> R.string.hub_invalid_response
         "network_unavailable" -> R.string.hub_network_unavailable
         "not_signed_in", "session_expired" -> R.string.hub_session_expired
+        "mail_expired" -> R.string.hub_renew_mail
         "insufficient_scope" -> R.string.hub_mail_consent
         "no_transaction", "transaction_expired" -> R.string.hub_transaction_expired
         "access_denied" -> R.string.hub_access_denied
@@ -759,11 +762,11 @@ private fun protocolName(node: NodeSummary): String = when (node.protocol) {
 }
 private fun moduleIcon(module: ModuleId): Int = when (module) {
     ModuleId.WELCOME -> R.drawable.ic_home; ModuleId.VPN -> R.drawable.ic_network; ModuleId.SHIELD -> R.drawable.ic_shield
-    ModuleId.MAIL -> R.drawable.ic_mail; ModuleId.AUDIT -> R.drawable.ic_log; ModuleId.SETTING -> R.drawable.ic_settings; ModuleId.ACCOUNT -> R.drawable.ic_account
+    ModuleId.MAIL -> R.drawable.ic_mail; ModuleId.TOTP -> R.drawable.ic_vault; ModuleId.AUDIT -> R.drawable.ic_log; ModuleId.SETTING -> R.drawable.ic_settings; ModuleId.ACCOUNT -> R.drawable.ic_account
 }
 private fun moduleTitle(module: ModuleId): Int = when (module) {
     ModuleId.WELCOME -> R.string.module_welcome; ModuleId.VPN -> R.string.module_vpn; ModuleId.SHIELD -> R.string.module_shield
-    ModuleId.MAIL -> R.string.module_mail; ModuleId.AUDIT -> R.string.module_audit; ModuleId.SETTING -> R.string.module_setting; ModuleId.ACCOUNT -> R.string.module_account
+    ModuleId.MAIL -> R.string.module_mail; ModuleId.TOTP -> R.string.vault_title; ModuleId.AUDIT -> R.string.module_audit; ModuleId.SETTING -> R.string.module_setting; ModuleId.ACCOUNT -> R.string.module_account
 }
 private fun pageTitle(page: Page): Int = when (page) {
     Page.NODES -> R.string.node_list; Page.NODE_DETAILS -> R.string.node_details; Page.IMPORT_NODE -> R.string.import_link

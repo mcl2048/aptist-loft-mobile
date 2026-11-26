@@ -24,7 +24,7 @@ class OwnedSourceVerification(unittest.TestCase):
         self.addition.write_bytes(b"bounded mobile adapter\n")
         self.manifest = {
             "schema_version": 1,
-            "gateway_commit": "231f14813f2b45cb6f0bde984181c57cba1d02fd",
+            "gateway_commit": "98644864d2426627cd151a0561e5035e46f6b79c",
             "files": [
                 {"source_kind": "source_snapshot", "source": "/unavailable/provenance/production.go", "destination": "third_party/production.go", "source_sha256": hashlib.sha256(b"upstream production bytes\n").hexdigest(), "owned_sha256": hashlib.sha256(self.file.read_bytes()).hexdigest()},
                 {"source_kind": "mobile_addition", "source": "LOFT mobile adapter", "destination": "third_party/mobile.go", "source_sha256": None, "owned_sha256": hashlib.sha256(self.addition.read_bytes()).hexdigest()},

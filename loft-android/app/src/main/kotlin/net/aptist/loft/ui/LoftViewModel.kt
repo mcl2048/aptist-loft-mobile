@@ -105,19 +105,21 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     private var hubExpiry: Job? = null
     private var pendingExport: HubExport? = null
     private val client = CoreServiceClient(application, ::receivedFrame, ::receivedReceipt, ::serviceLost, ::receivedNodePage)
+    internal val vault = VaultPresentation(client, viewModelScope)
 
     init { client.setPresentationLocale(mutable.value.locale); client.bind() }
 
     fun setVisible(value: Boolean) {
         visible = value
         client.setVisible(value)
+        vault.setActive(value && mutable.value.canChangeConfiguration && mutable.value.presentation.navigation.page == Page.TOTP)
         if (!value) {
             cancelApps(); cancelNodePage()
             if (mutable.value.presentation.navigation.page == Page.MAIL && !hubExportInProgress()) clearMail()
         }
         else if (mutable.value.presentation.navigation.page == Page.ROUTING) loadApps()
         else if (nodePageVisible()) loadNodePage()
-        else if (mutable.value.presentation.navigation.page in setOf(Page.ACCOUNT, Page.MAIL)) refreshHub()
+        else if (mutable.value.presentation.navigation.page in setOf(Page.ACCOUNT, Page.MAIL, Page.TOTP)) refreshHub()
     }
     fun setFolds(folds: List<PhysicalFold>) { mutable.value = mutable.value.copy(folds = folds.take(2).toList()) }
     fun resize(viewport: Viewport) {
@@ -178,7 +180,8 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
                     routingDraft = if (navigation.page == Page.ROUTING) current.native?.core?.let { RoutingDraft.from(it.routingEnabled, it.selectedApps.toSet()) } else current.presentation.routingDraft))
             if (navigation.page == Page.ROUTING && visible) loadApps()
             if (navigation.page in setOf(Page.NODES, Page.NODE_DETAILS) && visible) loadNodePage()
-            if (navigation.page in setOf(Page.ACCOUNT, Page.MAIL) && visible) refreshHub()
+            vault.setActive(visible && current.canChangeConfiguration && navigation.page == Page.TOTP)
+            if (navigation.page in setOf(Page.ACCOUNT, Page.MAIL, Page.TOTP) && visible) refreshHub()
         } else mutable.value = old.copy(presentation = old.presentation.copy(navigation = navigation))
     }
 
@@ -231,7 +234,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         val state = mutable.value
         val message = state.hubMessage ?: return
         val snapshot = state.hub ?: return
-        if (pendingExport != null || state.hubBusy || snapshot.session?.mailAccess != true) return
+        if (pendingExport != null || state.hubBusy || snapshot.session?.mailAvailable != true) return
         val attachment = attachmentId?.let { id -> message.attachments.firstOrNull { it.id == id } ?: return }
         val input = if (attachment != null) "${message.summary.id}:${attachment.id}" else message.summary.id
         pendingExport = HubExport(if (attachment != null) HubAction.MAIL_ATTACHMENT else HubAction.MAIL_CONTENT, input, snapshot.generation)
@@ -292,7 +295,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         if (scopeChanged || latest?.transactionPending != true) browserUrl = null
         if (result?.browserUrl != null && latest?.transactionPending == true) browserUrl = result.browserUrl
         if (scopeChanged) pendingExport = null
-        val canShowMail = latest?.session?.mailAccess == true && state.presentation.navigation.page == Page.MAIL && visible
+        val canShowMail = latest?.session?.mailAvailable == true && state.presentation.navigation.page == Page.MAIL && visible
         val status = when {
             action == null && code == "ok" -> state.hubStatus
             code != "ok" -> code
@@ -307,7 +310,8 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     }
     private fun scheduleHubExpiry(snapshot: HubSnapshot?) {
         hubExpiry?.cancel()
-        val remaining = snapshot?.session?.expiresInSeconds?.toLong() ?: return
+        val session = snapshot?.session?.takeIf { it.mailAvailable } ?: return
+        val remaining = session.expiresInSeconds.toLong()
         hubExpiry = viewModelScope.launch {
             // A single local expiry only removes private presentation data.
             delay(remaining * 1_000)
@@ -315,7 +319,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
             if (state.hub?.generation == snapshot.generation) {
                 pendingExport = null
                 clearMail()
-                mutable.value = mutable.value.copy(hub = snapshot.copy(session = null), hubStatus = "session_expired")
+                mutable.value = mutable.value.copy(hub = snapshot.copy(session = session.copy(mailAvailable = false, expiresInSeconds = 0u)), hubStatus = "mail_expired")
             }
         }
     }
@@ -547,7 +551,8 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         mutable.value = state.copy(native = frame, availability = ServiceAvailability.AVAILABLE, serverText = server, selectedNodeMetadata = choice.summary,
             presentation = state.presentation.copy(routingDraft = draft, selectedNodeId = choice.id))
         if (visible && nodePageVisible()) loadNodePage()
-        if (mutable.value.hub == null && mutable.value.presentation.navigation.page in setOf(Page.ACCOUNT, Page.MAIL)) refreshHub()
+        if (visible && mutable.value.presentation.navigation.page == Page.TOTP) vault.setActive(mutable.value.canChangeConfiguration)
+        if (mutable.value.hub == null && mutable.value.presentation.navigation.page in setOf(Page.ACCOUNT, Page.MAIL, Page.TOTP)) refreshHub()
     }
     private fun receivedReceipt(requestId: Long, code: ReceiptCode) {
         val state = mutable.value
@@ -586,6 +591,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         if (code in setOf(ReceiptCode.SERVER_STAGED, ReceiptCode.SERVER_RESET, ReceiptCode.STORAGE_REOPENED)) refreshHub()
     }
     private fun serviceLost(code: ReceiptCode) {
+        vault.setActive(false)
         pendingOperation = null
         vpnPermission.cancel()
         cancelNodePage()
@@ -599,6 +605,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     private fun isStorageOpenFailure(code: ReceiptCode): Boolean =
         code == ReceiptCode.STORAGE_UNAVAILABLE || code == ReceiptCode.STORAGE_RECOVERY_REQUIRED
     override fun onCleared() {
+        vault.setActive(false)
         clearHub(); client.close(); cancelApps(); cancelNodePage()
         mutable.value = mutable.value.copy(importText = "", serverText = "", native = null,
             presentation = mutable.value.presentation.copy(routingDraft = null))

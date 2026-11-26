@@ -8,7 +8,8 @@ import tomllib
 # New direct dependencies require a conscious policy and source review; platform,
 # HTTP, database and binding implementations belong in adapter crates.
 APPROVED_DOMAIN_DEPENDENCIES = frozenset({
-    "base64", "rustls", "serde", "serde_json", "sha2", "x509-parser", "zeroize",
+    "argon2", "base64", "data-encoding", "ring", "rustls", "serde", "serde_json",
+    "sha2", "x509-parser", "zeroize",
 })
 
 

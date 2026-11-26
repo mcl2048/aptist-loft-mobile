@@ -25,6 +25,7 @@ const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 20
 const jwk = { ...publicKey.export({ format: 'jwk' }), kid, alg: 'RS256', use: 'sig' };
 
 let authorization;
+let authorizationSubject;
 let sourceRevoked = false;
 let mailProviderError = false;
 let redirectedMail = false;
@@ -66,7 +67,7 @@ async function portal(request) {
     assert.equal(hash(form.get('code_verifier')), authorization.searchParams.get('code_challenge'));
     const now = Math.floor(Date.now() / 1000);
     const header = part({ alg: 'RS256', typ: 'JWT', kid });
-    const claims = part({ iss: issuer, aud: client, sub: subject,
+    const claims = part({ iss: issuer, aud: client, sub: authorizationSubject ?? subject,
       nonce: jwtFailure === 'nonce' ? random() : authorization.searchParams.get('nonce'), iat: now, exp: now + 300 });
     const input = [header, claims].join('.');
     const signature = sign('RSA-SHA256', Buffer.from(input), privateKey);
@@ -81,7 +82,7 @@ async function portal(request) {
   assert.equal(request.method, 'GET');
   assert.equal(auth, 'Bearer ' + upstreamBearer);
   if (sourceRevoked) return Response.json({ error: 'invalid_token' }, { status: 401 });
-  if (suffix === '/userinfo') return Response.json({ sub: subject, email: 'account@example.test' });
+  if (suffix === '/userinfo') return Response.json({ sub: authorizationSubject ?? subject, email: 'account@example.test' });
   if (mailProviderError) return Response.json({ error: 'mail_provider_unavailable' }, { status: 503 });
   if (suffix === '/mail') {
     if (redirectedMail) return Response.redirect('https://foreign.example/redirected', 307);
@@ -137,8 +138,10 @@ async function expectStatus(response, status) {
   return actual;
 }
 
-async function create(mailRead, proof = random()) {
-  const response = await expectStatus(api('/v1/auth/portal/transactions', body({ proofChallenge: hash(proof), mailRead })), 201);
+async function create(mailRead, proof = random(), { durable, token } = {}) {
+  const request = body({ proofChallenge: hash(proof), mailRead, ...(durable ? { durable } : {}) });
+  if (token) request.headers.Authorization = 'Bearer ' + token;
+  const response = await expectStatus(api('/v1/auth/portal/transactions', request), 201);
   const transaction = await response.json();
   authorization = new URL(transaction.authorizationUrl);
   assert.equal(authorization.origin, new URL(issuer).origin);
@@ -156,9 +159,11 @@ const cancel = tx => api(tx.path + '/cancel', body({ proof: tx.proof }));
 
 try {
   const d1 = await config.getD1Database('DB', 'hub');
-  const sql = await readFile(new URL('../migrations/0001_identity.sql', import.meta.url), 'utf8');
-  for (const statement of sql.split(';').map(s => s.trim()).filter(Boolean)) {
-    await d1.prepare(statement).run();
+  for (const migration of ['0001_identity.sql', '0002_durable_identity_and_vault.sql']) {
+    const sql = await readFile(new URL('../migrations/' + migration, import.meta.url), 'utf8');
+    for (const statement of sql.split(';').map(s => s.trim()).filter(Boolean)) {
+      await d1.prepare(statement).run();
+    }
   }
   const discovery = await expectStatus(api('/.well-known/loft-app'), 200);
   assert.equal(discovery.headers.get('Cache-Control'), 'private, no-store');
@@ -243,7 +248,118 @@ try {
     await expectStatus(callback(invalidTx), 303);
     await expectStatus(complete(invalidTx), 403);
   }
-  console.log('PASS: workerd Pages service binding, D1 login/cancel/logout, Portal JOSE and own-user Mail');
+  jwtFailure = undefined;
+  const enrolled = await create(true, random(), { durable: true });
+  await expectStatus(callback(enrolled), 303);
+  const [device, repeatedEnrollment] = await Promise.all([complete(enrolled), complete(enrolled)])
+    .then(responses => Promise.all(responses.map(async response => (await expectStatus(response, 200)).json())));
+  assert.equal(device.sessionToken, repeatedEnrollment.sessionToken);
+  assert.equal(device.durable, true);
+  const authDevice = bearer(device.sessionToken);
+  const durableRows = await d1.prepare('SELECT session_hash, identity_box, mail_box FROM hub_device_session').all();
+  assert.equal(durableRows.results.length, 1);
+  assert.ok(!JSON.stringify(durableRows).includes(device.sessionToken));
+  assert.ok(!JSON.stringify(durableRows).includes(upstreamBearer));
+
+  const vaultPath = '/v1/vault/' + random();
+  const ciphertext = random(64);
+  const put = (token, baseRevision, value, path = vaultPath) => {
+    const request = body({ baseRevision, ciphertext: value });
+    request.headers.Authorization = 'Bearer ' + token;
+    return api(path, { ...request, method: 'PUT' });
+  };
+  await expectStatus(api(vaultPath, authDevice), 404);
+  await expectStatus(api(vaultPath, auth), 401);
+  const cas = await Promise.all([put(device.sessionToken, 0, ciphertext), put(device.sessionToken, 0, random(64))]);
+  assert.deepEqual(cas.map(value => value.status).sort(), [200, 409]);
+  const vault = await (await expectStatus(api(vaultPath, authDevice), 200)).json();
+  assert.equal(vault.revision, 1);
+  assert.deepEqual(await (await expectStatus(put(device.sessionToken, 1, ciphertext), 200)).json(), { revision: 2 });
+  await expectStatus(put(device.sessionToken, 2, random(256 * 1024 + 1)), 413);
+
+  const revoked = await (await expectStatus(api('/v1/session', authDevice), 200)).json();
+  assert.equal(revoked.durable, true);
+  await d1.prepare('UPDATE hub_device_session SET mail_expires_at = 1').run();
+  const expiredGrant = await (await expectStatus(api('/v1/session', authDevice), 200)).json();
+  assert.equal(expiredGrant.mailRead, false);
+  assert.equal(expiredGrant.expiresIn, 0);
+  const consentRequired = await expectStatus(api('/v1/mail/messages', authDevice), 403);
+  assert.deepEqual(await consentRequired.json(), { error: 'mail_consent_required' });
+  await expectStatus(api(vaultPath, authDevice), 200);
+
+  const renewed = await create(true, random(), { durable: true, token: device.sessionToken });
+  await expectStatus(callback(renewed), 303);
+  const sameDevice = await (await expectStatus(complete(renewed), 200)).json();
+  assert.equal(sameDevice.sessionToken, device.sessionToken);
+  await expectStatus(api('/v1/mail/messages', authDevice), 200);
+
+  authorizationSubject = random();
+  const wrongAccount = await create(true, random(), { durable: true, token: device.sessionToken });
+  await expectStatus(callback(wrongAccount), 303);
+  await expectStatus(complete(wrongAccount), 403);
+  const otherEnrollment = await create(true, random(), { durable: true });
+  await expectStatus(callback(otherEnrollment), 303);
+  const otherDevice = await (await expectStatus(complete(otherEnrollment), 200)).json();
+  await expectStatus(api(vaultPath, bearer(otherDevice.sessionToken)), 404);
+  await expectStatus(put(otherDevice.sessionToken, 2, random(64)), 409);
+  const sharedPath = '/v1/vault/' + random();
+  const deviceClock = performance.now();
+  const waveSize = 32;
+  const sameOwner = await Promise.all(Array.from({ length: waveSize }, () =>
+    put(device.sessionToken, 0, random(64), sharedPath)));
+  const sameOwnerCodes = sameOwner.map(response => response.status);
+  assert.equal(sameOwnerCodes.filter(code => code === 200).length, 1);
+  assert.ok(sameOwnerCodes.every(code => [200, 409, 429].includes(code)));
+  const shared = await (await expectStatus(api(sharedPath, authDevice), 200)).json();
+  assert.equal(shared.revision, 1);
+  await expectStatus(api(sharedPath, bearer(otherDevice.sessionToken)), 404);
+
+  const siblingPaths = Array.from({ length: 4 }, () => '/v1/vault/' + random());
+  const independent = await Promise.all(siblingPaths.flatMap(path =>
+    [device.sessionToken, otherDevice.sessionToken].map(token => put(token, 0, random(64), path))));
+  assert.ok(independent.every(response => [200, 429].includes(response.status)));
+  for (const [index, path] of siblingPaths.entries()) {
+    for (const [owner, token] of [device.sessionToken, otherDevice.sessionToken].entries()) {
+      if (independent[index * 2 + owner].status === 429) {
+        await expectStatus(put(token, 0, random(64), path), 200);
+      }
+    }
+    const [a, b] = await Promise.all([authDevice, bearer(otherDevice.sessionToken)].map(async credentials =>
+      (await expectStatus(api(path, credentials), 200)).json()));
+    assert.equal(a.revision, 1);
+    assert.equal(b.revision, 1);
+    assert.notEqual(a.ciphertext, b.ciphertext);
+  }
+  const elapsed = Math.round(performance.now() - deviceClock);
+  console.log('workerd CAS wave: ' + waveSize + ' same-target requests, '
+    + [200, 409, 429].map(code => code + '=' + sameOwnerCodes.filter(result => result === code).length).join(' ')
+    + ', 8 cross-account writes, ' + elapsed + ' ms local fixture');
+  authorizationSubject = undefined;
+
+  const logoutRace = await create(true, random(), { durable: true, token: device.sessionToken });
+  await expectStatus(callback(logoutRace), 303);
+  await expectStatus(api('/v1/logout', { ...authDevice, method: 'POST' }), 204);
+  await expectStatus(complete(logoutRace), 410);
+  await expectStatus(api('/v1/session', authDevice), 401);
+  await expectStatus(api(vaultPath, authDevice), 401);
+  await expectStatus(api('/v1/auth/portal/transactions', {
+    ...body({ proofChallenge: hash(random()), mailRead: true, durable: true }),
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + device.sessionToken },
+  }), 401);
+
+  const reenroll = await create(false, random(), { durable: true });
+  await expectStatus(callback(reenroll), 303);
+  const recovered = await (await expectStatus(complete(reenroll), 200)).json();
+  const vaultAfterLogout = await (await expectStatus(api(vaultPath, bearer(recovered.sessionToken)), 200)).json();
+  assert.deepEqual(vaultAfterLogout, { revision: 2, ciphertext });
+
+  const discardedEnrollment = await create(false, random(), { durable: true });
+  await expectStatus(callback(discardedEnrollment), 303);
+  const discarded = await (await expectStatus(complete(discardedEnrollment), 200)).json();
+  await expectStatus(cancel(discardedEnrollment), 204);
+  await expectStatus(api('/v1/session', bearer(discarded.sessionToken)), 401);
+
+  console.log('PASS: workerd Pages binding, legacy and durable D1 identity, own-mail authority, encrypted vault CAS');
 } finally {
   await config.dispose();
 }

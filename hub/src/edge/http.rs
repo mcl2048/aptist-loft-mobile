@@ -14,6 +14,8 @@ impl Fault {
 pub(super) type Result<T> = std::result::Result<T, Fault>;
 pub(super) const INVALID: Fault = Fault(400, "invalid_request");
 pub(super) const SESSION: Fault = Fault(401, "session_expired");
+pub(super) const CONSENT: Fault = Fault(403, "mail_consent_required");
+pub(super) const CONFLICT: Fault = Fault(409, "revision_conflict");
 pub(super) const SCOPE: Fault = Fault(403, "insufficient_scope");
 pub(super) const DENIED: Fault = Fault(403, "access_denied");
 pub(super) const NOT_FOUND: Fault = Fault(404, "not_found");
@@ -76,7 +78,13 @@ pub(super) async fn read_chunks(
 }
 
 pub(super) async fn input<T: DeserializeOwned>(request: &mut Request) -> Result<T> {
-    const LIMIT: usize = 1024;
+    input_bounded(request, 1024).await
+}
+
+pub(super) async fn input_bounded<T: DeserializeOwned>(
+    request: &mut Request,
+    limit: usize,
+) -> Result<T> {
     if request
         .headers()
         .get("Origin")
@@ -94,8 +102,16 @@ pub(super) async fn input<T: DeserializeOwned>(request: &mut Request) -> Result<
     }) {
         return Err(INVALID);
     }
+    if request
+        .headers()
+        .get("Content-Length")
+        .map_err(|_| INVALID)?
+        .is_some_and(|value| value.parse::<usize>().is_ok_and(|size| size > limit))
+    {
+        return Err(TOO_LARGE);
+    }
     let stream = request.stream().map_err(|_| INVALID)?;
-    let bytes = read_chunks(stream, LIMIT, TOO_LARGE).await?;
+    let bytes = read_chunks(stream, limit, TOO_LARGE).await?;
     serde_json::from_slice(&bytes).map_err(|_| INVALID)
 }
 

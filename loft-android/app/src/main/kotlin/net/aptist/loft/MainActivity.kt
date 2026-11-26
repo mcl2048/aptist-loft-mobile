@@ -2,7 +2,11 @@ package net.aptist.loft
 
 import android.os.Bundle
 import android.os.Build
+import android.os.CancellationSignal
 import android.Manifest
+import android.app.KeyguardManager
+import android.hardware.biometrics.BiometricManager
+import android.hardware.biometrics.BiometricPrompt
 import android.content.pm.PackageManager
 import android.content.Intent
 import android.content.ActivityNotFoundException
@@ -27,6 +31,7 @@ import kotlinx.coroutines.launch
 import net.aptist.loft.foundation.ObscuredTouchGate
 import net.aptist.loft.foundation.Page
 import net.aptist.loft.foundation.TouchDispatch
+import net.aptist.loft.core.generated.VaultEntry
 import net.aptist.loft.ui.*
 import net.aptist.loft.service.LoftNotificationChannels
 
@@ -35,6 +40,11 @@ class MainActivity : AppCompatActivity() {
     private val touchGate = ObscuredTouchGate()
     private var sensitivePage = false
     private var windowActive = false
+    private var vaultAuthorization: VaultEntry? = null
+    private var vaultBiometric: CancellationSignal? = null
+    private val vaultCredential = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        finishVaultAuthorization(result.resultCode == RESULT_OK)
+    }
     private val vpnPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         model.completeVpnPermission(result.resultCode == RESULT_OK)
     }
@@ -86,6 +96,9 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
     }
     override fun onDestroy() {
+        vaultAuthorization = null
+        vaultBiometric?.cancel()
+        vaultBiometric = null
         windowActive = false
         sensitivePage = false
         applySensitiveWindow()
@@ -98,7 +111,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setSensitivePage(page: Page) {
-        val sensitive = page in setOf(Page.IMPORT_NODE, Page.ACCOUNT, Page.MAIL)
+        if (page != Page.TOTP) {
+            vaultAuthorization = null
+            vaultBiometric?.cancel()
+            vaultBiometric = null
+        }
+        val sensitive = page in setOf(Page.IMPORT_NODE, Page.ACCOUNT, Page.MAIL, Page.TOTP)
         if (sensitivePage == sensitive) return
         sensitivePage = sensitive
         applySensitiveWindow()
@@ -138,6 +156,39 @@ class MainActivity : AppCompatActivity() {
         val intent = VpnService.prepare(this)
         if (intent == null) model.completeVpnPermission(true) else vpnPermission.launch(intent)
     }
+    @Suppress("DEPRECATION")
+    internal fun requestVaultReveal(entry: VaultEntry) {
+        if (vaultAuthorization != null || !windowActive || model.ui.value.presentation.navigation.page != Page.TOTP) return
+        val keyguard = getSystemService(KeyguardManager::class.java)
+        if (keyguard?.isDeviceSecure != true) { model.vault.notice("device_lock"); return }
+        vaultAuthorization = entry
+        val title = getString(R.string.vault_verify)
+        if (Build.VERSION.SDK_INT >= 30) {
+            val signal = CancellationSignal()
+            vaultBiometric = signal
+            try {
+                BiometricPrompt.Builder(this).setTitle(title)
+                    .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)
+                    .build().authenticate(signal, mainExecutor, object : BiometricPrompt.AuthenticationCallback() {
+                        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult?) { finishVaultAuthorization(true) }
+                        override fun onAuthenticationError(errorCode: Int, errString: CharSequence?) { finishVaultAuthorization(false) }
+                    })
+            } catch (_: RuntimeException) { finishVaultAuthorization(false) }
+        } else {
+            val intent = keyguard.createConfirmDeviceCredentialIntent(title, null)
+            if (intent == null) { finishVaultAuthorization(false); return }
+            try { vaultCredential.launch(intent) } catch (_: ActivityNotFoundException) { finishVaultAuthorization(false) }
+        }
+    }
+
+    private fun finishVaultAuthorization(granted: Boolean) {
+        val entry = vaultAuthorization ?: return
+        vaultAuthorization = null
+        vaultBiometric = null
+        if (model.ui.value.presentation.navigation.page != Page.TOTP) return
+        if (granted) model.vault.authorizedReveal(entry) else model.vault.notice("device_auth")
+    }
+
     fun launchHubBrowser(url: String): Boolean {
         val uri = Uri.parse(url)
         if (uri.scheme != "https" || uri.host == null || uri.userInfo != null || uri.fragment != null) return false

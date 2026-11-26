@@ -18,7 +18,7 @@ android {
         applicationId = "net.aptist.loft"
         minSdk = 29
         targetSdk = 36
-        versionCode = 5
+        versionCode = 6
         versionName = loftReleaseVersion.get()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "PRODUCT_ID", "\"loft\"")
@@ -80,6 +80,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.window:window:1.5.1")
+    implementation("androidx.camera:camera-camera2:1.5.3")
+    implementation("androidx.camera:camera-lifecycle:1.5.3")
+    implementation("androidx.camera:camera-view:1.5.3")
+    implementation("com.google.zxing:core:3.5.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("net.java.dev.jna:jna:5.18.1@aar")
     implementation(files(loftNativeRoot.resolve("gomobile/loft-engine.aar")))

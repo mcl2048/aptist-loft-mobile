@@ -9,6 +9,7 @@ pub enum HubAction {
     Complete,
     Cancel,
     Logout,
+    Session,
     MailInbox,
     MailTrash,
     MailMessage,
@@ -24,6 +25,7 @@ impl From<HubAction> for loft_core::HubAction {
             HubAction::Complete => Self::Complete,
             HubAction::Cancel => Self::Cancel,
             HubAction::Logout => Self::Logout,
+            HubAction::Session => Self::Session,
             HubAction::MailInbox => Self::MailInbox,
             HubAction::MailTrash => Self::MailTrash,
             HubAction::MailMessage => Self::MailMessage,
@@ -138,6 +140,7 @@ pub struct HubSession {
     pub subject: String,
     pub email: Option<String>,
     pub mail_access: bool,
+    pub mail_available: bool,
     pub expires_in_seconds: u32,
 }
 
@@ -147,6 +150,7 @@ impl From<loft_core::HubSession> for HubSession {
             subject: value.subject,
             email: value.email,
             mail_access: value.mail_access,
+            mail_available: value.mail_available,
             expires_in_seconds: value.expires_in_seconds,
         }
     }
@@ -296,6 +300,6 @@ impl AppCore {
 
     pub fn hub_clear(&self) -> Result<HubSnapshot, HubError> {
         let mut state = self.state.lock().map_err(|_| HubError::StateUnavailable)?;
-        Ok(state.hub_clear().into())
+        Ok(state.hub_clear()?.into())
     }
 }
