@@ -9,6 +9,7 @@ import android.os.Process
 import net.aptist.loft.ipc.ILoftControl
 import net.aptist.loft.ipc.ILoftEvents
 import net.aptist.loft.ipc.ILoftHubEvents
+import net.aptist.loft.ipc.ILoftTrafficEvents
 
 /** Private UI binding; the process owner also serves LoftVpnService. */
 class LoftCoreService : Service() {
@@ -36,6 +37,9 @@ class LoftCoreService : Service() {
             enforceCaller(); owner.executeVault(requestId, command, observer)
         }
         override fun cancelVaultWork(requestId: Long) { enforceCaller(); owner.cancelVaultWork(requestId) }
+        override fun queryVpnTraffic(attemptId: Long, observer: ILoftTrafficEvents) {
+            enforceCaller(); owner.queryVpnTraffic(attemptId.toULong(), observer)
+        }
     }
     override fun onCreate() {
         super.onCreate()

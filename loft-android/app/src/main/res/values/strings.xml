@@ -36,7 +36,7 @@
     <string name="data_plane_body">VPN transport is not available in this framework. No traffic is being routed by LOFT.</string>
     <string name="selected_candidate">Selected node candidate</string>
     <string name="choose_node">Choose a node</string>
-    <string name="node_list">Nodes</string>
+    <string name="node_list">VPN nodes</string>
     <string name="import_link">Import a link</string>
     <string name="node_count">%1$d saved nodes</string>
     <string name="first_page_only">Showing the first %1$d nodes. Further node pages need the storage adapter.</string>
@@ -355,4 +355,21 @@
     <string name="hub_renew_mail">Renew mail access</string>
     <string name="vault_refresh">Refresh entries</string>
     <string name="vault_code_expired">The code expired. Tap Show code again.</string>
+    <string name="overview_title">Overview</string>
+    <string name="overview_shortcuts">Quick access</string>
+    <string name="overview_traffic">VPN app traffic</string>
+    <string name="overview_traffic_unavailable">Traffic totals unavailable</string>
+    <string name="overview_account_unavailable">Account state unavailable</string>
+    <string name="vpn_cancel_connection">Cancel connection</string>
+    <string name="vpn_permission_pending">Waiting for VPN permission</string>
+    <string name="overview_traffic_upload">Upload</string>
+    <string name="overview_traffic_download">Download</string>
+    <string name="overview_traffic_refresh">Refresh traffic totals</string>
+    <string name="overview_traffic_current">Current session</string>
+    <string name="overview_traffic_last">Last session</string>
+    <string name="vpn_nodes_empty_body">Import a node link to connect to your VPN.</string>
+    <string name="vpn_node_choice">Selected</string>
+    <string name="vpn_node_details_action">Details for %1$s</string>
+    <string name="vpn_nodes_next_connection">Your selection applies to the next connection.</string>
+    <string name="vpn_connection_details">Connection details</string>
 </resources>

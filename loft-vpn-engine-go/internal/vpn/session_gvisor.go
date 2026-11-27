@@ -23,12 +23,18 @@ import (
 	N "github.com/sagernet/sing/common/network"
 	"golang.org/x/net/dns/dnsmessage"
 	"golang.org/x/sys/unix"
+	x "loft.local/hyrakenx"
 	"net.aptist.loft/loft-vpn-engine-go/internal/networkprivacy"
 	"net.aptist.loft/loft-vpn-engine-go/internal/nodeconfig"
 	"net.aptist.loft/loft-vpn-engine-go/internal/transport"
 )
 
 const GVisorBuilt = true
+
+const (
+	maxUDPPayload      = 65507
+	fullUDPBufferBytes = 65536
+)
 
 type flowKey struct {
 	network             uint8
@@ -59,6 +65,7 @@ type session struct {
 	stack                      tun.Stack
 	observed                   *observedTUN
 	budget                     *ByteBudget
+	traffic                    trafficCounters
 	flows                      map[flowKey]*forwardFlow
 	idle                       chan struct{}
 	wg                         sync.WaitGroup
@@ -67,6 +74,7 @@ type session struct {
 	released                   bool
 	dns                        string
 	udpBytes                   int64
+	udpDownstreamSize          int
 	synthetic                  netip.Addr
 	lost                       func(string)
 	stopOnce                   sync.Once
@@ -90,11 +98,23 @@ func startWithTun(parent context.Context, native tun.Tun, options tun.Options, c
 	ctx, cancel := context.WithCancel(parent)
 	idle := make(chan struct{})
 	close(idle)
-	udpBytes := int64(2*65536 + 512)
-	if cfg != nil && cfg.Protocol == "socks5" {
-		udpBytes += 65536
+	udpDownstreamSize, udpDownstreamBytes := maxUDPPayload, fullUDPBufferBytes
+	if cfg != nil && cfg.Protocol == "hyrakenx" {
+		// X's framing rejects larger remote datagrams before copying to the
+		// caller. The TUN reader still needs its full buffer to consume a local
+		// oversized packet without terminating the active association.
+		udpDownstreamSize, udpDownstreamBytes = x.MaxDatagramPayload, x.MaxDatagramPayload
 	}
-	s := &session{ctx: ctx, cancel: cancel, tun: native, tunOwned: true, budget: NewBudget(networkprivacy.DynamicBudgetBytes), flows: make(map[flowKey]*forwardFlow), idle: idle, dns: networkPolicy.ResolverEndpoint, networkPolicy: networkPolicy, udpBytes: udpBytes, synthetic: options.Inet4Address[0].Addr().Next(), lost: lost}
+	udpBytes := int64(fullUDPBufferBytes + udpDownstreamBytes + 512)
+	if cfg != nil && cfg.Protocol == "socks5" {
+		udpBytes += fullUDPBufferBytes
+	}
+	s := &session{
+		ctx: ctx, cancel: cancel, tun: native, tunOwned: true,
+		budget: NewBudget(networkprivacy.DynamicBudgetBytes), flows: make(map[flowKey]*forwardFlow), idle: idle,
+		dns: networkPolicy.ResolverEndpoint, networkPolicy: networkPolicy, udpBytes: udpBytes, udpDownstreamSize: udpDownstreamSize,
+		synthetic: options.Inet4Address[0].Addr().Next(), lost: lost,
+	}
 	client, err := transport.NewClientWithOptions(ctx, cfg, policy, transport.ClientOptions{Hydra: networkPolicy.Hydra})
 	if err != nil {
 		return s.startupFailure("loft.vpn.invalid_node")
@@ -364,9 +384,14 @@ func (s *session) NewConnectionEx(ctx context.Context, conn net.Conn, source, de
 	copySide := func(dst, src net.Conn, reply bool) {
 		buffer := make([]byte, 16384)
 		defer clear(buffer)
-		_, err := io.CopyBuffer(guardedWriter{flow.guard, dst, reply}, src, buffer)
+		counter := &s.traffic.upload
+		if reply {
+			counter = &s.traffic.download
+		}
+		writer := &trafficWriter{destination: dst, counter: counter}
+		_, err := io.CopyBuffer(guardedWriter{flow.guard, writer, reply}, src, buffer)
 		if err == nil {
-			err = flow.guard.FinishTCP(dst, reply)
+			err = flow.guard.FinishTCP(writer, reply)
 		}
 		if err == nil {
 			if half, ok := dst.(interface{ CloseWrite() error }); ok {
@@ -441,8 +466,15 @@ func (s *session) NewPacketConnectionEx(ctx context.Context, conn N.PacketConn, 
 	s.mu.Lock()
 	flow.packet = conn
 	s.mu.Unlock()
+	targetName := flow.guard.Target()
+	mapped := flow.guard.Mapped()
+	var proxyTarget, appTarget M.Socksaddr
+	if mapped {
+		proxyTarget = M.ParseSocksaddr(targetName)
+		appTarget = M.SocksaddrFromNetIP(flow.key.destination)
+	}
 	opening, cancel := context.WithTimeout(flow.ctx, 8*time.Second)
-	remote, err := s.client.DialPacket(opening, flow.guard.Target())
+	remote, err := s.client.DialPacket(opening, targetName)
 	cancel()
 	if err != nil {
 		return
@@ -454,7 +486,7 @@ func (s *session) NewPacketConnectionEx(ctx context.Context, conn N.PacketConn, 
 	defer stop()
 	results := make(chan error, 2)
 	go func() {
-		buffer := buf.NewSize(65507)
+		buffer := buf.NewSize(maxUDPPayload)
 		defer buffer.Release()
 		for {
 			buffer.Reset()
@@ -464,7 +496,9 @@ func (s *session) NewPacketConnectionEx(ctx context.Context, conn N.PacketConn, 
 				results <- err
 				return
 			}
-			if !flow.guard.Current() || target.String() != flow.guard.Original() {
+			// The flow key already holds the native IPv4 destination confirmed
+			// at admission, so the per-datagram check needs no string conversion.
+			if !flow.guard.Current() || !target.IsIPv4() || target.AddrPort() != flow.key.destination {
 				results <- errors.New("loft.vpn.udp_target_changed")
 				return
 			}
@@ -478,21 +512,25 @@ func (s *session) NewPacketConnectionEx(ctx context.Context, conn N.PacketConn, 
 				results <- err
 				return
 			}
-			if flow.guard.Mapped() {
-				target = M.ParseSocksaddr(flow.guard.Target())
+			if mapped {
+				target = proxyTarget
 			}
 			_ = remote.SetWriteDeadline(time.Now().Add(30 * time.Second))
-			if _, err = remote.WriteTo(buffer.Bytes(), target); err != nil {
+			written, err := remote.WriteTo(buffer.Bytes(), target)
+			if err != nil {
 				if errorCode(err) == "loft.vpn.udp_payload_limit" {
 					continue
 				}
 				results <- err
 				return
 			}
+			if written == buffer.Len() {
+				s.traffic.upload.record(written)
+			}
 		}
 	}()
 	go func() {
-		buffer := make([]byte, 65507)
+		buffer := make([]byte, s.udpDownstreamSize)
 		defer clear(buffer)
 		for {
 			_ = remote.SetReadDeadline(time.Now().Add(30 * time.Second))
@@ -508,13 +546,15 @@ func (s *session) NewPacketConnectionEx(ctx context.Context, conn N.PacketConn, 
 				results <- err
 				return
 			}
-			if flow.guard.Mapped() {
-				target = M.ParseSocksaddr(flow.guard.Original())
+			responseTarget := appTarget
+			if !mapped {
+				responseTarget = M.SocksaddrFromNet(target)
 			}
-			if err := conn.WritePacket(buf.As(buffer[:n]), M.SocksaddrFromNet(target)); err != nil {
+			if err := conn.WritePacket(buf.As(buffer[:n]), responseTarget); err != nil {
 				results <- err
 				return
 			}
+			s.traffic.download.record(n)
 		}
 	}()
 	remaining := 2

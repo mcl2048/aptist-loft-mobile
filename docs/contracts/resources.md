@@ -8,6 +8,7 @@ This is the framework's initial resource contract, derived from the local v3.6 p
 | Configuration | Rust: 200 nodes/8 MiB retained charge, 512 KiB raw/decoded parser input | Reject atomically and clear temporary owned buffers. Durable configuration stays encrypted across process exits |
 | SQLCipher | One connection on the existing serial control worker, 64 MiB maximum database, 2 MiB page cache and bounded restore reads | Transactions precede published mutations. Stop ingress performs priority cancellation independently of disk and Keystore I/O. Final Rust confirmation acquires the state lock |
 | UI directory | One node page/50 rows plus bounded selection metadata; APP list page50, current Android11+ launcher-visible discovery | Query/binding epochs reject late results; page changes release rows; PM-reported UID members are frozen exactly, hidden/full-device inventory is not proved |
+| VPN app traffic | Two saturating 64-bit Go counters per active session and one final sample. The visible overview samples on entry, a matching lifecycle change, or explicit refresh | Private query shares the bounded ordinary queue. ViewModel and service fence stale attempts and replies. A new attempt or owner reopen clears the final sample |
 | Ordinary control | One serial Android worker; 8 queued commands, each at most60 KiB | Queue-full is a typed busy result; Stop/revoke bypass the queue |
 | Snapshot delivery | One serialized publisher; at most60 KiB frame, monotonic capture sequence | Visibility unsubscribe and Binder death; explicit sequence exhaustion |
 | Node bootstrap resolution | Captured physical Network; one in-flight query, at most8 IPv4 answers/1024 bytes, 5-second deadline | Stop cancels the platform signal; callback executor is bounded and joined |
@@ -37,7 +38,7 @@ The singleton stores applicationContext; an activeAttempt deliberately retains i
 
 One final redacted Facts record may survive fully joined Stop until the next policy/attempt. Original epoch/scope and confirmed totals remain, with all active flags false/off and dynamic ownership zero; counter history is not a live proof or a resource owner. No additional timer/task retains or polls it.
 
-TCP forwarding uses two 16 KiB copy buffers and bounded stack buffers (16 KiB default/32 KiB maximum per direction). UDP reserves two 64 KiB buffers plus metadata; SOCKS additionally charges its 64 KiB wire buffer. The byte budget can therefore reject UDP admission before the 64-flow count ceiling; this is an explicit overload result, not an implicit allocation outside the ledger.
+TCP forwarding uses two 16 KiB copy buffers and bounded stack buffers (16 KiB default/32 KiB maximum per direction). UDP reserves a full 64 KiB uplink and a protocol-sized downlink. X uses 1 KiB for downlink. Pro and SOCKS reserve 64 KiB for downlink, and SOCKS additionally charges its 64 KiB wire buffer. All paths charge association metadata. The byte budget can reject UDP admission independently of the 64-flow count ceiling.
 
 The 8-command normal queue is stricter than the design's 32-command ceiling. Its maximum encoded queued bodies fit below the 1 MiB design allowance; active decoded strings and native allocations are additional costs. Larger file imports must use a separately bounded FD path, not a larger Binder transaction.
 

@@ -91,6 +91,10 @@ func packetXNode(t *testing.T) *nodeconfig.Config {
 
 func TestActualXIPv4PacketPathTransfersTCPAndFixedTargetUDP(t *testing.T) {
 	created, app := packetRigNode(t, "1.1.1.1:53", packetXNode(t))
+	runtime := NewRuntime(&inertPolicy{})
+	runtime.session = created
+	runtime.networkPolicy = &created.networkPolicy
+	runtime.generation, runtime.state = 1, "running"
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	target := tcpip.FullAddress{NIC: tun.DefaultNIC, Addr: tcpip.AddrFrom4([4]byte{192, 0, 2, 1}), Port: 7}
@@ -118,6 +122,14 @@ func TestActualXIPv4PacketPathTransfersTCPAndFixedTargetUDP(t *testing.T) {
 	for _, size := range []int{1, 512, 1024} {
 		payload := bytes.Repeat([]byte{0x78}, size)
 		_ = packet.SetDeadline(time.Now().Add(time.Second))
+		// An oversized local datagram is dropped without retiring the
+		// association or affecting the next valid received payload.
+		if size == x.MaxDatagramPayload {
+			oversized := make([]byte, x.MaxDatagramPayload+1)
+			if n, err := packet.Write(oversized); err != nil || n != len(oversized) {
+				t.Fatal("X oversized test datagram did not reach the local IPv4 adapter")
+			}
+		}
 		if n, err := packet.Write(payload); err != nil || n != size {
 			t.Fatal("X real IPv4 UDP write failed")
 		}
@@ -127,13 +139,42 @@ func TestActualXIPv4PacketPathTransfersTCPAndFixedTargetUDP(t *testing.T) {
 			t.Fatalf("X real IPv4 UDP size %d was lost or truncated", size)
 		}
 	}
-	if err := created.stop(); err != nil {
+	if err := runtime.Stop(); err != nil {
 		t.Fatal(err)
+	}
+	// The joined runtime must retain only the actual TCP/UDP payload totals.
+	// The 19-byte TCP request, FIN and three UDP sizes make 1556 bytes/direction.
+	if runtime.TrafficUsage() != "1:1:1556:1556:1" {
+		t.Fatal("joined session did not report its exact application payload totals")
+	}
+	if err := runtime.SetNetworkPolicy(testNetworkPolicyJSON); err != nil || runtime.TrafficUsage() != "" {
+		t.Fatal("installing a policy retained an earlier session's traffic")
 	}
 	var proof Snapshot
 	created.facts(&proof)
 	if !proof.ResourcesReleased || proof.ActiveFlows != 0 || proof.QueuedBytes != 0 || proof.PhysicalOpen != 0 {
 		t.Fatal("X real packet stop retained owned resources")
+	}
+}
+
+func TestActualXUDPAdmissionReservesItsProtocolReadLimit(t *testing.T) {
+	created, _ := packetRigNode(t, "1.1.1.1:53", packetXNode(t))
+	const expectedBytes = 65536 + x.MaxDatagramPayload + 512 + 4096
+	for i := 0; i < 64; i++ {
+		source := netip.AddrPortFrom(netip.MustParseAddr("198.18.0.1"), uint16(31000+i))
+		destination := netip.MustParseAddrPort("192.0.2.1:7")
+		if created.JudgeFlow(17, source, destination, nil).Action != tun.ActionAccept {
+			t.Fatalf("X UDP association %d hit the byte limit before the flow limit", i+1)
+		}
+		if used := created.budget.Used(); used != int64((i+1)*expectedBytes) {
+			t.Fatalf("X UDP charged %d bytes after %d admissions, want %d", used, i+1, (i+1)*expectedBytes)
+		}
+	}
+	if created.JudgeFlow(17, netip.MustParseAddrPort("198.18.0.1:31064"), netip.MustParseAddrPort("192.0.2.1:7"), nil).Action != tun.ActionReject {
+		t.Fatal("X UDP admitted an association above the flow limit")
+	}
+	if err := created.stop(); err != nil || created.budget.Used() != 0 {
+		t.Fatal("X pending admission stop did not release its byte owners")
 	}
 }
 

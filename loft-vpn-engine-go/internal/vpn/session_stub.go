@@ -15,7 +15,7 @@ import (
 
 const GVisorBuilt = false
 
-type session struct{}
+type session struct{ traffic trafficCounters }
 
 func startSession(ctx context.Context, fd int, name string, address netip.Prefix, mtu int, cfg *nodeconfig.Config, policy transport.SocketPolicy, networkPolicy networkprivacy.Policy, lost func(string)) (*session, error) {
 	_ = unix.Close(fd)

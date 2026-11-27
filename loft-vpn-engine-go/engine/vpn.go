@@ -66,6 +66,14 @@ func (r *VPNRuntime) Snapshot() string {
 	return r.native.SnapshotJSON()
 }
 
+// TrafficUsage returns the active or joined session's application byte totals.
+func (r *VPNRuntime) TrafficUsage() string {
+	if r.native == nil {
+		return ""
+	}
+	return r.native.TrafficUsage()
+}
+
 // Drain freezes actual flow admission and bounds remaining work at1..5000ms.
 func (r *VPNRuntime) Drain(ms int64) error {
 	if r.native == nil {

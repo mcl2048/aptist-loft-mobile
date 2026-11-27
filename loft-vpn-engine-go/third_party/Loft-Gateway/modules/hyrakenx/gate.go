@@ -26,10 +26,11 @@ const (
 // QUIC still owns anti-amplification, packet replay and connection state.
 // A captured valid outer packet can be replayed, so this is not a replay fence.
 type GateConn struct {
-	inner net.PacketConn
-	key   [32]byte // Immutable after construction, including during fallback hashing.
-	role  Role
-	tags  [2]gateTagWorkspace
+	inner      net.PacketConn
+	key        [32]byte // Immutable after construction, including during fallback hashing.
+	role       Role
+	tags       [2]gateTagWorkspace
+	ecnEnabled bool // Read-only capability of the already configured owned UDP socket.
 }
 
 // Each direction owns one bounded hash workspace. Its mutex protects all hash
@@ -49,7 +50,7 @@ func NewGateConn(conn net.PacketConn, secret []byte, role Role) (*GateConn, erro
 	if err != nil {
 		return nil, fmt.Errorf("hyrakenx: derive gate key: %w", err)
 	}
-	g := &GateConn{inner: conn, role: role}
+	g := &GateConn{inner: conn, role: role, ecnEnabled: gateECNEnabled(conn)}
 	copy(g.key[:], key)
 	clear(key)
 	for direction := range g.tags {
@@ -90,39 +91,40 @@ func (g *GateConn) independentTag(direction Role, epoch, packet []byte) [16]byte
 }
 
 func (g *GateConn) ReadFrom(out []byte) (int, net.Addr, error) {
-	// One extra byte distinguishes an oversized UDP datagram from an exact-fit one.
-	var packet [gateHeaderSize + maxInnerQUICPacket + 1]byte
+	packet := gateReadPacketBuffer(out)
 	for {
 		n, addr, err := g.inner.ReadFrom(packet[:])
 		if err != nil {
 			return 0, nil, err
 		}
-		if n < gateHeaderSize+1 || n > gateHeaderSize+maxInnerQUICPacket || n-gateHeaderSize > len(out) {
-			continue
-		}
-		epoch := binary.BigEndian.Uint32(packet[:4])
-		now := uint32(time.Now().Unix() / gateEpochSeconds)
-		if epoch+1 < now || epoch > now+1 {
-			continue
-		}
-		expected := g.tag(g.role^1, packet[:4], packet[gateHeaderSize:n])
-		if subtle.ConstantTimeCompare(expected[:], packet[4:gateHeaderSize]) != 1 {
+		if !g.authenticatePacket(packet[:], n, len(out)) {
 			continue
 		}
 		return copy(out, packet[gateHeaderSize:n]), addr, nil
 	}
 }
 
-func (g *GateConn) WriteTo(packet []byte, addr net.Addr) (int, error) {
-	if len(packet) == 0 || len(packet) > maxInnerQUICPacket {
-		return 0, errors.New("hyrakenx: QUIC packet exceeds 1280-byte IPv6 path budget")
+// gateReadPacketBuffer borrows only the output slice owned by this call. QUIC
+// passes a full 1452-byte packet buffer, which also accommodates the Gate header
+// and one sentinel byte for detecting an oversized datagram. Never extend beyond
+// len(out): a short public buffer retains the original complete-datagram scratch.
+// Rejected packets may occupy this private receive slice but are never returned
+// as data or metadata. Only a complete authenticated packet is shifted into out.
+func gateReadPacketBuffer(out []byte) []byte {
+	const packetSize = gateHeaderSize + maxInnerQUICPacket + 1
+	if len(out) >= packetSize {
+		return out[:packetSize]
 	}
+	return make([]byte, packetSize)
+}
+
+func (g *GateConn) WriteTo(packet []byte, addr net.Addr) (int, error) {
 	var wrapped [gateHeaderSize + maxInnerQUICPacket]byte
-	binary.BigEndian.PutUint32(wrapped[:4], uint32(time.Now().Unix()/gateEpochSeconds))
-	copy(wrapped[gateHeaderSize:], packet)
-	tag := g.tag(g.role, wrapped[:4], packet)
-	copy(wrapped[4:gateHeaderSize], tag[:])
-	n, err := g.inner.WriteTo(wrapped[:gateHeaderSize+len(packet)], addr)
+	size, err := g.wrapPacket(wrapped[:], packet)
+	if err != nil {
+		return 0, err
+	}
+	n, err := g.inner.WriteTo(wrapped[:size], addr)
 	if err != nil {
 		return 0, err
 	}
@@ -130,6 +132,32 @@ func (g *GateConn) WriteTo(packet []byte, addr net.Addr) (int, error) {
 		return 0, net.ErrClosed
 	}
 	return len(packet), nil
+}
+
+// Both socket entry points use exactly the same directional HMAC, epoch and
+// complete-datagram bounds. No receive metadata is visible before this succeeds.
+func (g *GateConn) authenticatePacket(packet []byte, n, outputSize int) bool {
+	if n < gateHeaderSize+1 || n > gateHeaderSize+maxInnerQUICPacket || n > len(packet) || n-gateHeaderSize > outputSize {
+		return false
+	}
+	epoch := binary.BigEndian.Uint32(packet[:4])
+	now := uint32(time.Now().Unix() / gateEpochSeconds)
+	if epoch+1 < now || epoch > now+1 {
+		return false
+	}
+	expected := g.tag(g.role^1, packet[:4], packet[gateHeaderSize:n])
+	return subtle.ConstantTimeCompare(expected[:], packet[4:gateHeaderSize]) == 1
+}
+
+func (g *GateConn) wrapPacket(wrapped, packet []byte) (int, error) {
+	if len(packet) == 0 || len(packet) > maxInnerQUICPacket {
+		return 0, errors.New("hyrakenx: QUIC packet exceeds 1280-byte IPv6 path budget")
+	}
+	binary.BigEndian.PutUint32(wrapped[:4], uint32(time.Now().Unix()/gateEpochSeconds))
+	copy(wrapped[gateHeaderSize:], packet)
+	tag := g.tag(g.role, wrapped[:4], packet)
+	copy(wrapped[4:gateHeaderSize], tag[:])
+	return gateHeaderSize + len(packet), nil
 }
 
 // ReadFromContext is for bounded diagnostics. QUIC uses ReadFrom and closes

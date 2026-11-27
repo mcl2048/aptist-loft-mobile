@@ -17,6 +17,7 @@ import net.aptist.loft.foundation.VisibilityEpoch
 import net.aptist.loft.ipc.ILoftControl
 import net.aptist.loft.ipc.ILoftEvents
 import net.aptist.loft.ipc.ILoftHubEvents
+import net.aptist.loft.ipc.ILoftTrafficEvents
 import net.aptist.loft.core.generated.HubAction
 import net.aptist.loft.core.generated.NodePage
 
@@ -154,6 +155,30 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
         catch (_: RemoteException) { pages.cancel(); lost(ReceiptCode.STATE_UNAVAILABLE); false }
     }
     fun cancelNodePages() = pages.cancel()
+
+    fun queryVpnTraffic(attemptId: ULong, receive: (VpnTrafficSample?) -> Unit): Boolean {
+        val control = remote ?: return false
+        val subscription = subscribed ?: return false
+        val ticket = bindingGeneration
+        if (attemptId == 0uL) return false
+        val callback = object : ILoftTrafficEvents.Stub() {
+            override fun onVpnTraffic(id: Long, uploadBytes: Long, downloadBytes: Long, finalized: Boolean) {
+                if (uploadBytes < 0 || downloadBytes < 0) return
+                deliver(id, VpnTrafficSample(attemptId, uploadBytes, downloadBytes, finalized))
+            }
+
+            override fun onVpnTrafficUnavailable(id: Long) { deliver(id, null) }
+
+            private fun deliver(id: Long, sample: VpnTrafficSample?) {
+                if (Binder.getCallingUid() != Process.myUid() || id.toULong() != attemptId) return
+                handler.post {
+                    if (!closed && ticket == bindingGeneration && subscribed === subscription) receive(sample)
+                }
+            }
+        }
+        return try { control.queryVpnTraffic(attemptId.toLong(), callback); true }
+        catch (_: RemoteException) { lost(ReceiptCode.STATE_UNAVAILABLE); false }
+    }
 
     internal fun executeHub(requestId: Long, action: HubAction?, input: String?, mailAccess: Boolean,
         destination: ParcelFileDescriptor?, receive: (String, HubResult?) -> Unit): Boolean {

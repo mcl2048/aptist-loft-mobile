@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "gateway_commit": "98644864d2426627cd151a0561e5035e46f6b79c",
+  "gateway_commit": "a984911c8aa0e932c885bb298134031432eb82b7",
   "source_scope": "Pinned production Go/native sources, module/license files and explicit owned framed-I/O regression; deployment configurations, private inputs and credentials excluded.",
   "sing_tun_version": "v0.9.6-0.20260924001923-ddaa4ca25e3b",
   "sing_version": "v0.9.6-0.20260922013354-87c33f17688f",
@@ -93,9 +93,9 @@
     {
       "source": "modules/firewall/hydra/hydra.go",
       "destination": "third_party/Loft-Gateway/modules/firewall/hydra/hydra.go",
-      "source_sha256": "280e60867b38d0ae95e27edd21d821edee0c571c59e5c4fc157091ad56204ad4",
+      "source_sha256": "79a323d38bb77ef3fba7e478700d227230ecb3c9a205ff7040142e92e2d05015",
       "source_kind": "source_snapshot",
-      "owned_sha256": "280e60867b38d0ae95e27edd21d821edee0c571c59e5c4fc157091ad56204ad4"
+      "owned_sha256": "79a323d38bb77ef3fba7e478700d227230ecb3c9a205ff7040142e92e2d05015"
     },
     {
       "source": "modules/firewall/hydra/traffic.go",
@@ -128,9 +128,23 @@
     {
       "source": "modules/hyrakenx/gate.go",
       "destination": "third_party/Loft-Gateway/modules/hyrakenx/gate.go",
-      "source_sha256": "06980000b8b5aeef78a447deb54d897ecc2dc8441bfd3ea258edac87e5a24319",
+      "source_sha256": "36afbc4050b3bb6ac5e1fbf734907f0af7379d615d2847820189a08f956eeb21",
       "source_kind": "source_snapshot",
-      "owned_sha256": "06980000b8b5aeef78a447deb54d897ecc2dc8441bfd3ea258edac87e5a24319"
+      "owned_sha256": "36afbc4050b3bb6ac5e1fbf734907f0af7379d615d2847820189a08f956eeb21"
+    },
+    {
+      "source": "modules/hyrakenx/gate_ecn_linux.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/gate_ecn_linux.go",
+      "source_sha256": "b970fe6bfc73c35133f6e03e2a0554e581b636aafca532144827bbdcd0214560",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "b970fe6bfc73c35133f6e03e2a0554e581b636aafca532144827bbdcd0214560"
+    },
+    {
+      "source": "modules/hyrakenx/gate_ecn_other.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/gate_ecn_other.go",
+      "source_sha256": "bed87a3eb599b08fadfdd2f03f0fc1295c23c14841dd1181204e3ffb00f8abcc",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "bed87a3eb599b08fadfdd2f03f0fc1295c23c14841dd1181204e3ffb00f8abcc"
     },
     {
       "source": "modules/hyrakenx/gcm_amd64.go",
@@ -161,6 +175,13 @@
       "owned_sha256": "41789bd6c52f01a554f32dcd80ee146527d327b13508ed17bebaa2cb25dec0a6"
     },
     {
+      "source": "modules/hyrakenx/hydra_scope.go",
+      "destination": "third_party/Loft-Gateway/modules/hyrakenx/hydra_scope.go",
+      "source_sha256": "ea1174c4ca72af1df442feadba640dde277ad059e7139a313e1b778ac2b10884",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "ea1174c4ca72af1df442feadba640dde277ad059e7139a313e1b778ac2b10884"
+    },
+    {
       "source": "modules/hyrakenx/negotiation.go",
       "destination": "third_party/Loft-Gateway/modules/hyrakenx/negotiation.go",
       "source_sha256": "cc45bedb2d0ea254eaa95307bcb84642ee7d26a413062d4289b1e419065067b9",
@@ -184,9 +205,9 @@
     {
       "source": "modules/hyrakenx/quic.go",
       "destination": "third_party/Loft-Gateway/modules/hyrakenx/quic.go",
-      "source_sha256": "2b0e3f1fa7977c1a69d073358f726653f58254c5d3b3798fcc3e5c2c76731775",
+      "source_sha256": "0216ff42f811331aa98a1cc22562ff51be133baaafca2b55c4501938aca48ed6",
       "source_kind": "source_snapshot",
-      "owned_sha256": "ef57de2bf805ccccc13e667ba82a0eb1c284d0af4a2bd207e1162afd68ba89e9"
+      "owned_sha256": "b73df5fe787254f5f05d5d45340462dad17aea579c17882451809ae12bac2c73"
     },
     {
       "source": "modules/hyrakenx/rocca_s.go",
@@ -219,9 +240,9 @@
     {
       "source": "modules/hyrakenx/socket_buffer_linux.go",
       "destination": "third_party/Loft-Gateway/modules/hyrakenx/socket_buffer_linux.go",
-      "source_sha256": "a027848d3fdb3706fcf3312ab86930cf16dc6460f62267a0e11e62ca75d9d0da",
+      "source_sha256": "792880f5211bdb01ba0fcb0ce4709815485e1187bc165befdf768d4239cc799f",
       "source_kind": "source_snapshot",
-      "owned_sha256": "a027848d3fdb3706fcf3312ab86930cf16dc6460f62267a0e11e62ca75d9d0da"
+      "owned_sha256": "792880f5211bdb01ba0fcb0ce4709815485e1187bc165befdf768d4239cc799f"
     },
     {
       "source": "modules/hyrakenx/socket_buffer_other.go",
@@ -233,9 +254,9 @@
     {
       "source": "modules/hyrakenx/stream.go",
       "destination": "third_party/Loft-Gateway/modules/hyrakenx/stream.go",
-      "source_sha256": "c1efa8c5985919ba1a582a854d881e1053dbf8337be6bd0a1fa159216de2495f",
+      "source_sha256": "1eaa94013b98d5e3201a147177ce5c8c27a6a8e15e218da37126e93c0900e60e",
       "source_kind": "source_snapshot",
-      "owned_sha256": "06bab053aa15d559592bdc5ad2de8b11b4947f3e82676856d06ae0f39e4bd5e8"
+      "owned_sha256": "6aa8db627fdc4bc5bea5dafde5cab0270d05dafc688bafc2508546e2737bec6e"
     },
     {
       "source": "pkg/hyrakenpro/THIRD_PARTY_NOTICES.md",
@@ -450,9 +471,9 @@
     {
       "source": "pkg/hyrakenquic/README.loft.md",
       "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/README.loft.md",
-      "source_sha256": "c7fba13d57f96abe81d1c189079cc7143e1005269f300f3ca5d5d225d02e1456",
+      "source_sha256": "0c8aea8eaf08b5de47c0a4285ab4e53c895eee83e4f047517d1dff7f0a5ef03f",
       "source_kind": "source_snapshot",
-      "owned_sha256": "c7fba13d57f96abe81d1c189079cc7143e1005269f300f3ca5d5d225d02e1456"
+      "owned_sha256": "0c8aea8eaf08b5de47c0a4285ab4e53c895eee83e4f047517d1dff7f0a5ef03f"
     },
     {
       "source": "pkg/hyrakenquic/UPSTREAM-SHA256SUMS",
@@ -1710,9 +1731,9 @@
     {
       "source": "pkg/hyrakenquic/sys_conn.go",
       "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn.go",
-      "source_sha256": "a3066d6c45d54f28429185f1a2e394c22d3576b9feab1812ab715972fe3fb6fb",
+      "source_sha256": "35b151aaa28881a57bf39191d7b76fa892ff9b255d5e3d3ec151bdacb2a2bae4",
       "source_kind": "source_snapshot",
-      "owned_sha256": "a3066d6c45d54f28429185f1a2e394c22d3576b9feab1812ab715972fe3fb6fb"
+      "owned_sha256": "35b151aaa28881a57bf39191d7b76fa892ff9b255d5e3d3ec151bdacb2a2bae4"
     },
     {
       "source": "pkg/hyrakenquic/sys_conn_buffers.go",
@@ -1783,6 +1804,20 @@
       "source_sha256": "4239fd611f7e941ad93f6137f1d37f8f7d2a629482ae53d08321801e13b3d046",
       "source_kind": "source_snapshot",
       "owned_sha256": "4239fd611f7e941ad93f6137f1d37f8f7d2a629482ae53d08321801e13b3d046"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_message_linux.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_message_linux.go",
+      "source_sha256": "576931b5058f6426d051ac5af7ca8383af8d203a34b2b60881c78ae6d9a16a27",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "576931b5058f6426d051ac5af7ca8383af8d203a34b2b60881c78ae6d9a16a27"
+    },
+    {
+      "source": "pkg/hyrakenquic/sys_conn_message_other.go",
+      "destination": "third_party/Loft-Gateway/pkg/hyrakenquic/sys_conn_message_other.go",
+      "source_sha256": "2b0e09a24081e91efe303313b9f980255f485d7101d19d666b9cd568b73f1bcf",
+      "source_kind": "source_snapshot",
+      "owned_sha256": "2b0e09a24081e91efe303313b9f980255f485d7101d19d666b9cd568b73f1bcf"
     },
     {
       "source": "pkg/hyrakenquic/sys_conn_msgx_darwin.go",

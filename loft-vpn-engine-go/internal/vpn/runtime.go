@@ -41,6 +41,7 @@ type Runtime struct {
 	policy        transport.SocketPolicy
 	networkPolicy *networkprivacy.Policy
 	finalPrivacy  *networkprivacy.Facts
+	finalTraffic  *trafficUsage
 	state         string
 	generation    int64
 	session       *session
@@ -84,6 +85,7 @@ func (r *Runtime) SetNetworkPolicy(raw string) error {
 	}
 	r.networkPolicy = &policy
 	r.finalPrivacy = nil
+	r.finalTraffic = nil
 	return nil
 }
 
@@ -137,6 +139,7 @@ func (r *Runtime) start(raw, prefix string, mtu int, create func(context.Context
 		return errors.New("loft.vpn.network_policy_required")
 	}
 	r.finalPrivacy = nil
+	r.finalTraffic = nil
 	r.generation++
 	generation := r.generation
 	r.state = "starting"
@@ -470,6 +473,8 @@ func (r *Runtime) completeStop(operation *stopOperation, current *session, start
 	if r.session == current && released && err == nil {
 		if final != nil && r.networkPolicy != nil && final.PolicyEpoch == r.networkPolicy.PolicyEpoch && final.ScopeID == r.networkPolicy.ScopeID {
 			r.finalPrivacy = final
+			totals := current.traffic.sample()
+			r.finalTraffic = &totals
 		}
 		r.session = nil
 	}

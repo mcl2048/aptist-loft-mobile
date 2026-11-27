@@ -10,7 +10,7 @@ The source inputs on this server are:
 
 | Input | Exact path and pin |
 | --- | --- |
-| HyrakenX core | `/home/coder/Loft-Gateway/modules/hyrakenx`; Gateway `98644864d2426627cd151a0561e5035e46f6b79c` |
+| HyrakenX core | `/home/coder/Loft-Gateway/modules/hyrakenx`; Gateway `a984911c8aa0e932c885bb298134031432eb82b7` |
 | Hyraken Pro core | `/home/coder/Loft-Gateway/pkg/hyrakenpro`; same Gateway pin |
 | Node DNS/Firewall/Hydra | `/home/coder/Loft-Gateway/modules/dns`, `/home/coder/Loft-Gateway/modules/firewall`, `/home/coder/Loft-Gateway/modules/firewall/hydra` |
 | Portal IDP/Mail | `/home/coder/aptist-portal/modules/idp`, `/home/coder/aptist-portal/modules/mail`; Portal `4ab2b37d08f9d7e304ae4d420d36d15c54dffa36` |

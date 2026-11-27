@@ -36,7 +36,7 @@ func (p *Peer) OpenStream(ctx context.Context, network, target string) (net.Conn
 	if _, _, err := net.SplitHostPort(target); err != nil {
 		return nil, fmt.Errorf("hyrakenx: invalid target: %w", err)
 	}
-	config, observer := p.streamHydraConfig()
+	config, scope, observer := p.streamHydraPolicy()
 	stream, err := p.conn.OpenStreamSync(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("hyrakenx: open logical stream: %w", err)
@@ -48,7 +48,7 @@ func (p *Peer) OpenStream(ctx context.Context, network, target string) (net.Conn
 		return nil, err
 	}
 	c := &streamConn{stream: stream, session: session, local: p.conn.LocalAddr(), remote: p.conn.RemoteAddr(), hydraObserver: observer}
-	c.shaper, err = newStreamShaper(config, session)
+	c.shaper, err = newStreamShaperScoped(config, session, scope)
 	if err != nil {
 		_ = c.Close()
 		return nil, err
@@ -92,7 +92,7 @@ func (p *Peer) AcceptStream(ctx context.Context) (_ net.Conn, _ string, _ string
 	if err := ctx.Err(); err != nil {
 		return nil, "", "", fmt.Errorf("hyrakenx: accept logical stream: %w", err)
 	}
-	config, observer := p.streamHydraConfig()
+	config, scope, observer := p.streamHydraPolicy()
 	stream, err := p.conn.AcceptStream(ctx)
 	if err != nil {
 		return nil, "", "", fmt.Errorf("hyrakenx: accept logical stream: %w", err)
@@ -109,7 +109,7 @@ func (p *Peer) AcceptStream(ctx context.Context) (_ net.Conn, _ string, _ string
 		return nil, "", "", err
 	}
 	c := &streamConn{stream: stream, session: session, local: p.conn.LocalAddr(), remote: p.conn.RemoteAddr(), hydraObserver: observer}
-	c.shaper, err = newStreamShaper(config, session)
+	c.shaper, err = newStreamShaperScoped(config, session, scope)
 	if err != nil {
 		_ = c.Close()
 		return nil, "", "", err

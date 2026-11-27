@@ -9,9 +9,9 @@ import (
 
 const (
 	schemaVersion       = 1
-	engineVersion       = "0.1.5-LYNX"
+	engineVersion       = "0.1.6-LYNX"
 	gatewaySourcePin    = "231f14813f2b45cb6f0bde984181c57cba1d02fd"
-	vpnGatewaySourcePin = "98644864d2426627cd151a0561e5035e46f6b79c"
+	vpnGatewaySourcePin = "a984911c8aa0e932c885bb298134031432eb82b7"
 	maxOperations       = 64
 	maxReservedBytes    = int64(8 * 1024 * 1024)
 	maxOperationMillis  = int64(30000)

@@ -18,7 +18,7 @@ android {
         applicationId = "net.aptist.loft"
         minSdk = 29
         targetSdk = 36
-        versionCode = 6
+        versionCode = 7
         versionName = loftReleaseVersion.get()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "PRODUCT_ID", "\"loft\"")

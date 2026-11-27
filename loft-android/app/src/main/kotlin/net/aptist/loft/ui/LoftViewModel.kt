@@ -45,6 +45,9 @@ data class LoftUiState(
     val pendingRequest: Long? = null,
     val stopRequest: Long? = null,
     val vpnPermissionPending: Boolean = false,
+    val vpnStartPending: Boolean = false,
+    val vpnTraffic: VpnTrafficSample? = null,
+    val vpnTrafficLoading: Boolean = false,
     val nodePage: NodePage? = null,
     val nodePageOffset: UInt = 0u,
     val nodePageLoading: Boolean = false,
@@ -75,6 +78,22 @@ data class LoftUiState(
     override fun toString() = "LoftUiState(<redacted>)"
 }
 
+internal fun canRefreshVpnTraffic(state: LoftUiState): Boolean =
+    vpnTrafficScope(state.native) != null && !state.vpnTrafficLoading
+
+private data class VpnTrafficScope(val attemptId: ULong, val finalized: Boolean)
+
+// Rust retains the attempt ID after Stop. Admission requires its live or final phase too.
+private fun vpnTrafficScope(frame: SnapshotFrame?): VpnTrafficScope? {
+    val core = frame?.core ?: return null
+    if (core.connectionAttemptId == 0uL) return null
+    return when (core.connectionState) {
+        ConnectionState.CONNECTED -> VpnTrafficScope(core.connectionAttemptId, finalized = false)
+        ConnectionState.DISCONNECTED, ConnectionState.UNAVAILABLE -> VpnTrafficScope(core.connectionAttemptId, finalized = true)
+        else -> null
+    }
+}
+
 class AppearancePreferences(context: Context) {
     private val preferences = context.applicationContext.getSharedPreferences("appearance", Context.MODE_PRIVATE)
     fun theme(): ThemeChoice = ThemeChoice.entries.find { it.name == preferences.getString("theme", "SYSTEM") } ?: ThemeChoice.SYSTEM
@@ -92,6 +111,8 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     private var pendingOperation: OperationKind? = null
     private val vpnPermission = VpnPermissionDraft()
     private var nextNodeQuery = 0L
+    private var vpnTrafficRequest: Any? = null
+    private val hubSnapshotPages = setOf(Page.WELCOME, Page.ACCOUNT, Page.MAIL, Page.TOTP)
     private var nodeQuery: Long? = null
     private var nodeQueryGeneration: ULong? = null
     private var nodeQueryOffset: UInt? = null
@@ -114,12 +135,15 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         client.setVisible(value)
         vault.setActive(value && mutable.value.canChangeConfiguration && mutable.value.presentation.navigation.page == Page.TOTP)
         if (!value) {
-            cancelApps(); cancelNodePage()
+            cancelApps(); cancelNodePage(); cancelVpnTraffic()
             if (mutable.value.presentation.navigation.page == Page.MAIL && !hubExportInProgress()) clearMail()
         }
         else if (mutable.value.presentation.navigation.page == Page.ROUTING) loadApps()
         else if (nodePageVisible()) loadNodePage()
-        else if (mutable.value.presentation.navigation.page in setOf(Page.ACCOUNT, Page.MAIL, Page.TOTP)) refreshHub()
+        else if (mutable.value.presentation.navigation.page in hubSnapshotPages) {
+            refreshHub()
+            if (mutable.value.presentation.navigation.page == Page.WELCOME) refreshVpnTraffic()
+        }
     }
     fun setFolds(folds: List<PhysicalFold>) { mutable.value = mutable.value.copy(folds = folds.take(2).toList()) }
     fun resize(viewport: Viewport) {
@@ -172,6 +196,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         val old = mutable.value
         if (old.presentation.navigation.page != navigation.page && navigation.pendingPage == null) {
             if (old.presentation.navigation.page == Page.ROUTING) cancelApps()
+            if (old.presentation.navigation.page == Page.WELCOME) cancelVpnTraffic()
             if (old.presentation.navigation.page in setOf(Page.NODES, Page.NODE_DETAILS) && navigation.page !in setOf(Page.NODES, Page.NODE_DETAILS)) cancelNodePage()
             if (old.presentation.navigation.page == Page.MAIL && !hubExportInProgress()) clearMail()
             val current = mutable.value
@@ -181,7 +206,8 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
             if (navigation.page == Page.ROUTING && visible) loadApps()
             if (navigation.page in setOf(Page.NODES, Page.NODE_DETAILS) && visible) loadNodePage()
             vault.setActive(visible && current.canChangeConfiguration && navigation.page == Page.TOTP)
-            if (navigation.page in setOf(Page.ACCOUNT, Page.MAIL, Page.TOTP) && visible) refreshHub()
+            if (visible && navigation.page in hubSnapshotPages) refreshHub()
+            if (visible && navigation.page == Page.WELCOME) refreshVpnTraffic()
         } else mutable.value = old.copy(presentation = old.presentation.copy(navigation = navigation))
     }
 
@@ -382,6 +408,33 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
             serviceLost(ReceiptCode.STATE_UNAVAILABLE)
         }
     }
+    fun refreshVpnTraffic() {
+        val state = mutable.value
+        if (!visible || state.presentation.navigation.page != Page.WELCOME || vpnTrafficRequest != null) return
+        val scope = vpnTrafficScope(state.native) ?: return
+        val request = Any()
+        vpnTrafficRequest = request
+        mutable.value = state.copy(vpnTrafficLoading = true)
+        if (!client.queryVpnTraffic(scope.attemptId) { sample ->
+                if (vpnTrafficRequest === request) {
+                    vpnTrafficRequest = null
+                    val current = mutable.value
+                    val admitted = sample?.takeIf {
+                        vpnTrafficScope(current.native) == scope && it.attemptId == scope.attemptId && it.finalized == scope.finalized
+                    }
+                    mutable.value = current.copy(vpnTraffic = admitted, vpnTrafficLoading = false)
+                }
+            }) cancelVpnTraffic()
+    }
+
+    private fun cancelVpnTraffic(clearSample: Boolean = false) {
+        vpnTrafficRequest = null
+        val state = mutable.value
+        if (state.vpnTrafficLoading || clearSample && state.vpnTraffic != null) {
+            mutable.value = state.copy(vpnTraffic = state.vpnTraffic.takeUnless { clearSample }, vpnTrafficLoading = false)
+        }
+    }
+
     private fun stopViaOs() {
         runCatching { getApplication<Application>().startService(Intent(getApplication(), LoftVpnService::class.java).setAction(LoftVpnService.ACTION_STOP)) }
     }
@@ -522,6 +575,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
                 return
             }
         }
+        cancelVpnTraffic(clearSample = true)
         mutable.value = mutable.value.copy(availability = ServiceAvailability.OPENING, native = null, nodePage = null,
             pendingRequest = null, notice = null, storageOpenFailure = null)
         client.reopen()
@@ -533,16 +587,19 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         if (!state.canChangeConfiguration) { showNotice(state.storageOpenFailure ?: ReceiptCode.STATE_UNAVAILABLE); return }
         val request = Math.addExact(nextRequest, 1L)
         nextRequest = request; pendingOperation = OperationKind.of(command)
-        mutable.value = state.copy(pendingRequest = request, notice = null)
+        mutable.value = state.copy(pendingRequest = request, vpnStartPending = command is CoreCommand.Connect, notice = null)
         try {
             if (!client.execute(request, command)) serviceLost(ReceiptCode.STATE_UNAVAILABLE)
         } catch (failure: ControlMessageException) {
-            mutable.value = mutable.value.copy(pendingRequest = null, notice = if (failure.problem == ControlProblem.TOO_LARGE) ReceiptCode.CONTROL_TOO_LARGE else ReceiptCode.INVALID_COMMAND)
+            mutable.value = mutable.value.copy(pendingRequest = null, vpnStartPending = false,
+                notice = if (failure.problem == ControlProblem.TOO_LARGE) ReceiptCode.CONTROL_TOO_LARGE else ReceiptCode.INVALID_COMMAND)
             pendingOperation = null
         }
     }
     private fun receivedFrame(frame: SnapshotFrame) {
         if (mutable.value.native?.core?.serverAddress != frame.core.serverAddress) clearHub()
+        val trafficScopeChanged = vpnTrafficScope(mutable.value.native) != vpnTrafficScope(frame)
+        if (trafficScopeChanged) cancelVpnTraffic(clearSample = true)
         val state = mutable.value
         val existingDraft = state.presentation.routingDraft
         val draft = if (existingDraft == null || !existingDraft.dirty) RoutingDraft.from(frame.core.routingEnabled, frame.core.selectedApps.toSet()) else existingDraft
@@ -552,7 +609,8 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
             presentation = state.presentation.copy(routingDraft = draft, selectedNodeId = choice.id))
         if (visible && nodePageVisible()) loadNodePage()
         if (visible && mutable.value.presentation.navigation.page == Page.TOTP) vault.setActive(mutable.value.canChangeConfiguration)
-        if (mutable.value.hub == null && mutable.value.presentation.navigation.page in setOf(Page.ACCOUNT, Page.MAIL, Page.TOTP)) refreshHub()
+        if (state.hub == null && state.presentation.navigation.page in hubSnapshotPages) refreshHub()
+        if (trafficScopeChanged) refreshVpnTraffic()
     }
     private fun receivedReceipt(requestId: Long, code: ReceiptCode) {
         val state = mutable.value
@@ -562,7 +620,8 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         if (!stopping) pendingOperation = null
         val receipt = UiReceipt(requestId, operation, code, System.currentTimeMillis())
         var updated = state.copy(pendingRequest = if (stopping) state.pendingRequest else null,
-            stopRequest = if (stopping) null else state.stopRequest, notice = code, receipts = (listOf(receipt) + state.receipts).take(20))
+            stopRequest = if (stopping) null else state.stopRequest, vpnStartPending = stopping && state.vpnStartPending,
+            notice = code, receipts = (listOf(receipt) + state.receipts).take(20))
         if (code == ReceiptCode.NODE_IMPORTED) updated = updated.copy(importText = "", importConfirmation = false,
             presentation = updated.presentation.copy(navigation = NavigationState(Page.NODES)))
         if (code == ReceiptCode.NODE_REMOVED) {
@@ -587,6 +646,10 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
             updated = updated.copy(storageOpenFailure = null)
         }
         mutable.value = updated
+        if (vpnTrafficScope(state.native) != vpnTrafficScope(updated.native)) {
+            cancelVpnTraffic(clearSample = true)
+            refreshVpnTraffic()
+        }
         if (visible && nodePageVisible()) loadNodePage()
         if (code in setOf(ReceiptCode.SERVER_STAGED, ReceiptCode.SERVER_RESET, ReceiptCode.STORAGE_REOPENED)) refreshHub()
     }
@@ -595,10 +658,11 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         pendingOperation = null
         vpnPermission.cancel()
         cancelNodePage()
+        cancelVpnTraffic(clearSample = true)
         clearHub()
         val state = mutable.value
         mutable.value = state.copy(native = null, nodePage = null, availability = ServiceAvailability.UNAVAILABLE,
-            pendingRequest = null, stopRequest = null, notice = code,
+            pendingRequest = null, stopRequest = null, vpnPermissionPending = false, vpnStartPending = false, notice = code,
             storageOpenFailure = if (isStorageOpenFailure(code)) code else state.storageOpenFailure)
     }
 

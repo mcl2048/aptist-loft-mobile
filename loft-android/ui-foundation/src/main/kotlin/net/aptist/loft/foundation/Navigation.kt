@@ -25,7 +25,7 @@ data class NavigationState(
     }
     fun back(dirty: Boolean): NavigationState = when {
         menuOpen -> copy(menuOpen = false)
-        page.module == ModuleId.VPN && page != Page.VPN_HOME -> navigate(Page.VPN_HOME, dirty)
+        page.module == ModuleId.VPN && page != Page.NODES -> navigate(Page.NODES, dirty)
         page != Page.WELCOME -> navigate(Page.WELCOME, dirty)
         else -> this
     }
@@ -43,7 +43,7 @@ object ModuleCatalog {
     val schemaVersion = 1
     val registrations = listOf(
         ModuleRegistration(ModuleId.WELCOME, Page.WELCOME, emptyList(), "module_welcome", "rail_welcome", "home", EntryPolicy.LOCAL_ENTRY),
-        ModuleRegistration(ModuleId.VPN, Page.VPN_HOME, listOf(Page.NODES, Page.NODE_DETAILS, Page.IMPORT_NODE, Page.ROUTING, Page.DIAGNOSTICS), "module_vpn", "rail_vpn", "network", EntryPolicy.LOCAL_ENTRY),
+        ModuleRegistration(ModuleId.VPN, Page.NODES, listOf(Page.VPN_HOME, Page.NODE_DETAILS, Page.IMPORT_NODE, Page.ROUTING, Page.DIAGNOSTICS), "module_vpn", "rail_vpn", "network", EntryPolicy.LOCAL_ENTRY),
         ModuleRegistration(ModuleId.SHIELD, Page.SHIELD, emptyList(), "module_shield", "rail_shield", "shield", EntryPolicy.DEPENDENCY_INFORMATION),
         ModuleRegistration(ModuleId.MAIL, Page.MAIL, emptyList(), "module_mail", "rail_mail", "mail", EntryPolicy.SERVER_CAPABILITY),
         ModuleRegistration(ModuleId.TOTP, Page.TOTP, emptyList(), "vault_title", "vault_title", "vault", EntryPolicy.LOCAL_ENTRY),

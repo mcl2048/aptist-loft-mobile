@@ -1,0 +1,125 @@
+{
+  "path": "bin/loft.apk",
+  "sha256": "374460971ef192a0841f40a2bc28b2fad2d4a255b2439369c907e6ddf180cb53",
+  "bytes": 29181882,
+  "package": "net.aptist.loft",
+  "version_name": "0.1.6-LYNX",
+  "version_code": 7,
+  "min_sdk": 29,
+  "target_sdk": 36,
+  "debuggable": false,
+  "allow_backup": false,
+  "full_backup_content": false,
+  "uses_cleartext_traffic": false,
+  "data_extraction_rules_sha256": "e6d3a37a18eb3ac437c2bad69718ab0abce3a70d1e9832d4c785d1c7e56ad14a",
+  "manifest_sha256": "d00e781868bf95d2aa86a3ef52e9cfa42e62e9d501894566f982975849c1af7f",
+  "signing_identity": "local development, same certificate as 0.1.2",
+  "optional_camera_features": [
+    "android.hardware.camera",
+    "android.hardware.camera.autofocus",
+    "android.hardware.camera.any"
+  ],
+  "signature_cert_sha256": "4fd578439fe8c3bb5ab2abc6c33e494753a965dc47e44d96e313962852a400fc",
+  "signature_sdk_ranges": {
+    "v3": [
+      "29",
+      "36"
+    ],
+    "v2": [
+      "24",
+      "27"
+    ]
+  },
+  "native_libraries": {
+    "lib/arm64-v8a/libandroidx.graphics.path.so": {
+      "sha256": "41e9a793c43a0f4fddb19e33f346bace464f30f888ba7b9eaf96294ea115bfb6",
+      "bytes": 10096,
+      "machine": "AArch64",
+      "load_segments": 3,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libgojni.so": {
+      "sha256": "ee003cb2f32e6fb845bfa81bda5a491219e819cde913c16ecf15ee70aada34f9",
+      "bytes": 15990440,
+      "machine": "AArch64",
+      "load_segments": 4,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libimage_processing_util_jni.so": {
+      "sha256": "f0e4611db0d6b68942d8ba6977519f3dd1cdbffa87b7fc16d8006696ba954af4",
+      "bytes": 32544,
+      "machine": "AArch64",
+      "load_segments": 3,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libjnidispatch.so": {
+      "sha256": "ddfc6c965bbe366615c000ec1f06552ddf0bb2b4f9d921d0bff8c75b3cb2ca4c",
+      "bytes": 165992,
+      "machine": "AArch64",
+      "load_segments": 2,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libloft_ffi.so": {
+      "sha256": "7cf2aa872e7c5486624b87fb4ff528c2967a5d325bd22eb41a8f460a9213b450",
+      "bytes": 7673928,
+      "machine": "AArch64",
+      "load_segments": 4,
+      "alignment": "16KiB-compatible"
+    },
+    "lib/arm64-v8a/libsurface_util_jni.so": {
+      "sha256": "6cb2eac3c68e6a82ce2a5ea5aba86749eb8c609914392e125f6cdfbc208992f8",
+      "bytes": 4896,
+      "machine": "AArch64",
+      "load_segments": 2,
+      "alignment": "16KiB-compatible"
+    }
+  },
+  "secret_scan": {
+    "result": "PASS",
+    "inspected": 1807,
+    "scope": "git_index_and_artifact_members",
+    "private_inputs_available": true,
+    "failures": []
+  },
+  "checked_at_utc": "2026-11-27T23:38:41.906021+00:00",
+  "unsigned_sha256": "a1987beb537c0a8fa10a69a5b837799dc791fdc161a3b984b3c4e2ee8ae63ba3",
+  "previous_canonical_sha256": "84d722ef75d875c7f244798af1b61b9090493102df68c78b8f895bca67d1c45b",
+  "candidate_sha256": "374460971ef192a0841f40a2bc28b2fad2d4a255b2439369c907e6ddf180cb53",
+  "source_manifest_sha256": "408d65fd2f1bc932264865ab89ac4cfc1e1c797580fb865d063f772e89814ff0",
+  "verify_apk_cli": {
+    "result": "PASS",
+    "apk": "loft.apk",
+    "native_libraries": {
+      "lib/arm64-v8a/libandroidx.graphics.path.so": {
+        "machine": "AArch64",
+        "load_segments": 3,
+        "alignment": "16KiB-compatible"
+      },
+      "lib/arm64-v8a/libgojni.so": {
+        "machine": "AArch64",
+        "load_segments": 4,
+        "alignment": "16KiB-compatible"
+      },
+      "lib/arm64-v8a/libimage_processing_util_jni.so": {
+        "machine": "AArch64",
+        "load_segments": 3,
+        "alignment": "16KiB-compatible"
+      },
+      "lib/arm64-v8a/libjnidispatch.so": {
+        "machine": "AArch64",
+        "load_segments": 2,
+        "alignment": "16KiB-compatible"
+      },
+      "lib/arm64-v8a/libloft_ffi.so": {
+        "machine": "AArch64",
+        "load_segments": 4,
+        "alignment": "16KiB-compatible"
+      },
+      "lib/arm64-v8a/libsurface_util_jni.so": {
+        "machine": "AArch64",
+        "load_segments": 2,
+        "alignment": "16KiB-compatible"
+      }
+    }
+  }
+}

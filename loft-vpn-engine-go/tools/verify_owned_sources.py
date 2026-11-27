@@ -13,7 +13,7 @@ import sys
 
 
 DIGEST = re.compile(r"[0-9a-f]{64}\Z")
-GATEWAY_PIN = "98644864d2426627cd151a0561e5035e46f6b79c"
+GATEWAY_PIN = "a984911c8aa0e932c885bb298134031432eb82b7"
 
 
 class SourceError(Exception):

@@ -58,6 +58,15 @@ func configureOwnedUDPSocket(socket net.PacketConn) {
 			})
 		}
 	}
+	if rawErr == nil {
+		// Optional metadata only on constructor-owned UDP sockets. Failure is
+		// intentionally nonfatal: NewGateConn independently reads back capability
+		// and leaves QUIC on its original basicConn when the options are absent.
+		_ = raw.Control(func(fd uintptr) {
+			_ = unix.SetsockoptInt(int(fd), unix.IPPROTO_IP, unix.IP_RECVTOS, 1)
+			_ = unix.SetsockoptInt(int(fd), unix.IPPROTO_IPV6, unix.IPV6_RECVTCLASS, 1)
+		})
+	}
 }
 
 func growOwnedUDPBuffer(raw syscall.RawConn, option, maximum int) (int, error) {

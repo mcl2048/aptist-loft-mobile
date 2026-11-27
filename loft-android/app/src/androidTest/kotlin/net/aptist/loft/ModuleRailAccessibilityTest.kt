@@ -18,7 +18,7 @@ import kotlin.math.roundToInt
 class ModuleRailAccessibilityTest {
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
 
-    @Test fun iconTargetsRetainNamesSelectionAndFullTouchArea() {
+    @Test fun networkTabOpensNodesAndItsMenuOpensImport() {
         val context = instrumentation.targetContext
         val locale = Locale.forLanguageTag(AppearancePreferences(context).locale())
         val localized = context.createConfigurationContext(Configuration(context.resources.configuration).apply { setLocale(locale) })
@@ -33,20 +33,31 @@ class ModuleRailAccessibilityTest {
                 assertTrue("RAIL_TOUCH_WIDTH", bounds.width() >= (48 * density).roundToInt())
                 assertTrue("RAIL_TOUCH_HEIGHT", bounds.height() >= (56 * density).roundToInt())
             }
+            val overviewName = localized.getString(R.string.overview_title)
+            awaitMatch("OVERVIEW_PAGE_TITLE") { node ->
+                node.takeIf { it.text?.toString() == overviewName && it.isHeading && !it.isClickable }
+            }
             click("VPN_TAB", network)
             awaitRailTab("VPN_SELECTED", networkName, selected = true)
-            val menuName = localized.getString(R.string.open_secondary)
-            click("SECONDARY_MENU", awaitAction("SECONDARY_MENU") { it.contentDescription?.toString() == menuName })
             val nodesName = localized.getString(R.string.node_list)
-            click("NODES_MENU_ITEM", awaitAction("NODES_MENU_ITEM") { it.text?.toString() == nodesName })
-            awaitMatch("NODES_PAGE_TITLE") { node ->
+            val heading = awaitMatch("NODES_PAGE_TITLE") { node ->
                 node.takeIf { it.text?.toString() == nodesName && it.isHeading && !it.isClickable }
             }
-            val closeMenuName = localized.getString(R.string.close_secondary)
-            val currentWindow = checkNotNull(instrumentation.uiAutomation.rootInActiveWindow)
-            assertTrue("RAIL_SECONDARY_MENU_REMAINS_OPEN", find(currentWindow) { node ->
-                node.takeIf { it.text?.toString() == closeMenuName }
-            } == null)
+            val menuName = localized.getString(R.string.open_secondary)
+            val menu = awaitAction("VPN_MENU") { it.contentDescription?.toString() == menuName }
+            val menuBounds = Rect().also(menu::getBoundsInScreen)
+            val headingBounds = Rect().also(heading::getBoundsInScreen)
+            assertTrue("VPN_MENU_AT_RIGHT", menuBounds.centerX() > headingBounds.centerX())
+            assertTrue("VPN_MENU_TOUCH_WIDTH", menuBounds.width() >= (48 * density).roundToInt())
+            assertTrue("VPN_MENU_TOUCH_HEIGHT", menuBounds.height() >= (48 * density).roundToInt())
+            click("VPN_MENU", menu)
+            val routingName = localized.getString(R.string.routing_title)
+            awaitAction("ROUTING_MENU_ITEM") { it.text?.toString() == routingName }
+            val importName = localized.getString(R.string.import_link)
+            click("IMPORT_MENU_ITEM", awaitAction("IMPORT_MENU_ITEM") { it.text?.toString() == importName })
+            awaitMatch("IMPORT_PAGE_TITLE") { node ->
+                node.takeIf { it.text?.toString() == importName && it.isHeading && !it.isClickable }
+            }
             awaitRailTab("VPN_SELECTED_ON_CHILD", networkName, selected = true)
         }
     }

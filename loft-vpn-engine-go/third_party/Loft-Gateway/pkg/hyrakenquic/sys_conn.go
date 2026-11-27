@@ -49,6 +49,17 @@ type OOBCapablePacketConn interface {
 
 var _ OOBCapablePacketConn = &net.UDPConn{}
 
+// MessagePacketConn explicitly opts a PacketConn wrapper into safe message I/O.
+// Its methods must preserve the wrapper's complete per-datagram transformation
+// and authentication. ECNEnabled reports options already enabled by the socket
+// owner; this interface never exposes a descriptor or authorizes GSO.
+type MessagePacketConn interface {
+	net.PacketConn
+	ECNEnabled() bool
+	ReadMsgUDP(b, oob []byte) (n, oobn, flags int, addr *net.UDPAddr, err error)
+	WriteMsgUDP(b, oob []byte, addr *net.UDPAddr) (n, oobn int, err error)
+}
+
 // IOActivityConn is implemented by conns passed to the Transport that observe their own I/O.
 // On the optimized path, reads and writes go through the file descriptor and bypass the conn's
 // own methods; these callbacks are invoked instead, once per syscall: onRead with the size of
@@ -58,6 +69,11 @@ type IOActivityConn interface {
 }
 
 func wrapConn(pc net.PacketConn) (rawConn, error) {
+	if message, ok := pc.(MessagePacketConn); ok && message.ECNEnabled() {
+		if conn := wrapMessageConn(message); conn != nil {
+			return conn, nil
+		}
+	}
 	var sysConn syscall.RawConn
 	syscallConn, isSyscallConn := pc.(syscall.Conn)
 	if isSyscallConn {

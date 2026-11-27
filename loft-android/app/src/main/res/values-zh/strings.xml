@@ -36,7 +36,7 @@
     <string name="data_plane_body">此框架尚未接入 VPN 数据面，LOFT 当前没有转发任何流量。</string>
     <string name="selected_candidate">已选节点候选</string>
     <string name="choose_node">选择节点</string>
-    <string name="node_list">节点列表</string>
+    <string name="node_list">VPN 节点</string>
     <string name="import_link">导入链接</string>
     <string name="node_count">已保存 %1$d 个节点</string>
     <string name="first_page_only">当前展示前 %1$d 个节点，更多节点分页需接入存储适配器。</string>
@@ -355,4 +355,21 @@
     <string name="hub_renew_mail">续期邮件访问权限</string>
     <string name="vault_refresh">刷新条目</string>
     <string name="vault_code_expired">验证码已过期，请再次点击显示验证码。</string>
+    <string name="overview_title">概览</string>
+    <string name="overview_shortcuts">快捷入口</string>
+    <string name="overview_traffic">VPN 应用流量</string>
+    <string name="overview_traffic_unavailable">流量统计暂不可用</string>
+    <string name="overview_account_unavailable">账户状态暂不可用</string>
+    <string name="vpn_cancel_connection">取消连接</string>
+    <string name="vpn_permission_pending">等待 VPN 授权</string>
+    <string name="overview_traffic_upload">上传</string>
+    <string name="overview_traffic_download">下载</string>
+    <string name="overview_traffic_refresh">刷新流量统计</string>
+    <string name="overview_traffic_current">当前会话</string>
+    <string name="overview_traffic_last">上次会话</string>
+    <string name="vpn_nodes_empty_body">导入节点链接后即可连接 VPN。</string>
+    <string name="vpn_node_choice">已选择</string>
+    <string name="vpn_node_details_action">查看 %1$s 的详情</string>
+    <string name="vpn_nodes_next_connection">新选择的节点将在下次连接时生效。</string>
+    <string name="vpn_connection_details">连接详情</string>
 </resources>

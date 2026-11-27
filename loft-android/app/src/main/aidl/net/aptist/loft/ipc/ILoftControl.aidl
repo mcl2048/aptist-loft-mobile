@@ -2,6 +2,7 @@ package net.aptist.loft.ipc;
 
 import net.aptist.loft.ipc.ILoftEvents;
 import net.aptist.loft.ipc.ILoftHubEvents;
+import net.aptist.loft.ipc.ILoftTrafficEvents;
 import android.os.ParcelFileDescriptor;
 
 interface ILoftControl {
@@ -16,4 +17,5 @@ interface ILoftControl {
     oneway void cancelHubWork(long requestId);
     oneway void executeVault(long requestId, in byte[] command, ILoftHubEvents observer);
     oneway void cancelVaultWork(long requestId);
+    oneway void queryVpnTraffic(long attemptId, ILoftTrafficEvents observer);
 }

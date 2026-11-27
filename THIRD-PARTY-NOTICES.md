@@ -2,7 +2,7 @@
 
 The linked Android application uses GPL-3.0-or-later sing/sing-tun code. The combined application and Go adapter are delivered under compatible GPL terms; independent Rust crates retain the Apache-2.0 metadata. Full GPL and Apache texts are in `licenses/`. Original component notices remain applicable.
 
-Gateway input: `/home/coder/Loft-Gateway` commit `98644864d2426627cd151a0561e5035e46f6b79c` (8.0.34-LYNX). Selected protocol/QUIC/Hydra/traffic-profile and SOCKS source is copied under `loft-vpn-engine-go/third_party`; upstream files are not modified. The source manifest records copied hashes and local adapter/stack differences. The QUIC fork retains its MIT license. GhostX/sing copyright and name/association restrictions are retained, without implying endorsement.
+Gateway input: `/home/coder/Loft-Gateway` commit `a984911c8aa0e932c885bb298134031432eb82b7` (8.0.36-LYNX). Selected protocol/QUIC/Hydra/traffic-profile and SOCKS source is copied under `loft-vpn-engine-go/third_party`; upstream files are not modified. The source manifest records copied hashes and local adapter/stack differences. The QUIC fork retains its MIT license. GhostX/sing copyright and name/association restrictions are retained, without implying endorsement.
 
 HyrakenX/Pro crypto notices describe the existing Rocca-S/Ascon/AEGIS lineage and its original validation material. They do not constitute an independent mobile cryptographic audit. Test-only C references and private test nodes are not linked into the APK. Original notices and referenced license texts accompany the selected source snapshot.
 

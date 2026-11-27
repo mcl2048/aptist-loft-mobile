@@ -1,6 +1,6 @@
 # LOFT framework requirement status
 
-The 0.1.5-LYNX task adds durable Hub enrollment, an offline TOTP and password vault, and the Gateway 8.0.34 refresh. [Current task report](../report/loftmobile-1126-02-progress.md)
+The 0.1.6-LYNX task adds the native overview and VPN node directory, session-scoped app traffic, and measured UDP allocation reductions. The report records the current Gateway source and signed APK, and identifies open physical-device acceptance. [Current task report](../report/loftmobile-1128-01-progress.md)
 
 | Requirement | Implementation / owner | Verified boundary and remaining work |
 | --- | --- | --- |

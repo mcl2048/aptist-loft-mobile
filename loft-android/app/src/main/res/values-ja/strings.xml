@@ -36,7 +36,7 @@
     <string name="data_plane_body">このフレームワークでは VPN 通信を利用できません。LOFT はトラフィックを転送していません。</string>
     <string name="selected_candidate">選択中のノード候補</string>
     <string name="choose_node">ノードを選ぶ</string>
-    <string name="node_list">ノード一覧</string>
+    <string name="node_list">VPN ノード</string>
     <string name="import_link">リンクをインポート</string>
     <string name="node_count">保存済みノード %1$d 件</string>
     <string name="first_page_only">先頭の %1$d ノードを表示しています。続きのページには保存アダプターが必要です。</string>
@@ -355,4 +355,21 @@
     <string name="hub_renew_mail">メールのアクセス権を更新</string>
     <string name="vault_refresh">項目を更新</string>
     <string name="vault_code_expired">コードの有効期限が切れました。もう一度コードを表示してください。</string>
+    <string name="overview_title">概要</string>
+    <string name="overview_shortcuts">クイックアクセス</string>
+    <string name="overview_traffic">VPN のアプリ通信量</string>
+    <string name="overview_traffic_unavailable">通信量を取得できません</string>
+    <string name="overview_account_unavailable">アカウントの状態を取得できません</string>
+    <string name="vpn_cancel_connection">接続をキャンセル</string>
+    <string name="vpn_permission_pending">VPN の許可を待機中</string>
+    <string name="overview_traffic_upload">アップロード</string>
+    <string name="overview_traffic_download">ダウンロード</string>
+    <string name="overview_traffic_refresh">通信量を更新</string>
+    <string name="overview_traffic_current">現在のセッション</string>
+    <string name="overview_traffic_last">前回のセッション</string>
+    <string name="vpn_nodes_empty_body">ノードリンクをインポートすると VPN に接続できます。</string>
+    <string name="vpn_node_choice">選択済み</string>
+    <string name="vpn_node_details_action">%1$s の詳細</string>
+    <string name="vpn_nodes_next_connection">選択したノードは次回の接続から適用されます。</string>
+    <string name="vpn_connection_details">接続の詳細</string>
 </resources>

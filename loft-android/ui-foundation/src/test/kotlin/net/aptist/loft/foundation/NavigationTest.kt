@@ -4,6 +4,24 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class NavigationTest {
+    @Test fun vpnEntryOpensDirectoryAndPreservesExistingStableRoutes() {
+        assertEquals(Page.NODES, ModuleCatalog.entry(ModuleId.VPN))
+        assertEquals(Page.VPN_HOME, ModuleCatalog.resolve("vpn", "home"))
+        assertEquals(Page.NODES, ModuleCatalog.resolve("vpn", "nodes"))
+    }
+
+    @Test fun backReturnsFromNetworkChildrenToDirectoryThenOverview() {
+        val child = NavigationState(page = Page.IMPORT_NODE)
+        val pending = child.back(dirty = true)
+        assertEquals(Page.IMPORT_NODE, pending.page)
+        assertEquals(Page.NODES, pending.pendingPage)
+        val directory = pending.discardAndNavigate()
+        assertEquals(Page.NODES, directory.page)
+        assertEquals(Page.WELCOME, directory.back(dirty = false).page)
+        assertEquals(Page.NODES, NavigationState(page = Page.VPN_HOME).back(dirty = false).page)
+        assertEquals(Page.NODES, NavigationState(page = Page.NODE_DETAILS).back(dirty = false).page)
+    }
+
     // Catches secondary navigation losing its persistent parent-module selection.
     @Test fun routingPageKeepsNetworkSelected() {
         val state = NavigationState().navigate(Page.ROUTING, dirty = false)

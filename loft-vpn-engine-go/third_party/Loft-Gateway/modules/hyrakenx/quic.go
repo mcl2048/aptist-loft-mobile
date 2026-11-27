@@ -5,6 +5,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"crypto/tls"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"net"
@@ -364,6 +365,7 @@ type Peer struct {
 	closeErr      error
 	hydraMu       sync.Mutex
 	hydraConfig   hydra.Config
+	hydraScope    string
 	hydraObserver func(int, int)
 	hydraStarted  bool
 }
@@ -385,6 +387,15 @@ func (p *Peer) SetHydraObserver(observer func(records, paddingBytes int)) error 
 // failed attempts, so concurrent stream creation always sees one immutable policy.
 // Native QUIC datagrams sent through Send are not shaped.
 func (p *Peer) SetHydra(config hydra.Config) error {
+	return p.SetHydraScoped(config, "")
+}
+
+// SetHydraScoped publishes and freezes the policy and local scope together.
+// Scope affects sender scheduling only, never the session or receiver.
+func (p *Peer) SetHydraScoped(config hydra.Config, scope string) error {
+	if err := ValidateHydraScope(scope); err != nil {
+		return err
+	}
 	normalized, err := hydra.Normalize(config)
 	if err != nil {
 		return err
@@ -394,29 +405,34 @@ func (p *Peer) SetHydra(config hydra.Config) error {
 	if p.hydraStarted {
 		return errors.New("hyrakenx: Hydra policy frozen after streams begin")
 	}
-	p.hydraConfig = normalized
+	p.hydraConfig, p.hydraScope = normalized, scope
 	return nil
 }
 
-func (p *Peer) streamHydraConfig() (hydra.Config, func(int, int)) {
+func (p *Peer) streamHydraConfig() hydra.Config {
+	config, _, _ := p.streamHydraPolicy()
+	return config
+}
+
+func (p *Peer) streamHydraPolicy() (hydra.Config, string, func(int, int)) {
 	p.hydraMu.Lock()
 	defer p.hydraMu.Unlock()
 	p.hydraStarted = true
-	return p.hydraConfig, p.hydraObserver
+	return p.hydraConfig, p.hydraScope, p.hydraObserver
 }
 
 func newStreamShaper(config hydra.Config, session *Session) (*hydra.Shaper, error) {
+	return newStreamShaperScoped(config, session, "")
+}
+
+func newStreamShaperScoped(config hydra.Config, session *Session, scope string) (*hydra.Shaper, error) {
 	if !config.Enabled {
 		return nil, nil
 	}
 	// stream() already binds transcriptHash to the stream ID. Direction separates
 	// the two senders without changing any encryption key or nonce derivation.
-	mac := hmac.New(sha256.New, session.master[:])
-	_, _ = mac.Write([]byte("hyrakenx/hydra/sender/v1"))
-	_, _ = mac.Write(session.transcriptHash[:])
-	_, _ = mac.Write([]byte{byte(session.role)})
-	var seed [32]byte
-	copy(seed[:], mac.Sum(nil))
+	seed := streamHydraSeed(session, scope)
+	defer clear(seed[:])
 	// The local adaptive algorithm preserves v1 authenticated framing. Include
 	// the outer length, protected header, suite tag and encrypted payload length
 	// when selecting optional framed-length targets; QUIC still owns packetization.
@@ -466,4 +482,21 @@ func (p *Peer) Receive(ctx context.Context) ([]byte, error) {
 		return nil, fmt.Errorf("hyrakenx: receive datagram: %w", err)
 	}
 	return p.session.Open(packet)
+}
+
+func streamHydraSeed(session *Session, scope string) (seed [32]byte) {
+	mac := hmac.New(sha256.New, session.master[:])
+	if scope == "" {
+		_, _ = mac.Write([]byte("hyrakenx/hydra/sender/v1"))
+	} else {
+		_, _ = mac.Write([]byte("hyrakenx/hydra/sender/scoped/v2\x00"))
+		var size [4]byte
+		binary.BigEndian.PutUint32(size[:], uint32(len(scope)))
+		_, _ = mac.Write(size[:])
+		_, _ = mac.Write([]byte(scope))
+	}
+	_, _ = mac.Write(session.transcriptHash[:])
+	_, _ = mac.Write([]byte{byte(session.role)})
+	mac.Sum(seed[:0])
+	return seed
 }

@@ -36,7 +36,7 @@
     <string name="data_plane_body">VPN-Transport ist in diesem Grundgerüst nicht verfügbar. LOFT leitet keinen Datenverkehr weiter.</string>
     <string name="selected_candidate">Ausgewählter Knotenkandidat</string>
     <string name="choose_node">Knoten auswählen</string>
-    <string name="node_list">Knoten</string>
+    <string name="node_list">VPN-Knoten</string>
     <string name="import_link">Link importieren</string>
     <string name="node_count">%1$d gespeicherte Knoten</string>
     <string name="first_page_only">Die ersten %1$d Knoten werden angezeigt. Weitere Seiten benötigen den Speicheradapter.</string>
@@ -355,4 +355,21 @@
     <string name="hub_renew_mail">E-Mail-Zugriff erneuern</string>
     <string name="vault_refresh">Einträge aktualisieren</string>
     <string name="vault_code_expired">Der Code ist abgelaufen. Tippe erneut auf „Code anzeigen“.</string>
+    <string name="overview_title">Übersicht</string>
+    <string name="overview_shortcuts">Schnellzugriff</string>
+    <string name="overview_traffic">VPN-App-Datenverkehr</string>
+    <string name="overview_traffic_unavailable">Datenverbrauch nicht verfügbar</string>
+    <string name="overview_account_unavailable">Kontostatus nicht verfügbar</string>
+    <string name="vpn_cancel_connection">Verbindung abbrechen</string>
+    <string name="vpn_permission_pending">VPN-Berechtigung ausstehend</string>
+    <string name="overview_traffic_upload">Upload</string>
+    <string name="overview_traffic_download">Download</string>
+    <string name="overview_traffic_refresh">Datenverbrauch aktualisieren</string>
+    <string name="overview_traffic_current">Aktuelle Sitzung</string>
+    <string name="overview_traffic_last">Letzte Sitzung</string>
+    <string name="vpn_nodes_empty_body">Importiere einen Knotenlink, um eine VPN-Verbindung herzustellen.</string>
+    <string name="vpn_node_choice">Ausgewählt</string>
+    <string name="vpn_node_details_action">Details zu %1$s</string>
+    <string name="vpn_nodes_next_connection">Die Auswahl gilt ab der nächsten Verbindung.</string>
+    <string name="vpn_connection_details">Verbindungsdetails</string>
 </resources>

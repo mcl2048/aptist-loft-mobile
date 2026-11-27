@@ -1,7 +1,10 @@
 {
   "schema_version": 1,
-  "engine_version": "0.1.5-LYNX",
+  "engine_version": "0.1.6-LYNX",
   "generated_method": "VPNRuntime.setNetworkPolicy(String canonicalJSON)",
+  "gateway_source_pin": "a984911c8aa0e932c885bb298134031432eb82b7",
+  "traffic_usage_method": "VPNRuntime.trafficUsage()",
+  "traffic_usage_format": "1:generation:uploadPayloadBytes:downloadPayloadBytes:finalized (0/1), empty for unavailable. Counts exclude dedicated DNS handling and transport overhead; each direction saturates at signed int64 maximum.",
   "policy_max_bytes": 4096,
   "policy_exact_keys": [
     "schema_version",

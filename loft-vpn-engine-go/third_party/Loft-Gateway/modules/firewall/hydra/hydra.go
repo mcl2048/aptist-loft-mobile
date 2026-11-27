@@ -162,23 +162,57 @@ func newShaper(config Config, protocol string, seed [32]byte, limits Limits, alg
 func (s *Shaper) Snapshot() Snapshot { return s.profile }
 
 func (s *Shaper) digest(domain string, epoch, counter uint64) [32]byte {
-	mac := hmac.New(sha256.New, s.seed[:])
-	var header [20]byte
 	algorithm := s.algorithm
 	if algorithm == 0 {
 		algorithm = Version
 	}
+	const prefix = "loft/hydra/"
+	const maxDomainBytes = 64 // All internal domains are short literals.
+	const maxProtocolBytes = 256
+	const headerBytes = 20
+	if len(domain) > maxDomainBytes || len(s.protocol) > maxProtocolBytes {
+		// Preserve the original HMAC for private inputs beyond the stack bound.
+		mac := hmac.New(sha256.New, s.seed[:])
+		var header [headerBytes]byte
+		binary.BigEndian.PutUint16(header[:2], algorithm)
+		binary.BigEndian.PutUint16(header[2:4], uint16(len(s.protocol)))
+		binary.BigEndian.PutUint64(header[4:12], epoch)
+		binary.BigEndian.PutUint64(header[12:20], counter)
+		// hash.Hash.Write always returns len(p), nil; these errors cannot occur.
+		_, _ = mac.Write([]byte(prefix + domain + "\x00"))
+		_, _ = mac.Write(header[:])
+		_, _ = mac.Write([]byte(s.protocol))
+		var result [32]byte
+		copy(result[:], mac.Sum(nil))
+		return result
+	}
+	// RFC2104 HMAC with the fixed 32-byte seed, zero-padded to SHA256's block
+	// size. Local workspaces avoid per-digest hash objects and preserve Shaper's
+	// size. Seed bytes affect only XOR operands, never branches or loop bounds.
+	var inner [sha256.BlockSize + len(prefix) + maxDomainBytes + 1 + headerBytes + maxProtocolBytes]byte
+	var outer [sha256.BlockSize + sha256.Size]byte
+	for i := 0; i < sha256.BlockSize; i++ {
+		inner[i], outer[i] = 0x36, 0x5c
+	}
+	for i, value := range s.seed {
+		inner[i] ^= value
+		outer[i] ^= value
+	}
+	n := sha256.BlockSize
+	n += copy(inner[n:], prefix)
+	n += copy(inner[n:], domain)
+	inner[n] = 0
+	n++
+	header := inner[n : n+headerBytes]
 	binary.BigEndian.PutUint16(header[:2], algorithm)
 	binary.BigEndian.PutUint16(header[2:4], uint16(len(s.protocol)))
 	binary.BigEndian.PutUint64(header[4:12], epoch)
 	binary.BigEndian.PutUint64(header[12:20], counter)
-	// hash.Hash.Write always returns len(p), nil; these errors cannot occur.
-	_, _ = mac.Write([]byte("loft/hydra/" + domain + "\x00"))
-	_, _ = mac.Write(header[:])
-	_, _ = mac.Write([]byte(s.protocol))
-	var result [32]byte
-	copy(result[:], mac.Sum(nil))
-	return result
+	n += headerBytes
+	n += copy(inner[n:], s.protocol)
+	result := sha256.Sum256(inner[:n])
+	copy(outer[sha256.BlockSize:], result[:])
+	return sha256.Sum256(outer[:])
 }
 
 func (s *Shaper) derive(epoch uint64) {

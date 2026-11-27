@@ -20,6 +20,7 @@ import net.aptist.loft.engine.VPNStateListener
 import net.aptist.loft.foundation.*
 import net.aptist.loft.ipc.ILoftEvents
 import net.aptist.loft.ipc.ILoftHubEvents
+import net.aptist.loft.ipc.ILoftTrafficEvents
 import java.io.File
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.RejectedExecutionException
@@ -39,6 +40,7 @@ class LoftRuntimeOwner private constructor(context: Context) {
     private var stopEpoch = Any()
     private val active = AtomicReference<Attempt?>(null)
     private val closedNetworkResources = AtomicReference<NetworkResourceSnapshot?>(null)
+    private val closedTraffic = AtomicReference<VpnTrafficSample?>(null)
     private val tun = OriginalTunOwnership<ParcelFileDescriptor>()
     private val publisher = SnapshotPublisher()
     private val publicationFailed = AtomicBoolean(false)
@@ -158,6 +160,36 @@ class LoftRuntimeOwner private constructor(context: Context) {
     }
     fun unsubscribe(observer: ILoftEvents) { observers.unregister(observer) }
 
+    fun queryVpnTraffic(attemptId: ULong, observer: ILoftTrafficEvents) {
+        fun reply(sample: VpnTrafficSample?) {
+            try {
+                if (sample == null) observer.onVpnTrafficUnavailable(attemptId.toLong())
+                else observer.onVpnTraffic(attemptId.toLong(), sample.uploadBytes, sample.downloadBytes, sample.finalized)
+            } catch (_: RemoteException) { }
+        }
+        if (attemptId == 0uL || !submitCommand { reply(runCatching { trafficSample(attemptId) }.getOrNull()) }) reply(null)
+    }
+
+    private fun trafficSample(attemptId: ULong): VpnTrafficSample? {
+        val attempt = active.get()
+        if (attempt == null) {
+            val history = closedTraffic.get()?.takeIf { it.attemptId == attemptId } ?: return null
+            val core = resources.currentCore().snapshot()
+            return history.takeIf { active.get() == null && core.connectionAttemptId == attemptId &&
+                core.connectionState in setOf(ConnectionState.DISCONNECTED, ConnectionState.UNAVAILABLE) }
+        }
+        if (attempt.id != attemptId || !trafficReady(attempt)) return null
+        val raw = attempt.go.get()?.runtime?.trafficUsage() ?: return null
+        return decodeVpnTraffic(raw, attemptId, finalized = false)?.takeIf { trafficReady(attempt) }
+    }
+
+    private fun trafficReady(attempt: Attempt): Boolean {
+        if (active.get() !== attempt || !attempt.privacyConfirmed.get() || attempt.cancelled.get() || attempt.faulted.get() ||
+            !tun.facts().held || attempt.facts.current()?.provesReady != true) return false
+        val core = attempt.core.snapshot()
+        return core.connectionAttemptId == attempt.id && core.connectionState == ConnectionState.CONNECTED
+    }
+
     fun cancelHubWork(requestId: Long) { hub.cancel(requestId) }
 
     fun cancelVaultWork(requestId: Long) { vault.cancel(requestId) }
@@ -215,6 +247,7 @@ class LoftRuntimeOwner private constructor(context: Context) {
             workerUiLease = false
             engineVersion = ""
             closedNetworkResources.set(null)
+            closedTraffic.set(null)
             val core = try { retainCoreOnWorker() }
             catch (failure: Exception) { sendReceipt(observer, requestId, openFailure(failure), byteArrayOf()); return@submitCommand }
             catch (_: LinkageError) { sendReceipt(observer, requestId, ReceiptCode.NATIVE_UNAVAILABLE, byteArrayOf()); return@submitCommand }
@@ -314,6 +347,7 @@ class LoftRuntimeOwner private constructor(context: Context) {
                 if (epoch !== stopEpoch) throw CoreException.TicketExpired()
                 if (stopQueued || active.get() != null || !tun.begin(candidate.id)) throw CoreException.ConnectionBusy()
                 closedNetworkResources.set(null)
+                closedTraffic.set(null)
                 active.set(candidate)
             }
             main.post {
@@ -555,6 +589,9 @@ class LoftRuntimeOwner private constructor(context: Context) {
         var code = ReceiptCode.ENGINE_STOP_INCOMPLETE
         if (complete) {
             if (attempt != null) {
+                val finalTraffic = if (attempt.privacyConfirmed.get() && attempt.facts.current()?.provesReleased == true) {
+                    runCatching { attempt.go.get()?.runtime?.trafficUsage()?.let { decodeVpnTraffic(it, attempt.id, finalized = true) } }.getOrNull()
+                } else null
                 complete = runCatching { resources.releaseVpn(true) }.getOrDefault(false)
                 if (complete) synchronized(admissionLock) {
                     if (active.get() === attempt) {
@@ -563,6 +600,7 @@ class LoftRuntimeOwner private constructor(context: Context) {
                         closedNetworkResources.set(if (attempt.privacyConfirmed.get()) attempt.facts.current()?.let {
                             NetworkResourceSnapshot.from(attempt.id, attempt.networkPolicy, it)?.takeIf { record -> record.finalized }
                         } else null)
+                        closedTraffic.set(finalTraffic)
                         active.set(null)
                     }
                 }

@@ -1,6 +1,6 @@
 # Framework contract · CoreSnapshot 2 / Android envelope 3
 
-Product `loft`, Android package `net.aptist.loft`, target version `0.1.3-LYNX`. This contract covers the application framework and its VPN resource adapter. Policy JSON and NodePage use schema 1. Their numbers are independent of the snapshot and envelope versions. See the [requirements](../requirements.md) for executed checks and remaining roadmap work.
+Product `loft`, Android package `net.aptist.loft`, target version `0.1.6-LYNX`. This contract covers the application framework and its VPN resource adapter. Policy JSON and NodePage use schema 1. Their numbers are independent of the snapshot and envelope versions. See the [requirements](../requirements.md) for executed checks and remaining roadmap work.
 
 ## Owners and generated boundaries
 
@@ -47,6 +47,8 @@ The non-exported controller and the OS `BIND_VPN_SERVICE`-protected VPN entry sh
 The single snapshot publisher reserves its transport sequence before capturing Rust metadata and encoding. A consumer checks binding epoch and sequence as well as business generation, so a late equal-generation `Connected` capture cannot replace a newer `Stopping`/`Unavailable` projection. Sequence exhaustion is explicit. Page responses use a separate query/request fence and cannot overwrite business connection state.
 
 Normal work uses a bounded serial worker. Stop/revoke signals bypass that queue and cancel socket resolution/construction before joining their owners. UI subscriptions follow visibility; unbinding/recreating an Activity does not stop an active VPN. Notification publication and service foreground ownership are ordered with start/stop attempts.
+
+The overview reads app-payload totals through a separate same-UID Binder query on the ordinary worker. Live samples require the current Rust attempt and matching settled Go/TUN/privacy evidence. Final samples require joined Go and original-TUN closure. The wire callback carries a matching attempt ID, two nonnegative byte totals and a final flag. This leaves the strict lifecycle schemas independent of display statistics. TCP counts bytes accepted by the actual peer writer after privacy classification. UDP counts successfully written application datagrams. The counters cover app payload and exclude the dedicated DNS handling path and transport framing. Sampling has no timer.
 
 ## Go resource boundary
 
