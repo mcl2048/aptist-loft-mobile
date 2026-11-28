@@ -196,6 +196,7 @@ impl AppCore {
         expected_generation: Option<u64>,
     ) -> Result<VaultPage, VaultError> {
         let state = self.state.lock().map_err(|_| VaultError::Unavailable)?;
+        require_vault(&state)?;
         Ok(state
             .vault_list(archived, offset, expected_generation)?
             .into())
@@ -203,21 +204,25 @@ impl AppCore {
 
     pub fn vault_save(&self, draft: VaultDraft) -> Result<VaultEntry, VaultError> {
         let mut state = self.state.lock().map_err(|_| VaultError::Unavailable)?;
+        require_vault(&state)?;
         Ok(state.vault_save(draft.into())?.into())
     }
 
     pub fn vault_import(&self, uri: Vec<u8>) -> Result<VaultEntry, VaultError> {
         let mut state = self.state.lock().map_err(|_| VaultError::Unavailable)?;
+        require_vault(&state)?;
         Ok(state.vault_import(uri)?.into())
     }
 
     pub fn vault_archive(&self, id: String, archived: bool) -> Result<VaultEntry, VaultError> {
         let mut state = self.state.lock().map_err(|_| VaultError::Unavailable)?;
+        require_vault(&state)?;
         Ok(state.vault_archive(&id, archived)?.into())
     }
 
     pub fn vault_reveal(&self, id: String, unix_seconds: u64) -> Result<VaultReveal, VaultError> {
         let state = self.state.lock().map_err(|_| VaultError::Unavailable)?;
+        require_vault(&state)?;
         Ok(state.vault_reveal(&id, unix_seconds)?.into())
     }
 }
@@ -232,6 +237,7 @@ pub struct VaultSyncStep {
 impl AppCore {
     pub fn vault_sync_begin(&self, passphrase: Vec<u8>) -> Result<crate::HubRequest, VaultError> {
         let mut state = self.state.lock().map_err(|_| VaultError::Unavailable)?;
+        require_vault(&state)?;
         Ok(state.vault_sync_begin(passphrase)?.into())
     }
 
@@ -244,6 +250,7 @@ impl AppCore {
     ) -> Result<VaultSyncStep, VaultError> {
         let receipt = {
             let mut state = self.state.lock().map_err(|_| VaultError::Unavailable)?;
+            require_vault(&state)?;
             state.vault_sync_accept(request_id, status, media_type.as_deref(), body)?
         };
         let step = match receipt {
@@ -251,6 +258,10 @@ impl AppCore {
             loft_core::VaultSyncReceipt::Compute(work) => {
                 let result = work.compute();
                 let mut state = self.state.lock().map_err(|_| VaultError::Unavailable)?;
+                if let Err(error) = require_vault(&state) {
+                    state.vault_sync_abandon(request_id);
+                    return Err(error);
+                }
                 state.vault_sync_commit(result)?
             }
         };
@@ -265,4 +276,13 @@ impl AppCore {
         state.vault_sync_abandon(request_id);
         Ok(())
     }
+}
+
+fn require_vault(state: &loft_core::CoreState) -> Result<(), VaultError> {
+    state
+        .protection_require_vault()
+        .map_err(|error| match error {
+            loft_core::SecureError::StorageRecoveryRequired => VaultError::StorageRecoveryRequired,
+            _ => VaultError::AuthenticationFailed,
+        })
 }

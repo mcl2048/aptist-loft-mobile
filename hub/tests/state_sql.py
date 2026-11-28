@@ -1,5 +1,6 @@
 """Exercise actual Worker SQL with independent writers on a temporary SQLite database."""
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import closing
 from pathlib import Path
 import sqlite3
 import tempfile
@@ -17,12 +18,12 @@ class HubDatabase(unittest.TestCase):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
         self.path = Path(self.directory.name) / 'hub.db'
-        with sqlite3.connect(self.path) as connection:
+        with closing(sqlite3.connect(self.path)) as connection, connection:
             for migration in sorted((ROOT / 'migrations').glob('*.sql')):
                 connection.executescript(migration.read_text())
 
     def execute(self, name, *arguments):
-        with sqlite3.connect(self.path) as connection:
+        with closing(sqlite3.connect(self.path)) as connection, connection:
             connection.row_factory = sqlite3.Row
             row = connection.execute(query(name), arguments).fetchone()
             return dict(row) if row else None
@@ -68,7 +69,7 @@ class HubDatabase(unittest.TestCase):
         self.assertIsNone(self.execute('session', 'session-hash', 120))
 
     def durable_fixture(self):
-        with sqlite3.connect(self.path) as connection:
+        with closing(sqlite3.connect(self.path)) as connection, connection:
             connection.execute("INSERT INTO hub_device_session (session_hash, owner_hash, identity_box) VALUES ('hash-a', 'owner-a', 'box-a')")
             connection.execute("INSERT INTO hub_device_session (session_hash, owner_hash, identity_box) VALUES ('hash-b', 'owner-b', 'box-b')")
             connection.execute("INSERT INTO hub_device_session (session_hash, owner_hash, identity_box) VALUES ('hash-a2', 'owner-a', 'box-a')")
@@ -92,7 +93,7 @@ class HubDatabase(unittest.TestCase):
         self.assertIsNotNone(self.execute('vault_write', 'hash-a', 'f' * 43, 0, 'synthetic-ciphertext-fixture', 1))
         self.assertIsNone(self.execute('vault_write', 'hash-a', 's' * 43, 0, 'synthetic-ciphertext-fixture', 1))
         self.assertIsNotNone(self.execute('vault_write', 'hash-b', 's' * 43, 0, 'different-ciphertext-fixture', 1))
-        with sqlite3.connect(self.path) as connection:
+        with closing(sqlite3.connect(self.path)) as connection, connection:
             connection.execute("DELETE FROM hub_device_session WHERE session_hash = 'hash-a'")
         self.assertIsNone(self.execute('vault_write', 'hash-a', 'f' * 43, 1, 'revoked', 1))
         self.assertIsNone(self.execute('vault_read', 'hash-a', 'f' * 43))
@@ -103,6 +104,25 @@ class HubDatabase(unittest.TestCase):
         self.assertIsNotNone(self.execute('rate', 1, 20, 2))
         self.assertIsNone(self.execute('rate', 1, 20, 2))
         self.assertIsNotNone(self.execute('rate', 1, 21, 2))
+
+    def test_notes_revision_cas_and_conditional_reads_are_owner_scoped(self):
+        self.durable_fixture()
+        def create(i):
+            return self.execute('notes_write', 'hash-a', 0, 'notes-ciphertext-fixture-' + str(i))
+        with ThreadPoolExecutor() as executor:
+            results = list(executor.map(create, range(10)))
+        self.assertEqual(results.count({'revision': 1}), 1)
+        self.assertIsNone(self.execute('notes_read', 'not-enrolled', 0))
+        self.assertEqual(self.execute('notes_read', 'hash-b', 1), {'revision': None, 'ciphertext': None})
+        self.assertEqual(self.execute('notes_read', 'hash-a2', 1), {'revision': 1, 'ciphertext': None})
+        self.assertIsNone(self.execute('notes_write', 'hash-b', 1, 'foreign-ciphertext-fixture'))
+        self.assertIsNone(self.execute('notes_write', 'not-enrolled', 1, 'foreign-ciphertext-fixture'))
+        self.assertEqual(self.execute('notes_write', 'hash-a2', 1, 'replacement-ciphertext-fixture'), {'revision': 2})
+        self.assertEqual(self.execute('notes_read', 'hash-a', 1), {'revision': 2, 'ciphertext': 'replacement-ciphertext-fixture'})
+        with closing(sqlite3.connect(self.path)) as connection, connection:
+            connection.execute("DELETE FROM hub_device_session WHERE session_hash = 'hash-a'")
+        self.assertIsNone(self.execute('notes_write', 'hash-a', 2, 'revoked-ciphertext-fixture'))
+        self.assertIsNone(self.execute('notes_read', 'hash-a', 2))
 
 
 if __name__ == '__main__':

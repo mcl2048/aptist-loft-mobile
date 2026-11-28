@@ -18,7 +18,7 @@ android {
         applicationId = "net.aptist.loft"
         minSdk = 29
         targetSdk = 36
-        versionCode = 7
+        versionCode = 8
         versionName = loftReleaseVersion.get()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "PRODUCT_ID", "\"loft\"")
@@ -55,6 +55,7 @@ android {
     packaging {
         jniLibs { useLegacyPackaging = false }
         resources.excludes += setOf("META-INF/AL2.0", "META-INF/LGPL2.1")
+        resources.merges += "META-INF/LICENSE.txt"
     }
     lint { abortOnError = true }
 }
@@ -80,10 +81,15 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.window:window:1.5.1")
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
     implementation("androidx.camera:camera-camera2:1.5.3")
     implementation("androidx.camera:camera-lifecycle:1.5.3")
     implementation("androidx.camera:camera-view:1.5.3")
     implementation("com.google.zxing:core:3.5.4")
+    implementation("org.commonmark:commonmark:0.33.0")
+    implementation("org.commonmark:commonmark-ext-gfm-strikethrough:0.33.0")
+    implementation("org.commonmark:commonmark-ext-gfm-tables:0.33.0")
+    implementation("org.commonmark:commonmark-ext-task-list-items:0.33.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("net.java.dev.jna:jna:5.18.1@aar")
     implementation(files(loftNativeRoot.resolve("gomobile/loft-engine.aar")))

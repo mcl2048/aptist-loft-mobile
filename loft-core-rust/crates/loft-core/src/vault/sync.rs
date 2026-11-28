@@ -412,6 +412,8 @@ impl Active {
             bearer: Some(self.bearer.to_string()),
             body,
             max_response_bytes: WIRE_LIMIT as u32,
+            if_none_match: None,
+            requested_capabilities: None,
         }
     }
 }

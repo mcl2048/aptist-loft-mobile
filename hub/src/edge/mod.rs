@@ -1,6 +1,7 @@
 mod device;
 mod http;
 mod mail;
+mod notes;
 mod portal;
 mod vault;
 
@@ -189,10 +190,20 @@ async fn route(mut request: Request, env: Env) -> Result<Response> {
         return Err(INVALID);
     }
     if method == Method::Get && path == "/.well-known/loft-app" {
+        // Previously released clients reject unknown module names in the v1 descriptor.
+        let modules = match request
+            .headers()
+            .get("X-Loft-Capabilities")
+            .map_err(|_| INVALID)?
+            .as_deref()
+        {
+            Some("notes-sync/1") => &["mail", "notes_sync"][..],
+            _ => &["mail"][..],
+        };
         return http::json(
             200,
             &serde_json::json!({
-                "version": 1, "product": "loft", "authMode": "portal_bff", "issuer": config.issuer, "modules": ["mail"]
+                "version": 1, "product": "loft", "authMode": "portal_bff", "issuer": config.issuer, "modules": modules
             }),
         );
     }
@@ -256,6 +267,7 @@ async fn route(mut request: Request, env: Env) -> Result<Response> {
         (Method::Get | Method::Put, path) if path.starts_with("/v1/vault/") => {
             vault::access(&config, &db, &mut request, &path["/v1/vault/".len()..]).await
         }
+        (Method::Get | Method::Put, "/v1/notes") => notes::access(&config, &db, &mut request).await,
         (Method::Get, path)
             if path == MAIL
                 || path

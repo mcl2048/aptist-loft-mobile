@@ -66,7 +66,7 @@ internal class HubControl(private val publishCoreAvailability: (AppCore) -> Unit
                                 code = "revocation_unconfirmed"
                             }
                         }
-                        result = local?.let { HubResult(it) }
+                        result = local?.let { HubResult(it, notesSyncEligible = notesEligible(core)) }
                     }
                     runCatching { work.destination?.close() }
                     active.compareAndSet(work, null)
@@ -81,7 +81,7 @@ internal class HubControl(private val publishCoreAvailability: (AppCore) -> Unit
     }
 
     private fun exchange(core: AppCore, work: Work): HubResult {
-        val action = work.action ?: return HubResult(core.hubSnapshot())
+        val action = work.action ?: return HubResult(core.hubSnapshot(), notesSyncEligible = notesEligible(core))
         val request = core.hubBegin(action, work.input, work.mailAccess)
         try {
             val response = exchangeHub(request) { !work.cancelled.get() }
@@ -103,13 +103,15 @@ internal class HubControl(private val publishCoreAvailability: (AppCore) -> Unit
                         }
                     } finally { file.fill(0) }
                 }
-                return HubResult(receipt.snapshot, receipt.browserUrl, receipt.page, receipt.message)
+                return HubResult(receipt.snapshot, receipt.browserUrl, receipt.page, receipt.message, notesEligible(core))
             } finally { response.body.fill(0) }
         } finally {
             request.body.fill(0)
             runCatching { core.hubAbandon(request.requestId) }
         }
     }
+
+    private fun notesEligible(core: AppCore): Boolean = runCatching { core.notesSyncEligible() }.getOrDefault(false)
 
     private class HubDestinationFailure : Exception()
 

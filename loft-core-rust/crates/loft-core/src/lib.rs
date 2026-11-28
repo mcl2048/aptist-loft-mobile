@@ -16,9 +16,11 @@ use zeroize::Zeroizing;
 mod certificates;
 mod hub;
 mod import;
+mod notes;
 mod origin;
 mod persistence;
 mod privacy;
+mod protection;
 mod vault;
 mod vpn;
 pub use hub::{
@@ -26,6 +28,10 @@ pub use hub::{
     HubReceipt, HubRequest, HubSession, HubSnapshot,
 };
 pub use import::{MAX_NODE_INPUT_BYTES, MAX_NODE_LABEL_BYTES};
+pub use notes::{
+    NOTES_IMAGE_LIMIT, NoteDetail, NoteSummary, NoteTag, NotesDraft, NotesPage, NotesSyncReceipt,
+    NotesSyncStatus, NotesSyncStep,
+};
 pub use origin::{MAX_SERVER_INPUT_BYTES, normalize_server_origin};
 pub use persistence::{
     LoadedLocalConfig, LocalConfigEdit, LocalConfigStore, LocalSettings, PrivateRecord,
@@ -34,6 +40,9 @@ pub use privacy::{
     AppliedNetworkPrivacy, DnsMode, DnsPrivacyLimits, EffectivePackageUid, HydraConfig, HydraScope,
     LeakProtectionMode, NetworkPrivacyEnforcement, NetworkPrivacyPolicy, NetworkPrivacyReceipt,
     NetworkScopeIdentity,
+};
+pub use protection::{
+    PROTECTION_IMAGE_LIMIT, ProtectionAccess, ProtectionScope, ProtectionStatus, SecureError,
 };
 pub use vault::{
     VAULT_IMAGE_LIMIT, VaultAlgorithm, VaultDraft, VaultEntry, VaultError, VaultKind, VaultPage,
@@ -174,6 +183,9 @@ pub struct CoreState {
     generation: u64,
     vpn: vpn::VpnLifecycle,
     hub: hub::HubState,
+    protection: protection::Protection,
+    notes: notes::NotesState,
+    notes_sync: notes::NotesSync,
     vault: vault::VaultState,
     vault_sync: vault::SyncState,
     stop_signal: Arc<AtomicBool>,
@@ -209,6 +221,9 @@ impl CoreState {
             generation: 0,
             vpn: vpn::VpnLifecycle::default(),
             hub: hub::HubState::default(),
+            protection: protection::Protection::default(),
+            notes: notes::NotesState::default(),
+            notes_sync: notes::NotesSync::default(),
             vault: vault::VaultState::default(),
             vault_sync: vault::SyncState::default(),
             stop_signal,

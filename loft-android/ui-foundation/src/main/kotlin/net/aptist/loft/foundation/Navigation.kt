@@ -1,15 +1,16 @@
 package net.aptist.loft.foundation
 
 enum class ModuleId(val stableId: String) {
-    WELCOME("welcome"), VPN("vpn"), SHIELD("shield"), MAIL("mail"), TOTP("totp"), AUDIT("audit"), SETTING("setting"), ACCOUNT("account")
+    WELCOME("welcome"), VPN("vpn"), SHIELD("shield"), MAIL("mail"), TOTP("totp"), NOTES("notes"), AUDIT("audit"), SETTING("setting"), ACCOUNT("account")
 }
 
 enum class Page(val module: ModuleId, val stableId: String) {
     WELCOME(ModuleId.WELCOME, "home"),
     VPN_HOME(ModuleId.VPN, "home"), NODES(ModuleId.VPN, "nodes"), NODE_DETAILS(ModuleId.VPN, "node"),
     IMPORT_NODE(ModuleId.VPN, "import"), ROUTING(ModuleId.VPN, "routing"), DIAGNOSTICS(ModuleId.VPN, "diagnostics"),
-    SHIELD(ModuleId.SHIELD, "home"), MAIL(ModuleId.MAIL, "home"), TOTP(ModuleId.TOTP, "home"), AUDIT(ModuleId.AUDIT, "home"),
-    SETTINGS(ModuleId.SETTING, "home"), ACCOUNT(ModuleId.ACCOUNT, "home")
+    SHIELD(ModuleId.SHIELD, "home"), MAIL(ModuleId.MAIL, "home"), TOTP(ModuleId.TOTP, "home"), NOTES(ModuleId.NOTES, "home"),
+    AUDIT(ModuleId.AUDIT, "home"), SETTINGS(ModuleId.SETTING, "home"), APP_PROTECTION(ModuleId.SETTING, "app-protection"),
+    ACCOUNT(ModuleId.ACCOUNT, "home")
 }
 
 data class NavigationState(
@@ -26,6 +27,7 @@ data class NavigationState(
     fun back(dirty: Boolean): NavigationState = when {
         menuOpen -> copy(menuOpen = false)
         page.module == ModuleId.VPN && page != Page.NODES -> navigate(Page.NODES, dirty)
+        page == Page.APP_PROTECTION -> navigate(Page.SETTINGS, dirty)
         page != Page.WELCOME -> navigate(Page.WELCOME, dirty)
         else -> this
     }
@@ -47,8 +49,9 @@ object ModuleCatalog {
         ModuleRegistration(ModuleId.SHIELD, Page.SHIELD, emptyList(), "module_shield", "rail_shield", "shield", EntryPolicy.DEPENDENCY_INFORMATION),
         ModuleRegistration(ModuleId.MAIL, Page.MAIL, emptyList(), "module_mail", "rail_mail", "mail", EntryPolicy.SERVER_CAPABILITY),
         ModuleRegistration(ModuleId.TOTP, Page.TOTP, emptyList(), "vault_title", "vault_title", "vault", EntryPolicy.LOCAL_ENTRY),
+        ModuleRegistration(ModuleId.NOTES, Page.NOTES, emptyList(), "notes_title", "notes_short", "secure_notes", EntryPolicy.LOCAL_ENTRY),
         ModuleRegistration(ModuleId.AUDIT, Page.AUDIT, emptyList(), "module_audit", "rail_audit", "log", EntryPolicy.LOCAL_ENTRY),
-        ModuleRegistration(ModuleId.SETTING, Page.SETTINGS, emptyList(), "module_setting", "rail_setting", "settings", EntryPolicy.LOCAL_ENTRY),
+        ModuleRegistration(ModuleId.SETTING, Page.SETTINGS, listOf(Page.APP_PROTECTION), "module_setting", "rail_setting", "settings", EntryPolicy.LOCAL_ENTRY),
         ModuleRegistration(ModuleId.ACCOUNT, Page.ACCOUNT, listOf(Page.MAIL), "module_account", "module_account", "account", EntryPolicy.LOCAL_ENTRY),
     )
     fun rail(mailAvailable: Boolean, savedOrder: List<String> = emptyList()): List<ModuleId> {

@@ -1,0 +1,18 @@
+<resources>
+    <string name="protection_title">App-Schutz</string>
+    <string name="protection_setup_help">Eine sechsstellige PIN schützt den Authenticator und sichere Notizen.</string>
+    <string name="protection_enabled_help">Der App-Schutz ist aktiv. Gib deine aktuelle PIN ein, um ihn zu ändern.</string>
+    <string name="protection_unlock_help">Gib deine App-PIN ein, um fortzufahren.</string>
+    <string name="protection_pin">App-PIN</string>
+    <string name="protection_current_pin">Aktuelle PIN</string>
+    <string name="protection_new_pin">Neue PIN</string>
+    <string name="protection_confirm_pin">PIN bestätigen</string>
+    <string name="protection_unlock">Entsperren</string>
+    <string name="protection_use_biometrics">Fingerabdruck oder Gesicht verwenden</string>
+    <string name="protection_save">Schutzeinstellungen speichern</string>
+    <string name="protection_disable">App-Schutz deaktivieren</string>
+    <string name="protection_incorrect">Falsche PIN.</string>
+    <string name="protection_rate_limited">Zu viele Versuche. Versuche es später erneut.</string>
+    <string name="protection_invalid">Gib genau sechs Ziffern ein.</string>
+    <string name="protection_retry">Erneut versuchen</string>
+</resources>

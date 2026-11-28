@@ -56,6 +56,8 @@ pub struct HubRequest {
     pub bearer: Option<String>,
     pub body: Vec<u8>,
     pub max_response_bytes: u32,
+    pub if_none_match: Option<String>,
+    pub requested_capabilities: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -209,6 +211,7 @@ pub(crate) struct HubState {
 struct Profile {
     issuer: String,
     mail: bool,
+    notes_sync: bool,
 }
 
 struct Transaction {
@@ -263,13 +266,26 @@ impl HubState {
         self.generation
     }
 
+    pub(crate) fn scope_for_notes(&self, origin: &str) -> Result<(String, &str), HubError> {
+        let profile = self.profile.as_ref().ok_or(HubError::NotSignedIn)?;
+        if !profile.notes_sync {
+            return Err(HubError::AccessDenied);
+        }
+        self.session_scope(origin, profile)
+    }
+
     pub(crate) fn scope_for_vault(&self, origin: &str) -> Result<(String, String), HubError> {
         let profile = self.profile.as_ref().ok_or(HubError::NotSignedIn)?;
+        let (scope, bearer) = self.session_scope(origin, profile)?;
+        Ok((scope, bearer.to_owned()))
+    }
+
+    fn session_scope(&self, origin: &str, profile: &Profile) -> Result<(String, &str), HubError> {
         let session = self.durable_session().ok_or(HubError::NotSignedIn)?;
         let incarnation = serde_json::to_vec(&[origin, &profile.issuer, &session.subject])
             .map_err(|_| HubError::StateUnavailable)?;
         let scope = URL_SAFE_NO_PAD.encode(Sha256::digest(incarnation));
-        Ok((scope, session.bearer.to_string()))
+        Ok((scope, &session.bearer))
     }
 
     pub(crate) fn restored(&mut self, origin: Option<&str>, raw: &[u8]) -> Result<(), CoreError> {
@@ -294,7 +310,8 @@ impl HubState {
             .then(|| Instant::now() + Duration::from_secs(remaining));
         self.profile = Some(Profile {
             issuer: stored.issuer,
-            mail: true,
+            mail: stored.mail_supported,
+            notes_sync: stored.notes_sync,
         });
         self.session = Some(Session {
             bearer: stored.bearer,
@@ -321,6 +338,8 @@ impl HubState {
             subject: session.subject.clone(),
             email: session.email.clone(),
             mail: session.mail,
+            mail_supported: profile.mail,
+            notes_sync: profile.notes_sync,
             expires_at: session.expires_at,
             bearer: session.bearer.clone(),
         };
@@ -442,10 +461,13 @@ impl HubState {
             bearer: None,
             body: Vec::new(),
             max_response_bytes: MAX_AUTH_BYTES,
+            if_none_match: None,
+            requested_capabilities: None,
         };
         let operation = match action {
             HubAction::Discover => {
                 request.url.push_str(DISCOVERY);
+                request.requested_capabilities = Some("notes-sync/1".into());
                 Operation::Discover
             }
             HubAction::SignIn => {
@@ -578,12 +600,14 @@ impl HubState {
                 let descriptor: Descriptor =
                     read_json(media_type, &body).map_err(|_| HubError::IncompatibleServer)?;
                 let profile = descriptor.profile()?;
-                if self
-                    .profile
-                    .as_ref()
-                    .is_some_and(|current| current != &profile)
-                {
-                    self.clear_scope();
+                if let Some(current) = self.profile.as_ref() {
+                    if current.issuer != profile.issuer || current.mail != profile.mail {
+                        self.clear_scope();
+                    } else if current.notes_sync != profile.notes_sync {
+                        // Capability negotiation on the same profile cannot
+                        // revoke the user's verified durable identity.
+                        self.advance();
+                    }
                 }
                 self.profile = Some(profile);
             }
@@ -804,13 +828,19 @@ impl Descriptor {
             || self.product != "loft"
             || self.auth_mode != "portal_bff"
             || !normalize_server_origin(origin).is_ok_and(|normalized| normalized == origin)
-            || (!self.modules.is_empty() && self.modules != ["mail"])
+            || self.modules.len() > 2
+            || !self
+                .modules
+                .iter()
+                .all(|module| matches!(module.as_str(), "mail" | "notes_sync"))
+            || (self.modules.len() == 2 && self.modules[0] == self.modules[1])
         {
             return Err(HubError::IncompatibleServer);
         }
         Ok(Profile {
             issuer: self.issuer,
-            mail: !self.modules.is_empty(),
+            mail: self.modules.iter().any(|module| module == "mail"),
+            notes_sync: self.modules.iter().any(|module| module == "notes_sync"),
         })
     }
 }
@@ -883,8 +913,16 @@ struct StoredSession {
     email: Option<String>,
     mail: bool,
     expires_at: u64,
+    #[serde(default = "legacy_mail_supported")]
+    mail_supported: bool,
+    #[serde(default)]
+    notes_sync: bool,
     #[serde(serialize_with = "serialize_secret", deserialize_with = "secret")]
     bearer: Zeroizing<String>,
+}
+
+fn legacy_mail_supported() -> bool {
+    true
 }
 
 fn serialize_secret<S: serde::Serializer>(value: &str, serializer: S) -> Result<S::Ok, S::Error> {

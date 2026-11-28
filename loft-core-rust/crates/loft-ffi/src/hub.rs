@@ -96,6 +96,8 @@ pub struct HubRequest {
     pub bearer: Option<String>,
     pub body: Vec<u8>,
     pub max_response_bytes: u32,
+    pub if_none_match: Option<String>,
+    pub requested_capabilities: Option<String>,
 }
 
 impl From<loft_core::HubRequest> for HubRequest {
@@ -108,6 +110,8 @@ impl From<loft_core::HubRequest> for HubRequest {
             bearer: value.bearer,
             body: value.body,
             max_response_bytes: value.max_response_bytes,
+            if_none_match: value.if_none_match,
+            requested_capabilities: value.requested_capabilities,
         }
     }
 }

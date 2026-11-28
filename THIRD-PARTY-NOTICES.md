@@ -17,3 +17,5 @@ Go modules are locked by `go.mod/go.sum`, Rust crates by Cargo.lock, and Android
 APTIST Portal is a read-only architecture/API reference at commit `4ab2b37d08f9d7e304ae4d420d36d15c54dffa36`. Its credentials, deployment files, source and mail content are not copied into this application.
 
 The offline scanner uses AndroidX CameraX 1.5.3 and ZXing Core 3.5.4 under Apache 2.0. The vault adds RustCrypto argon2 0.5.3 under MIT or Apache 2.0 and data-encoding 2.11.1 under MIT and uses the existing ring 0.17.14 provider. Exact versions are recorded in Gradle and Cargo.lock. [CameraX](https://developer.android.com/jetpack/androidx/releases/camera) · [ZXing](https://github.com/zxing/zxing/tree/zxing-3.5.4)
+
+Secure Notes uses CommonMark Java 0.33.0 with the strikethrough, table and task list extensions under BSD-2-Clause. AndroidX WorkManager 2.11.2 supplies system scheduling under Apache 2.0. [CommonMark license](licenses/dependencies/android/org.commonmark@0.33.0/LICENSE.txt) · [WorkManager](https://developer.android.com/jetpack/androidx/releases/work)

@@ -159,7 +159,7 @@ const cancel = tx => api(tx.path + '/cancel', body({ proof: tx.proof }));
 
 try {
   const d1 = await config.getD1Database('DB', 'hub');
-  for (const migration of ['0001_identity.sql', '0002_durable_identity_and_vault.sql']) {
+  for (const migration of ['0001_identity.sql', '0002_durable_identity_and_vault.sql', '0003_secure_notes.sql']) {
     const sql = await readFile(new URL('../migrations/' + migration, import.meta.url), 'utf8');
     for (const statement of sql.split(';').map(s => s.trim()).filter(Boolean)) {
       await d1.prepare(statement).run();
@@ -167,7 +167,11 @@ try {
   }
   const discovery = await expectStatus(api('/.well-known/loft-app'), 200);
   assert.equal(discovery.headers.get('Cache-Control'), 'private, no-store');
-  assert.equal((await discovery.json()).issuer, issuer);
+  const descriptor = await discovery.json();
+  assert.equal(descriptor.issuer, issuer);
+  assert.deepEqual(descriptor.modules, ['mail']);
+  const supported = await expectStatus(api('/.well-known/loft-app', { headers: { 'X-Loft-Capabilities': 'notes-sync/1' } }), 200);
+  assert.deepEqual((await supported.json()).modules, ['mail', 'notes_sync']);
 
   const tx = await create(true);
   const pending = await expectStatus(complete(tx), 202);
@@ -277,9 +281,32 @@ try {
   assert.deepEqual(await (await expectStatus(put(device.sessionToken, 1, ciphertext), 200)).json(), { revision: 2 });
   await expectStatus(put(device.sessionToken, 2, random(256 * 1024 + 1)), 413);
 
+  const notesPath = '/v1/notes';
+  const notesCiphertext = random(72);
+  const notesIfCurrent = { headers: { ...authDevice.headers, 'If-None-Match': '"1"' } };
+  await expectStatus(api(notesPath, auth), 401);
+  await expectStatus(api(notesPath, authDevice), 404);
+  await expectStatus(put(device.sessionToken, 0, random(256 * 1024 + 1), notesPath), 413);
+  assert.deepEqual(await (await expectStatus(put(device.sessionToken, 0, notesCiphertext, notesPath), 200)).json(), { revision: 1 });
+  await expectStatus(put(device.sessionToken, 0, random(72), notesPath), 409);
+  const notesRead = await expectStatus(api(notesPath, authDevice), 200);
+  assert.equal(notesRead.headers.get('ETag'), '"1"');
+  assert.deepEqual(await notesRead.json(), { revision: 1, ciphertext: notesCiphertext });
+  const notesUnchanged = await expectStatus(api(notesPath, notesIfCurrent), 304);
+  assert.equal(notesUnchanged.headers.get('ETag'), '"1"');
+  assert.equal(notesUnchanged.headers.get('Cache-Control'), 'private, no-store');
+  assert.equal(await notesUnchanged.text(), '');
+  for (const invalid of ['W/"1"', '*', '"01"', '"0"', '"4294967296"', '"1", "2"']) {
+    await expectStatus(api(notesPath, { headers: { ...authDevice.headers, 'If-None-Match': invalid } }), 400);
+  }
+  const peerEnrollment = await create(false, random(), { durable: true });
+  await expectStatus(callback(peerEnrollment), 303);
+  const peer = await (await expectStatus(complete(peerEnrollment), 200)).json();
+  assert.deepEqual(await (await expectStatus(api(notesPath, bearer(peer.sessionToken)), 200)).json(), { revision: 1, ciphertext: notesCiphertext });
+
   const revoked = await (await expectStatus(api('/v1/session', authDevice), 200)).json();
   assert.equal(revoked.durable, true);
-  await d1.prepare('UPDATE hub_device_session SET mail_expires_at = 1').run();
+  await d1.prepare('UPDATE hub_device_session SET mail_expires_at = 1 WHERE mail_box IS NOT NULL').run();
   const expiredGrant = await (await expectStatus(api('/v1/session', authDevice), 200)).json();
   assert.equal(expiredGrant.mailRead, false);
   assert.equal(expiredGrant.expiresIn, 0);
@@ -300,6 +327,8 @@ try {
   const otherEnrollment = await create(true, random(), { durable: true });
   await expectStatus(callback(otherEnrollment), 303);
   const otherDevice = await (await expectStatus(complete(otherEnrollment), 200)).json();
+  await expectStatus(api(notesPath, { headers: { ...bearer(otherDevice.sessionToken).headers, 'If-None-Match': '"1"' } }), 404);
+  await expectStatus(put(otherDevice.sessionToken, 1, random(72), notesPath), 409);
   await expectStatus(api(vaultPath, bearer(otherDevice.sessionToken)), 404);
   await expectStatus(put(otherDevice.sessionToken, 2, random(64)), 409);
   const sharedPath = '/v1/vault/' + random();
@@ -342,6 +371,7 @@ try {
   await expectStatus(complete(logoutRace), 410);
   await expectStatus(api('/v1/session', authDevice), 401);
   await expectStatus(api(vaultPath, authDevice), 401);
+  await expectStatus(api(notesPath, notesIfCurrent), 401);
   await expectStatus(api('/v1/auth/portal/transactions', {
     ...body({ proofChallenge: hash(random()), mailRead: true, durable: true }),
     headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + device.sessionToken },
@@ -352,6 +382,7 @@ try {
   const recovered = await (await expectStatus(complete(reenroll), 200)).json();
   const vaultAfterLogout = await (await expectStatus(api(vaultPath, bearer(recovered.sessionToken)), 200)).json();
   assert.deepEqual(vaultAfterLogout, { revision: 2, ciphertext });
+  assert.deepEqual(await (await expectStatus(api(notesPath, bearer(recovered.sessionToken)), 200)).json(), { revision: 1, ciphertext: notesCiphertext });
 
   const discardedEnrollment = await create(false, random(), { durable: true });
   await expectStatus(callback(discardedEnrollment), 303);
@@ -359,7 +390,7 @@ try {
   await expectStatus(cancel(discardedEnrollment), 204);
   await expectStatus(api('/v1/session', bearer(discarded.sessionToken)), 401);
 
-  console.log('PASS: workerd Pages binding, legacy and durable D1 identity, own-mail authority, encrypted vault CAS');
+  console.log('PASS: workerd Pages binding, legacy and durable D1 identity, own-mail authority, encrypted vault and notes CAS, 304 empty body');
 } finally {
   await config.dispose();
 }

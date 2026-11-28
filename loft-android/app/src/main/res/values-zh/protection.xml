@@ -1,0 +1,18 @@
+<resources>
+    <string name="protection_title">应用保护</string>
+    <string name="protection_setup_help">设置六位 PIN 可保护身份验证器和安全备忘录。</string>
+    <string name="protection_enabled_help">应用保护已开启。修改配置前请输入当前 PIN。</string>
+    <string name="protection_unlock_help">输入应用 PIN 以继续。</string>
+    <string name="protection_pin">应用 PIN</string>
+    <string name="protection_current_pin">当前 PIN</string>
+    <string name="protection_new_pin">新 PIN</string>
+    <string name="protection_confirm_pin">确认 PIN</string>
+    <string name="protection_unlock">解锁</string>
+    <string name="protection_use_biometrics">使用指纹或面部识别</string>
+    <string name="protection_save">保存保护设置</string>
+    <string name="protection_disable">关闭应用保护</string>
+    <string name="protection_incorrect">PIN 不正确。</string>
+    <string name="protection_rate_limited">尝试次数过多，请稍后再试。</string>
+    <string name="protection_invalid">请输入六位数字。</string>
+    <string name="protection_retry">重试</string>
+</resources>

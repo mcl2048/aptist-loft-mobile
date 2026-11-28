@@ -22,6 +22,7 @@ A Cloudflare Pages service binding forwards the original request to a Rust Worke
 | `GET /v1/mail/messages/:id/attachments/:attachmentId` | Request-dispatched inert download, bounded to 2 MiB |
 | `GET /v1/vault/:id` | Durable Hub bearer. Returns the current `revision` and opaque base64url `ciphertext` for this verified account |
 | `PUT /v1/vault/:id` | Durable Hub bearer with `baseRevision` and `ciphertext`. Conditional write returns the new revision or HTTP 409 |
+| `GET /v1/notes` and `PUT /v1/notes` | Durable Hub bearer. Per-owner encrypted note collection, conditional GET and revision compare-and-swap. [Secure Notes contract](secure-notes.md) |
 
 Clients opt in to durable enrollment with `durable: true` when creating a transaction. The long-lived Hub bearer is encrypted in the APP's SQLCipher store, and D1 indexes its scoped hash. Each account can enroll up to 32 Hub sessions. Issuer and account remain bound to the enrollment. Logout removes the corresponding authorization, while local vault records survive. Portal currently provides no revocation signal for durable Hub identity after its short grant expires.
 

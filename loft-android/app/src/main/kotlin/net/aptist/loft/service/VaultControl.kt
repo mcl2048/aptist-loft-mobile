@@ -12,8 +12,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 
 internal class VaultControl(private val unavailable: (AppCore) -> Unit) {
-    class Work(val id: Long, val command: VaultCommand, val observer: ILoftHubEvents) {
+    class Work(val id: Long, val command: VaultCommand, val observer: ILoftHubEvents, private val visible: () -> Boolean) {
         val cancelled = AtomicBoolean(false)
+        fun active() = !cancelled.get() && visible()
     }
 
     private val sync = ThreadPoolExecutor(0, 1, 30, TimeUnit.SECONDS, SynchronousQueue())
@@ -33,7 +34,7 @@ internal class VaultControl(private val unavailable: (AppCore) -> Unit) {
 
     fun reject(work: Work, code: String) {
         clear(work)
-        if (!work.cancelled.get()) reply(work, code)
+        if (work.active()) reply(work, code)
     }
 
     private fun clear(work: Work) {
@@ -46,7 +47,7 @@ internal class VaultControl(private val unavailable: (AppCore) -> Unit) {
         var result: VaultResult? = null
         var code = "ok"
         try {
-            if (!work.cancelled.get()) when (val command = work.command) {
+            if (work.active()) when (val command = work.command) {
                 is VaultCommand.ListPage -> result = VaultResult.Page(core.vaultList(command.archived, command.offset, command.generation))
                 is VaultCommand.Import -> core.vaultImport(command.uri)
                 is VaultCommand.Save -> core.vaultSave(command.draft)
@@ -67,7 +68,7 @@ internal class VaultControl(private val unavailable: (AppCore) -> Unit) {
         } catch (_: LinkageError) {
             code = "unavailable"
         } finally { clear(work) }
-        try { if (!work.cancelled.get()) reply(work, code, result) }
+        try { if (work.active()) reply(work, code, result) }
         finally { (result as? VaultResult.Reveal)?.value?.value?.fill(0) }
     }
 
@@ -75,14 +76,14 @@ internal class VaultControl(private val unavailable: (AppCore) -> Unit) {
         try {
             sync.execute {
                 val code = try {
-                    if (!work.cancelled.get()) exchange(core, work)
+                    if (work.active()) exchange(core, work)
                     "ok"
                 } catch (failure: VaultException) { problem(core, failure) }
                 catch (_: IOException) { "network" }
                 catch (_: Exception) { "unavailable" }
                 catch (_: LinkageError) { "unavailable" }
                 finally { clear(work); release() }
-                if (!work.cancelled.get()) reply(work, code)
+                if (work.active()) reply(work, code)
             }
         } catch (_: java.util.concurrent.RejectedExecutionException) {
             release()
@@ -97,9 +98,9 @@ internal class VaultControl(private val unavailable: (AppCore) -> Unit) {
         repeat(3) {
             var next: net.aptist.loft.core.generated.HubRequest? = null
             try {
-                val response = exchangeHub(request) { !work.cancelled.get() }
+                val response = exchangeHub(request) { work.active() }
                 try {
-                    if (work.cancelled.get()) throw IOException()
+                    if (!work.active()) throw IOException()
                     next = core.vaultSyncFinish(request.requestId, response.status, response.mediaType, response.body).nextRequest
                 } finally { response.body.fill(0) }
             } finally {

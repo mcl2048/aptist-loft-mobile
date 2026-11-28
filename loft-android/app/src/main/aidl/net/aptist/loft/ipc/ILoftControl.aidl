@@ -15,7 +15,11 @@ interface ILoftControl {
     oneway void executeHub(long requestId, String action, @nullable String input, boolean mailAccess,
         in @nullable ParcelFileDescriptor destination, ILoftHubEvents observer);
     oneway void cancelHubWork(long requestId);
-    oneway void executeVault(long requestId, in byte[] command, ILoftHubEvents observer);
+    oneway void executeVault(long epoch, long requestId, in byte[] command, ILoftHubEvents observer);
+    oneway void setProtectedArea(long epoch, int area);
+    oneway void executeProtected(long epoch, long requestId, in byte[] command, ILoftHubEvents observer);
     oneway void cancelVaultWork(long requestId);
+    oneway void executeNotesSync(long requestId, ILoftHubEvents observer);
+    oneway void cancelNotesSync(long requestId);
     oneway void queryVpnTraffic(long attemptId, ILoftTrafficEvents observer);
 }

@@ -2,7 +2,8 @@
 
 use loft_core::{
     CoreError, LoadedLocalConfig, LocalConfigEdit, LocalConfigStore, LocalSettings,
-    MAX_NODE_INPUT_BYTES, MAX_NODES, PrivateRecord, VAULT_IMAGE_LIMIT,
+    MAX_NODE_INPUT_BYTES, MAX_NODES, NOTES_IMAGE_LIMIT, PROTECTION_IMAGE_LIMIT, PrivateRecord,
+    VAULT_IMAGE_LIMIT,
 };
 use rusqlite::{
     Connection, Error, ErrorCode, OpenFlags, Row, TransactionBehavior, config::DbConfig,
@@ -15,7 +16,7 @@ const PAGE_BYTES: u64 = 4096;
 const MAX_PAGES: i32 = 16_384;
 const MAX_SETTINGS_BYTES: usize = 8192;
 const APPLICATION_ID: u32 = u32::from_be_bytes(*b"LOFT");
-const SCHEMA_VERSION: u32 = 2;
+const SCHEMA_VERSION: u32 = 3;
 const HUB_SESSION_LIMIT: usize = 8192;
 
 const SCHEMA: &str = "
@@ -31,9 +32,14 @@ const SCHEMA: &str = "
     ) STRICT, WITHOUT ROWID;";
 const PRIVATE_SCHEMA: &str = "
     CREATE TABLE local_private (
-        kind INTEGER NOT NULL PRIMARY KEY CHECK (kind IN (1, 2)),
+        kind INTEGER NOT NULL PRIMARY KEY CHECK (kind BETWEEN 1 AND 4),
         data BLOB NOT NULL CHECK (
-            length(data) BETWEEN 1 AND CASE kind WHEN 1 THEN 245760 ELSE 8192 END
+            length(data) BETWEEN 1 AND CASE kind
+                WHEN 1 THEN 245760
+                WHEN 2 THEN 8192
+                WHEN 3 THEN 2048
+                WHEN 4 THEN 491520
+            END
         )
     ) STRICT;";
 
@@ -99,11 +105,24 @@ impl SqlCipherStore {
         }
         match (application, version) {
             (APPLICATION_ID, SCHEMA_VERSION) => check_cipher_integrity(&transaction)?,
-            (APPLICATION_ID, 1) => {
+            (APPLICATION_ID, 1 | 2) => {
                 check_cipher_integrity(&transaction)?;
+                if version == 2 {
+                    transaction
+                        .execute_batch("ALTER TABLE local_private RENAME TO local_private_v2;")
+                        .map_err(sql_error)?;
+                }
                 transaction
                     .execute_batch(PRIVATE_SCHEMA)
                     .map_err(sql_error)?;
+                if version == 2 {
+                    transaction
+                        .execute_batch(
+                            "INSERT INTO local_private SELECT kind, data FROM local_private_v2;
+                         DROP TABLE local_private_v2;",
+                        )
+                        .map_err(sql_error)?;
+                }
                 transaction
                     .pragma_update(None, "user_version", SCHEMA_VERSION)
                     .map_err(sql_error)?;
@@ -364,6 +383,8 @@ fn private_record(record: PrivateRecord) -> (u32, usize) {
     match record {
         PrivateRecord::Vault => (1, VAULT_IMAGE_LIMIT),
         PrivateRecord::Hub => (2, HUB_SESSION_LIMIT),
+        PrivateRecord::Protection => (3, PROTECTION_IMAGE_LIMIT),
+        PrivateRecord::Notes => (4, NOTES_IMAGE_LIMIT),
     }
 }
 

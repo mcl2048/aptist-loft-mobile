@@ -29,18 +29,22 @@ internal class VaultDisplay(
 internal class VaultPresentation(private val client: CoreServiceClient, private val scope: CoroutineScope) {
     private val mutable = MutableStateFlow(VaultDisplay())
     val state: StateFlow<VaultDisplay> = mutable
-    private var active = false
+    private var activeEpoch: Long? = null
     private var nextId = 0L
     private var pending: Long? = null
     private var expiry: Job? = null
     private var authorized: VaultEntry? = null
 
-    fun setActive(value: Boolean) {
-        if (active == value) return
-        active = value
-        if (value) load() else {
+    fun setActive(epoch: Long?) {
+        if (activeEpoch == epoch) return
+        activeEpoch = epoch
+        if (epoch != null) {
+            load()
+            revealIfReady()
+        } else {
             pending?.let(client::cancelVault)
             pending = null
+            authorized = null
             hide()
             mutable.value = VaultDisplay()
         }
@@ -68,7 +72,7 @@ internal class VaultPresentation(private val client: CoreServiceClient, private 
     }
 
     private fun revealIfReady() {
-        if (!active || pending != null) return
+        if (activeEpoch == null || pending != null) return
         val entry = authorized ?: return
         authorized = null
         hide()
@@ -95,14 +99,15 @@ internal class VaultPresentation(private val client: CoreServiceClient, private 
 
     private fun submit(command: VaultCommand, archived: Boolean = mutable.value.archived,
         revealEntry: VaultEntry? = null, refresh: Boolean = false, settledStatus: String? = null) {
-        if (!active || pending != null) { command.clear(); return }
+        val epoch = activeEpoch
+        if (epoch == null || pending != null) { command.clear(); return }
         val id = runCatching { Math.addExact(nextId, 1) }.getOrNull() ?: run { command.clear(); return }
         nextId = id
         pending = id
         val old = mutable.value
         mutable.value = VaultDisplay(archived, old.page.takeIf { archived == old.archived }, busy = true)
-        if (!client.executeVault(id, command) { code, result ->
-                if (!active || pending != id) {
+        if (!client.executeVault(epoch, id, command) { code, result ->
+                if (activeEpoch != epoch || pending != id) {
                     (result as? VaultResult.Reveal)?.value?.value?.fill(0)
                     return@executeVault
                 }

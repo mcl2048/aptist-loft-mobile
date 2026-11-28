@@ -27,7 +27,8 @@
         android:icon="@drawable/ic_loft"
         android:supportsRtl="true"
         android:theme="@style/Theme.Loft">
-        <activity android:name=".MainActivity" android:exported="true" android:resizeableActivity="true">
+        <activity android:name=".MainActivity" android:exported="true" android:resizeableActivity="true"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

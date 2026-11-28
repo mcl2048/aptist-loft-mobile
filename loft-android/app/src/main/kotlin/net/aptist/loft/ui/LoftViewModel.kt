@@ -112,7 +112,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     private val vpnPermission = VpnPermissionDraft()
     private var nextNodeQuery = 0L
     private var vpnTrafficRequest: Any? = null
-    private val hubSnapshotPages = setOf(Page.WELCOME, Page.ACCOUNT, Page.MAIL, Page.TOTP)
+    private val hubSnapshotPages = setOf(Page.WELCOME, Page.ACCOUNT, Page.MAIL, Page.TOTP, Page.NOTES)
     private var nodeQuery: Long? = null
     private var nodeQueryGeneration: ULong? = null
     private var nodeQueryOffset: UInt? = null
@@ -125,15 +125,67 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     private var browserUrl: String? = null
     private var hubExpiry: Job? = null
     private var pendingExport: HubExport? = null
-    private val client = CoreServiceClient(application, ::receivedFrame, ::receivedReceipt, ::serviceLost, ::receivedNodePage)
+    private val client = CoreServiceClient(application, ::receivedFrame, ::receivedReceipt, ::serviceLost, ::receivedNodePage, ::receiveNotesSync)
     internal val vault = VaultPresentation(client, viewModelScope)
+    private val mutableNotesRefresh = MutableStateFlow(0L)
+    internal val notesRefresh: StateFlow<Long> = mutableNotesRefresh
+    private var displayedNotesGeneration: ULong? = null
+
+    private fun receiveNotesSync(generation: Long, signedOut: Boolean) {
+        if (signedOut) {
+            clearHub()
+            updateNotesSchedule(false)
+            refreshProtection()
+            refreshHub()
+        } else if (visible && mutable.value.presentation.navigation.page == Page.NOTES &&
+            displayedNotesGeneration != generation.toULong()) {
+            mutableNotesRefresh.value = Math.incrementExact(mutableNotesRefresh.value)
+        }
+    }
+
+    private var notesSyncScheduled = false
+    internal val protection = ProtectionPresentation(client, vault) { command ->
+        when (command) {
+            is NotesCommand.SyncConfigure -> updateNotesSchedule(true, edited = true)
+            NotesCommand.SyncDisable -> updateNotesSchedule(false)
+            is NotesCommand.Save, is NotesCommand.Archive, is NotesCommand.Delete ->
+                if (notesSyncScheduled) NotesSyncSchedule.edited(getApplication<Application>())
+            else -> Unit
+        }
+    }
+
+    internal fun executeNotes(command: NotesCommand, receive: (String, NotesResult?) -> Unit): Boolean =
+        protection.notes(command) { code, result ->
+            if (result is NotesResult.Page) displayedNotesGeneration = result.value.generation
+            receive(code, result)
+        }
+
+    private fun updateNotesSchedule(eligible: Boolean, edited: Boolean = false) {
+        val app = getApplication<Application>()
+        if (notesSyncScheduled != eligible) {
+            notesSyncScheduled = eligible
+            NotesSyncSchedule.configure(app, eligible)
+        }
+        if (eligible && edited) NotesSyncSchedule.edited(app)
+    }
+
+    private fun refreshProtection(force: Boolean = false) {
+        val current = mutable.value
+        val area = if (visible && current.canChangeConfiguration) when (current.presentation.navigation.page) {
+            Page.APP_PROTECTION -> ProtectedArea.SETTINGS
+            Page.TOTP -> ProtectedArea.VAULT
+            Page.NOTES -> ProtectedArea.NOTES
+            else -> null
+        } else null
+        protection.select(area, force)
+    }
 
     init { client.setPresentationLocale(mutable.value.locale); client.bind() }
 
     fun setVisible(value: Boolean) {
         visible = value
         client.setVisible(value)
-        vault.setActive(value && mutable.value.canChangeConfiguration && mutable.value.presentation.navigation.page == Page.TOTP)
+        refreshProtection()
         if (!value) {
             cancelApps(); cancelNodePage(); cancelVpnTraffic()
             if (mutable.value.presentation.navigation.page == Page.MAIL && !hubExportInProgress()) clearMail()
@@ -205,7 +257,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
                     routingDraft = if (navigation.page == Page.ROUTING) current.native?.core?.let { RoutingDraft.from(it.routingEnabled, it.selectedApps.toSet()) } else current.presentation.routingDraft))
             if (navigation.page == Page.ROUTING && visible) loadApps()
             if (navigation.page in setOf(Page.NODES, Page.NODE_DETAILS) && visible) loadNodePage()
-            vault.setActive(visible && current.canChangeConfiguration && navigation.page == Page.TOTP)
+            refreshProtection()
             if (visible && navigation.page in hubSnapshotPages) refreshHub()
             if (visible && navigation.page == Page.WELCOME) refreshVpnTraffic()
         } else mutable.value = old.copy(presentation = old.presentation.copy(navigation = navigation))
@@ -332,7 +384,15 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         mutable.value = state.copy(hub = latest, hubBusy = false, hubStatus = status, hubBrowserReady = browserUrl != null,
             hubMail = result?.page?.takeIf { canShowMail } ?: state.hubMail.takeIf { canShowMail && !scopeChanged },
             hubMessage = result?.message?.takeIf { canShowMail } ?: state.hubMessage.takeIf { canShowMail && !scopeChanged && result?.page == null })
-        if (result != null) scheduleHubExpiry(latest)
+        if (result != null) {
+            updateNotesSchedule(result.notesSyncEligible)
+            val oldHub = state.hub
+            if (oldHub?.origin != latest?.origin || oldHub?.issuer != latest?.issuer ||
+                oldHub?.session?.subject != latest?.session?.subject) {
+                if (state.presentation.navigation.page == Page.NOTES) refreshProtection(force = true)
+            }
+            scheduleHubExpiry(latest)
+        }
     }
     private fun scheduleHubExpiry(snapshot: HubSnapshot?) {
         hubExpiry?.cancel()
@@ -367,6 +427,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         browserUrl = null
         pendingExport = null
         mutable.value = mutable.value.copy(hub = null, hubStatus = null, hubBrowserReady = false, hubMail = null, hubMessage = null)
+        if (mutable.value.presentation.navigation.page == Page.NOTES) protection.select(null)
     }
     fun selectNode(id: String, showDetails: Boolean) {
         val state = mutable.value
@@ -597,7 +658,10 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
     private fun receivedFrame(frame: SnapshotFrame) {
-        if (mutable.value.native?.core?.serverAddress != frame.core.serverAddress) clearHub()
+        if (mutable.value.native?.core?.serverAddress != frame.core.serverAddress) {
+            if (mutable.value.native != null) updateNotesSchedule(false)
+            clearHub()
+        }
         val trafficScopeChanged = vpnTrafficScope(mutable.value.native) != vpnTrafficScope(frame)
         if (trafficScopeChanged) cancelVpnTraffic(clearSample = true)
         val state = mutable.value
@@ -608,7 +672,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         mutable.value = state.copy(native = frame, availability = ServiceAvailability.AVAILABLE, serverText = server, selectedNodeMetadata = choice.summary,
             presentation = state.presentation.copy(routingDraft = draft, selectedNodeId = choice.id))
         if (visible && nodePageVisible()) loadNodePage()
-        if (visible && mutable.value.presentation.navigation.page == Page.TOTP) vault.setActive(mutable.value.canChangeConfiguration)
+        refreshProtection()
         if (state.hub == null && state.presentation.navigation.page in hubSnapshotPages) refreshHub()
         if (trafficScopeChanged) refreshVpnTraffic()
     }
@@ -646,6 +710,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
             updated = updated.copy(storageOpenFailure = null)
         }
         mutable.value = updated
+        refreshProtection()
         if (vpnTrafficScope(state.native) != vpnTrafficScope(updated.native)) {
             cancelVpnTraffic(clearSample = true)
             refreshVpnTraffic()
@@ -654,7 +719,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         if (code in setOf(ReceiptCode.SERVER_STAGED, ReceiptCode.SERVER_RESET, ReceiptCode.STORAGE_REOPENED)) refreshHub()
     }
     private fun serviceLost(code: ReceiptCode) {
-        vault.setActive(false)
+        protection.select(null)
         pendingOperation = null
         vpnPermission.cancel()
         cancelNodePage()
@@ -669,7 +734,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     private fun isStorageOpenFailure(code: ReceiptCode): Boolean =
         code == ReceiptCode.STORAGE_UNAVAILABLE || code == ReceiptCode.STORAGE_RECOVERY_REQUIRED
     override fun onCleared() {
-        vault.setActive(false)
+        protection.select(null)
         clearHub(); client.close(); cancelApps(); cancelNodePage()
         mutable.value = mutable.value.copy(importText = "", serverText = "", native = null,
             presentation = mutable.value.presentation.copy(routingDraft = null))

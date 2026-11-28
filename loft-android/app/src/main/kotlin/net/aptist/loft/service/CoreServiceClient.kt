@@ -24,7 +24,8 @@ import net.aptist.loft.core.generated.NodePage
 /** Uses only application Context; retained across Activity and window changes. */
 class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -> Unit,
     private val onReceipt: (Long, ReceiptCode) -> Unit, private val onLost: (ReceiptCode) -> Unit,
-    private val onNodePage: (Long, NodePage?, ReceiptCode?) -> Unit = { _, _, _ -> }) {
+    private val onNodePage: (Long, NodePage?, ReceiptCode?) -> Unit = { _, _, _ -> },
+    private val onNotesSyncReceipt: (Long, Boolean) -> Unit = { _, _ -> }) {
     private val appContext = context.applicationContext
     private val handler = Handler(Looper.getMainLooper())
     private val epoch = VisibilityEpoch()
@@ -35,6 +36,7 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
     private var visible = false
     private var closed = false
     private var bindingGeneration = 0L
+    private var protectedEpoch = 0L
     private var subscribed: ILoftEvents? = null
     private var deathRecipient: IBinder.DeathRecipient? = null
     private var connection: ServiceConnection? = null
@@ -79,6 +81,12 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
         val observationTicket = epoch.begin()
         val bindingTicket = bindingGeneration
         val callback = object : ILoftEvents.Stub() {
+            override fun onNotesSync(generation: Long, signedOut: Boolean) {
+                if (Binder.getCallingUid() != Process.myUid()) return
+                handler.post {
+                    if (bindingTicket == bindingGeneration && epoch.accepts(observationTicket)) onNotesSyncReceipt(generation, signedOut)
+                }
+            }
             override fun onNodePage(requestId: Long, code: String, payload: ByteArray) = Unit
             override fun onSnapshot(payload: ByteArray) {
                 if (!validCaller(payload)) return
@@ -114,6 +122,7 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
         val control = remote ?: return false
         val bindingTicket = bindingGeneration
         val callback = object : ILoftEvents.Stub() {
+            override fun onNotesSync(generation: Long, signedOut: Boolean) = Unit
             override fun onSnapshot(payload: ByteArray) = Unit
             override fun onNodePage(requestId: Long, code: String, payload: ByteArray) = Unit
             override fun onReceipt(id: Long, code: String, snapshotPayload: ByteArray) {
@@ -136,6 +145,7 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
         val ticket = bindingGeneration
         if (!pages.expect(ticket, requestId, offset, generation)) return false
         val callback = object : ILoftEvents.Stub() {
+            override fun onNotesSync(generation: Long, signedOut: Boolean) = Unit
             override fun onSnapshot(payload: ByteArray) = Unit
             override fun onReceipt(id: Long, code: String, payload: ByteArray) = Unit
             override fun onNodePage(id: Long, code: String, payload: ByteArray) {
@@ -205,7 +215,7 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
         try { remote?.cancelHubWork(requestId) } catch (_: RemoteException) { }
     }
 
-    internal fun executeVault(requestId: Long, command: VaultCommand, receive: (String, VaultResult?) -> Unit): Boolean {
+    internal fun executeVault(epoch: Long, requestId: Long, command: VaultCommand, receive: (String, VaultResult?) -> Unit): Boolean {
         val control = remote ?: run { command.clear(); return false }
         val ticket = bindingGeneration
         val payload = try { VaultWire.command(command) } catch (_: java.io.IOException) { return false }
@@ -218,7 +228,7 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
                 }
                 handler.post {
                     try {
-                        if (closed || ticket != bindingGeneration) return@post
+                        if (closed || ticket != bindingGeneration || epoch != protectedEpoch) return@post
                         val read = try { result.takeIf { it.isNotEmpty() }?.let(VaultWire::readResult) }
                         catch (_: java.io.IOException) { receive("unavailable", null); return@post }
                         receive(code, read)
@@ -226,7 +236,39 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
                 }
             }
         }
-        return try { control.executeVault(requestId, payload, callback); true }
+        return try { control.executeVault(epoch, requestId, payload, callback); true }
+        catch (_: RemoteException) { lost(ReceiptCode.STATE_UNAVAILABLE); false }
+        finally { payload.fill(0) }
+    }
+
+    internal fun selectProtectedArea(epoch: Long, area: ProtectedArea?): Boolean {
+        protectedEpoch = epoch
+        val control = remote ?: return false
+        return try { control.setProtectedArea(epoch, area?.ordinal ?: -1); true }
+        catch (_: RemoteException) { lost(ReceiptCode.STATE_UNAVAILABLE); false }
+    }
+
+    internal fun executeProtected(epoch: Long, requestId: Long, command: ProtectedCommand,
+        receive: (String, ProtectedResult?) -> Unit): Boolean {
+        val control = remote
+        if (control == null || requestId <= 0) { command.clear(); return false }
+        val generation = bindingGeneration
+        val payload = try { ProtectedWire.command(command) } catch (_: java.io.IOException) { return false }
+        finally { command.clear() }
+        val callback = object : ILoftHubEvents.Stub() {
+            override fun onResult(id: Long, code: String, result: ByteArray) {
+                if (!validCaller(result) || id != requestId || code.length > 40) { result.fill(0); return }
+                handler.post {
+                    try {
+                        if (generation != bindingGeneration || epoch != protectedEpoch) return@post
+                        val decoded = try { result.takeIf { it.isNotEmpty() }?.let(ProtectedWire::readResult) }
+                        catch (_: java.io.IOException) { receive("unavailable", null); return@post }
+                        receive(code, decoded)
+                    } finally { result.fill(0) }
+                }
+            }
+        }
+        return try { control.executeProtected(epoch, requestId, payload, callback); true }
         catch (_: RemoteException) { lost(ReceiptCode.STATE_UNAVAILABLE); false }
         finally { payload.fill(0) }
     }

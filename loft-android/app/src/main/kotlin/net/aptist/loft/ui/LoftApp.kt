@@ -45,6 +45,9 @@ import net.aptist.loft.core.generated.ConnectionState
 import net.aptist.loft.core.generated.VpnFailure
 import net.aptist.loft.foundation.*
 import net.aptist.loft.service.ReceiptCode
+import net.aptist.loft.service.ProtectedArea
+import net.aptist.loft.ui.notes.PrivateEditorInput
+import net.aptist.loft.ui.notes.SecureNotesScreen
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
@@ -53,6 +56,10 @@ import kotlin.math.roundToInt
 @Composable
 fun LoftApp(model: LoftViewModel, onExit: () -> Unit, onTheme: (ThemeChoice) -> Unit, onLocale: (String) -> Unit, onConnect: () -> Unit) {
     val state by model.ui.collectAsStateWithLifecycle()
+    val protectedPage by model.protection.state.collectAsStateWithLifecycle()
+    val notesRefresh by model.notesRefresh.collectAsStateWithLifecycle()
+    val notesOpen = state.presentation.navigation.page == Page.NOTES &&
+        protectedPage.area == ProtectedArea.NOTES && protectedPage.unlocked
     val keyboard = LocalSoftwareKeyboardController.current
     val imeVisible = WindowInsets.isImeVisible
     val activity = LocalActivity.current as? MainActivity
@@ -84,18 +91,24 @@ fun LoftApp(model: LoftViewModel, onExit: () -> Unit, onTheme: (ThemeChoice) -> 
                 val blocked = state.presentation.navigation.pendingPage != null
                 Box(Modifier.fillMaxSize().then(if (blocked) Modifier.clearAndSetSemantics { } else Modifier)) {
                     ModuleRail(state, model, layout, viewport.height, Modifier.offset(x = layout.railLeft.dp).width(layout.railWidth.dp).fillMaxHeight())
-                    Pane(layout.primary) {
-                        Column(Modifier.fillMaxSize()) {
-                            val page = state.presentation.navigation.page
-                            if (page != Page.WELCOME && page != Page.NODES && (page != Page.NODE_DETAILS || layout.secondary == null)) {
-                                AppHeader(state, model)
-                            }
-                            StorageFailure(state, model)
-                            PrimaryContent(state, model, layout.secondary != null, onTheme, onLocale, onConnect, Modifier.weight(1f))
+                    if (notesOpen) {
+                        key(protectedPage.epoch) {
+                            SecureNotesScreen(Modifier.fillMaxSize(), model::executeNotes, layout.primary, layout.secondary, notesRefresh)
                         }
-                    }
-                    layout.secondary?.let { secondary ->
-                        Pane(secondary) { SupportingContent(state, model, onTheme, onLocale) }
+                    } else {
+                        Pane(layout.primary) {
+                            Column(Modifier.fillMaxSize()) {
+                                val page = state.presentation.navigation.page
+                                if (page != Page.WELCOME && page != Page.NODES && (page != Page.NODE_DETAILS || layout.secondary == null)) {
+                                    AppHeader(state, model)
+                                }
+                                StorageFailure(state, model)
+                                PrimaryContent(state, model, layout.secondary != null, onTheme, onLocale, onConnect, Modifier.weight(1f))
+                            }
+                        }
+                        layout.secondary?.let { secondary ->
+                            Pane(secondary) { SupportingContent(state, model, onTheme, onLocale) }
+                        }
                     }
                     if (state.presentation.navigation.menuOpen) SecondaryMenu(state, model, layout.primary)
                 }
@@ -227,6 +240,9 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
             Explanation(R.string.vpn_policy_title, R.string.vpn_policy_body)
             NetworkPrivacyStatus(state)
             NotificationStatus(state, model)
+            LinkButton(onClick = { model.navigate(Page.APP_PROTECTION) }, modifier = Modifier.heightIn(min = 48.dp)) {
+                Text(stringResource(R.string.protection_title))
+            }
             LinkButton(onClick = { model.navigate(Page.NODES) }, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.node_list)) }
             LinkButton(onClick = { model.navigate(Page.ROUTING) }, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.routing_title)) }
         }
@@ -273,7 +289,29 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
             if (!dual) { Explanation(R.string.device_trust, R.string.device_unknown); Text(stringResource(R.string.shield_scope)) }
         }
         Page.MAIL -> ScrollPage(modifier) { PageTitle(R.string.mail_title); HubMail(state, model) }
-        Page.TOTP -> ScrollPage(modifier) { PageTitle(R.string.vault_title); VaultPageContent(state, model.vault) }
+        Page.TOTP -> {
+            val protection by model.protection.state.collectAsStateWithLifecycle()
+            ScrollPage(modifier) {
+                PageTitle(R.string.vault_title)
+                if (protection.area == ProtectedArea.VAULT) {
+                    if (protection.unlocked) PrivateEditorInput { VaultPageContent(state, model.vault) }
+                    else ProtectionGate(protection, model.protection)
+                }
+            }
+        }
+        Page.NOTES -> {
+            val protection by model.protection.state.collectAsStateWithLifecycle()
+            if (protection.area == ProtectedArea.NOTES && !protection.unlocked) {
+                ScrollPage(modifier) { PageTitle(R.string.notes_title); ProtectionGate(protection, model.protection) }
+            }
+        }
+        Page.APP_PROTECTION -> {
+            val protection by model.protection.state.collectAsStateWithLifecycle()
+            ScrollPage(modifier) {
+                PageTitle(R.string.protection_title)
+                if (protection.area == ProtectedArea.SETTINGS) ProtectionSettings(protection, model.protection)
+            }
+        }
         Page.AUDIT -> LazyColumn(modifier.fillMaxSize().padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item { PageTitle(R.string.audit_title); Text(stringResource(R.string.audit_body)) }
             if (state.receipts.isEmpty()) item { Text(stringResource(R.string.no_receipts)) }
@@ -291,6 +329,9 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
             PageTitle(R.string.settings_title)
             AppearanceChoices(state, onTheme, onLocale)
             NotificationStatus(state, model)
+            LinkButton(onClick = { model.navigate(Page.APP_PROTECTION) }, modifier = Modifier.heightIn(min = 48.dp)) {
+                Text(stringResource(R.string.protection_title))
+            }
             LinkButton(onClick = { model.navigate(Page.ACCOUNT) }, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.account_title)) }
             if (state.hub?.mailSupported == true) LinkButton(onClick = { model.navigate(Page.MAIL) }, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.mail_title)) }
             if (!dual) PrivacyAndBackground()
@@ -310,6 +351,7 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
             Page.ACCOUNT -> Text(stringResource(R.string.account_guest_body))
             Page.MAIL -> Explanation(R.string.privacy, R.string.hub_mail_privacy)
             Page.TOTP -> Text(stringResource(R.string.vault_offline))
+            Page.NOTES, Page.APP_PROTECTION -> Unit
             Page.SHIELD -> { Explanation(R.string.device_trust, R.string.device_unknown); Text(stringResource(R.string.shield_scope)) }
             Page.SETTINGS -> PrivacyAndBackground()
             Page.AUDIT, Page.DIAGNOSTICS -> { Explanation(R.string.framework_title, R.string.framework_body); LocalStorage() }
@@ -459,6 +501,9 @@ private fun VpnDirectory(
         if (!state.hubBrowserReady) PrimaryButton(R.string.hub_complete_sign_in, model::completeHubLogin, enabled)
         LinkButton(onClick = model::cancelHubLogin, enabled = enabled) { Text(stringResource(R.string.cancel)) }
         return
+    }
+    LinkButton(onClick = model::checkHub, enabled = enabled) {
+        Text(stringResource(R.string.hub_check_server))
     }
     if (profile.session == null) PrimaryButton(R.string.hub_sign_in, { model.signIn(false) }, enabled)
     else LinkButton(onClick = model::logoutHub, enabled = enabled) { Text(stringResource(R.string.hub_sign_out)) }
@@ -728,13 +773,13 @@ internal fun protocolName(node: NodeSummary): String = when (node.protocol) {
 }
 internal fun moduleIcon(module: ModuleId): Int = when (module) {
     ModuleId.WELCOME -> R.drawable.ic_home; ModuleId.VPN -> R.drawable.ic_network; ModuleId.SHIELD -> R.drawable.ic_shield
-    ModuleId.MAIL -> R.drawable.ic_mail; ModuleId.TOTP -> R.drawable.ic_vault; ModuleId.AUDIT -> R.drawable.ic_log; ModuleId.SETTING -> R.drawable.ic_settings; ModuleId.ACCOUNT -> R.drawable.ic_account
+    ModuleId.MAIL -> R.drawable.ic_mail; ModuleId.TOTP -> R.drawable.ic_vault; ModuleId.NOTES -> R.drawable.ic_secure_notes; ModuleId.AUDIT -> R.drawable.ic_log; ModuleId.SETTING -> R.drawable.ic_settings; ModuleId.ACCOUNT -> R.drawable.ic_account
 }
 internal fun moduleTitle(module: ModuleId): Int = when (module) {
     ModuleId.WELCOME -> R.string.module_welcome; ModuleId.VPN -> R.string.module_vpn; ModuleId.SHIELD -> R.string.module_shield
-    ModuleId.MAIL -> R.string.module_mail; ModuleId.TOTP -> R.string.vault_title; ModuleId.AUDIT -> R.string.module_audit; ModuleId.SETTING -> R.string.module_setting; ModuleId.ACCOUNT -> R.string.module_account
+    ModuleId.MAIL -> R.string.module_mail; ModuleId.TOTP -> R.string.vault_title; ModuleId.NOTES -> R.string.notes_title; ModuleId.AUDIT -> R.string.module_audit; ModuleId.SETTING -> R.string.module_setting; ModuleId.ACCOUNT -> R.string.module_account
 }
 private fun pageTitle(page: Page): Int = when (page) {
     Page.NODES -> R.string.node_list; Page.NODE_DETAILS -> R.string.node_details; Page.IMPORT_NODE -> R.string.import_link
-    Page.ROUTING -> R.string.routing_title; Page.DIAGNOSTICS -> R.string.diagnostics_title; else -> moduleTitle(page.module)
+    Page.APP_PROTECTION -> R.string.protection_title; Page.ROUTING -> R.string.routing_title; Page.DIAGNOSTICS -> R.string.diagnostics_title; else -> moduleTitle(page.module)
 }

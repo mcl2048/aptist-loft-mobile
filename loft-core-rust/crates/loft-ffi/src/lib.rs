@@ -18,6 +18,8 @@ use zeroize::Zeroizing;
 
 mod hub;
 pub use hub::*;
+mod notes;
+pub use notes::*;
 mod vault;
 pub use vault::*;
 

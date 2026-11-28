@@ -1,6 +1,6 @@
 # Framework contract · CoreSnapshot 2 / Android envelope 3
 
-Product `loft`, Android package `net.aptist.loft`, target version `0.1.6-LYNX`. This contract covers the application framework and its VPN resource adapter. Policy JSON and NodePage use schema 1. Their numbers are independent of the snapshot and envelope versions. See the [requirements](../requirements.md) for executed checks and remaining roadmap work.
+Product `loft`, Android package `net.aptist.loft`, target version `0.1.7-LYNX`. This contract covers the application framework and its VPN resource adapter. Policy JSON and NodePage use schema 1. Their numbers are independent of the snapshot and envelope versions. [Requirements and verification](../requirements.md)
 
 ## Owners and generated boundaries
 

@@ -1,0 +1,18 @@
+<resources>
+    <string name="protection_title">アプリ保護</string>
+    <string name="protection_setup_help">6 桁の PIN で認証アプリとセキュアメモを保護できます。</string>
+    <string name="protection_enabled_help">アプリ保護は有効です。変更するには現在の PIN を入力してください。</string>
+    <string name="protection_unlock_help">続けるにはアプリの PIN を入力してください。</string>
+    <string name="protection_pin">アプリの PIN</string>
+    <string name="protection_current_pin">現在の PIN</string>
+    <string name="protection_new_pin">新しい PIN</string>
+    <string name="protection_confirm_pin">PIN の確認</string>
+    <string name="protection_unlock">ロックを解除</string>
+    <string name="protection_use_biometrics">指紋または顔認証を使う</string>
+    <string name="protection_save">保護設定を保存</string>
+    <string name="protection_disable">アプリ保護を無効にする</string>
+    <string name="protection_incorrect">PIN が正しくありません。</string>
+    <string name="protection_rate_limited">試行回数が上限に達しました。しばらくしてから再試行してください。</string>
+    <string name="protection_invalid">6 桁の数字を入力してください。</string>
+    <string name="protection_retry">再試行</string>
+</resources>

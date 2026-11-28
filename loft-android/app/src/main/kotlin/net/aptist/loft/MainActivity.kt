@@ -3,6 +3,13 @@ package net.aptist.loft
 import android.os.Bundle
 import android.os.Build
 import android.os.CancellationSignal
+import android.security.keystore.KeyPermanentlyInvalidatedException
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
+import java.security.KeyStore
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
 import android.Manifest
 import android.app.KeyguardManager
 import android.hardware.biometrics.BiometricManager
@@ -27,7 +34,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.aptist.loft.foundation.ObscuredTouchGate
 import net.aptist.loft.foundation.Page
 import net.aptist.loft.foundation.TouchDispatch
@@ -40,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private val touchGate = ObscuredTouchGate()
     private var sensitivePage = false
     private var windowActive = false
+    private var appBiometric: CancellationSignal? = null
     private var vaultAuthorization: VaultEntry? = null
     private var vaultBiometric: CancellationSignal? = null
     private val vaultCredential = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -92,10 +102,12 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         model.setVisible(false)
         windowActive = false
+        cancelAppBiometric()
         applySensitiveWindow()
         super.onStop()
     }
     override fun onDestroy() {
+        cancelAppBiometric()
         vaultAuthorization = null
         vaultBiometric?.cancel()
         vaultBiometric = null
@@ -116,7 +128,8 @@ class MainActivity : AppCompatActivity() {
             vaultBiometric?.cancel()
             vaultBiometric = null
         }
-        val sensitive = page in setOf(Page.IMPORT_NODE, Page.ACCOUNT, Page.MAIL, Page.TOTP)
+        if (page != Page.TOTP && page != Page.NOTES) cancelAppBiometric()
+        val sensitive = page in setOf(Page.IMPORT_NODE, Page.ACCOUNT, Page.MAIL, Page.TOTP, Page.NOTES, Page.APP_PROTECTION)
         if (sensitivePage == sensitive) return
         sensitivePage = sensitive
         applySensitiveWindow()
@@ -156,6 +169,85 @@ class MainActivity : AppCompatActivity() {
         val intent = VpnService.prepare(this)
         if (intent == null) model.completeVpnPermission(true) else vpnPermission.launch(intent)
     }
+    @Suppress("DEPRECATION")
+    internal fun appBiometricAvailable(): Boolean {
+        val manager = getSystemService(BiometricManager::class.java) ?: return false
+        return try {
+            val status = if (Build.VERSION.SDK_INT >= 30) manager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+            else manager.canAuthenticate()
+            status == BiometricManager.BIOMETRIC_SUCCESS
+        } catch (_: RuntimeException) { false }
+    }
+
+    @Suppress("DEPRECATION")
+    internal fun requestAppBiometric(epoch: Long) {
+        if (!windowActive || appBiometric != null || !appBiometricAvailable()) return
+        val signal = CancellationSignal()
+        appBiometric = signal
+        lifecycleScope.launch {
+            try {
+                val cipher = withContext(Dispatchers.IO) { appBiometricCipher() }
+                if (appBiometric !== signal || !windowActive) return@launch
+                val builder = BiometricPrompt.Builder(this@MainActivity).setTitle(getString(R.string.protection_title))
+                    .setNegativeButton(getString(R.string.cancel), mainExecutor) { _, _ ->
+                        finishAppBiometric(signal, epoch, false)
+                    }
+                if (Build.VERSION.SDK_INT >= 30) builder.setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+                else builder.setDeviceCredentialAllowed(false)
+                builder.build().authenticate(BiometricPrompt.CryptoObject(cipher), signal, mainExecutor,
+                    object : BiometricPrompt.AuthenticationCallback() {
+                        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult?) {
+                            val verified = runCatching {
+                                check(result?.cryptoObject?.cipher === cipher)
+                                cipher.doFinal(byteArrayOf(1)).fill(0)
+                            }.isSuccess
+                            finishAppBiometric(signal, epoch, verified)
+                        }
+                        override fun onAuthenticationError(errorCode: Int, errString: CharSequence?) {
+                            finishAppBiometric(signal, epoch, false)
+                        }
+                    })
+            } catch (_: Exception) { finishAppBiometric(signal, epoch, false) }
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun appBiometricCipher(): Cipher {
+        val alias = "net.aptist.loft.app-protection-biometric.v1"
+        val store = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+        fun generate(): SecretKey {
+            val builder = KeyGenParameterSpec.Builder(alias, KeyProperties.PURPOSE_ENCRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setUserAuthenticationRequired(true)
+                .setInvalidatedByBiometricEnrollment(true)
+            if (Build.VERSION.SDK_INT >= 30) builder.setUserAuthenticationParameters(0, KeyProperties.AUTH_BIOMETRIC_STRONG)
+            else builder.setUserAuthenticationValidityDurationSeconds(-1)
+            return KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore").run {
+                init(builder.build()); generateKey()
+            }
+        }
+        fun cipher(key: SecretKey) = Cipher.getInstance("AES/GCM/NoPadding").apply { init(Cipher.ENCRYPT_MODE, key) }
+        return try {
+            cipher(store.getKey(alias, null) as? SecretKey ?: generate())
+        } catch (_: KeyPermanentlyInvalidatedException) {
+            store.deleteEntry(alias)
+            cipher(generate())
+        }
+    }
+
+    private fun finishAppBiometric(signal: CancellationSignal, epoch: Long, verified: Boolean) {
+        if (appBiometric !== signal) return
+        appBiometric = null
+        if (windowActive) model.protection.biometric(epoch, verified)
+    }
+
+    private fun cancelAppBiometric() {
+        val signal = appBiometric
+        appBiometric = null
+        signal?.cancel()
+    }
+
     @Suppress("DEPRECATION")
     internal fun requestVaultReveal(entry: VaultEntry) {
         if (vaultAuthorization != null || !windowActive || model.ui.value.presentation.navigation.page != Page.TOTP) return

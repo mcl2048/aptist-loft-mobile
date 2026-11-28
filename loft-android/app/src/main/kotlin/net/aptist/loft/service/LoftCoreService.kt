@@ -33,10 +33,22 @@ class LoftCoreService : Service() {
             enforceCaller(); owner.executeHub(requestId, action, input, mailAccess, destination, observer)
         }
         override fun cancelHubWork(requestId: Long) { enforceCaller(); owner.cancelHubWork(requestId) }
-        override fun executeVault(requestId: Long, command: ByteArray, observer: ILoftHubEvents) {
-            enforceCaller(); owner.executeVault(requestId, command, observer)
+        override fun executeVault(epoch: Long, requestId: Long, command: ByteArray, observer: ILoftHubEvents) {
+            enforceCaller(); owner.executeVault(controllerToken, epoch, requestId, command, observer)
+        }
+        override fun setProtectedArea(epoch: Long, area: Int) {
+            enforceCaller(); owner.setProtectedArea(controllerToken, epoch, ProtectedArea.entries.getOrNull(area))
+        }
+        override fun executeProtected(epoch: Long, requestId: Long, command: ByteArray, observer: ILoftHubEvents) {
+            enforceCaller(); owner.executeProtected(controllerToken, epoch, requestId, command, observer)
         }
         override fun cancelVaultWork(requestId: Long) { enforceCaller(); owner.cancelVaultWork(requestId) }
+        override fun executeNotesSync(requestId: Long, observer: ILoftHubEvents) {
+            enforceCaller(); owner.executeNotesSync(requestId, observer)
+        }
+        override fun cancelNotesSync(requestId: Long) {
+            enforceCaller(); owner.cancelNotesSync(requestId)
+        }
         override fun queryVpnTraffic(attemptId: Long, observer: ILoftTrafficEvents) {
             enforceCaller(); owner.queryVpnTraffic(attemptId.toULong(), observer)
         }

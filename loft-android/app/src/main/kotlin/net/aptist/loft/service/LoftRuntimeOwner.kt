@@ -47,6 +47,8 @@ class LoftRuntimeOwner private constructor(context: Context) {
     private val availabilityGuard = CoreAvailabilityGuard { unavailableNotice(); fault(active.get()) }
     private val commands = executor(8)
     private val hub = HubControl { core -> broadcast(capture(core)) }
+    private val protection = ProtectionControl()
+    private val notesSync = NotesSyncControl(::notesSyncRoute, ::notifyNotesSync)
     private val vault = VaultControl { core -> broadcast(capture(core)) }
     private val starts = executor(1)
     private val events = executor(1)
@@ -118,6 +120,7 @@ class LoftRuntimeOwner private constructor(context: Context) {
         if (!uiController.compareAndSet(token, null)) return
         hub.cancel()
         vault.cancel()
+        protection.detach(token)
         observerTargets().forEach { observers.unregister(it) }
         // If the queue is full, every already queued job runs the same cleanup.
         submitCommand { }
@@ -125,6 +128,7 @@ class LoftRuntimeOwner private constructor(context: Context) {
 
     private fun submitCommand(work: () -> Unit): Boolean = submit(commands) {
         try { work() } finally {
+            protection.retire(runCatching { resources.currentCore() }.getOrNull())
             if (workerUiLease && uiController.get() == null) {
                 workerUiLease = false
                 resources.releaseUi()
@@ -194,7 +198,83 @@ class LoftRuntimeOwner private constructor(context: Context) {
 
     fun cancelVaultWork(requestId: Long) { vault.cancel(requestId) }
 
-    fun executeVault(requestId: Long, payload: ByteArray, observer: ILoftHubEvents) {
+    fun executeNotesSync(requestId: Long, observer: ILoftHubEvents) {
+        if (requestId <= 0) { ProtectionControl.reply(requestId, observer, "invalid"); return }
+        val work = NotesSyncControl.Work(requestId, observer)
+        if (!notesSync.reserve(work)) { ProtectionControl.reply(requestId, observer, "busy"); return }
+        if (!submitCommand {
+            val core = try { retainCoreOnWorker() }
+            catch (_: Exception) { null }
+            catch (_: LinkageError) { null }
+            if (core == null) notesSync.reject(work, "unavailable")
+            else notesSync.execute(core, work) { resources.releaseUi() }
+        }) notesSync.reject(work, "busy")
+    }
+
+    private fun notifyNotesSync(generation: Long, signedOut: Boolean) {
+        observerTargets().forEach { observer ->
+            try { observer.onNotesSync(generation, signedOut) }
+            catch (_: RemoteException) { observers.unregister(observer) }
+        }
+    }
+
+    fun cancelNotesSync(requestId: Long) = notesSync.cancel(requestId)
+
+    private fun notesSyncRoute(): NotesSyncRoute? {
+        val connectivity = app.getSystemService(ConnectivityManager::class.java) ?: return null
+        val attempt = active.get()
+        if (stopQueued || (attempt != null && !trafficReady(attempt))) return null
+        if (attempt?.routingEnabled == true &&
+            attempt.uidScope.packageUids.none { it.uid == attempt.uidScope.vpnOwnerUid }) return null
+        val network = connectivity.activeNetwork ?: return null
+        fun current(): Boolean {
+            if (active.get() !== attempt || stopQueued || connectivity.activeNetwork != network ||
+                attempt?.cancelled?.get() == true || attempt?.faulted?.get() == true) return false
+            val capabilities = connectivity.getNetworkCapabilities(network) ?: return false
+            return attempt == null || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)
+        }
+        return if (current()) NotesSyncRoute(network, ::current) else null
+    }
+
+    internal fun setProtectedArea(controller: Any, epoch: Long, area: ProtectedArea?) {
+        if (epoch <= 0 || uiController.get() !== controller) return
+        protection.select(controller, epoch, area)
+        if (area != ProtectedArea.VAULT) vault.cancel()
+        submitCommand { }
+    }
+
+    fun executeProtected(controller: Any, epoch: Long, requestId: Long, payload: ByteArray, observer: ILoftHubEvents) {
+        val command = try { ProtectedWire.readCommand(payload) } catch (_: java.io.IOException) { null }
+        finally { payload.fill(0) }
+        if (command == null || requestId <= 0) {
+            command?.clear()
+            ProtectionControl.reply(requestId, observer, "invalid")
+            return
+        }
+        val session = protection.capture(controller, epoch)
+        if (session == null) {
+            command.clear()
+            ProtectionControl.reply(requestId, observer, "locked")
+            return
+        }
+        if (!submitCommand {
+            val core = try { retainCoreOnWorker() }
+            catch (_: Exception) { null }
+            catch (_: LinkageError) { null }
+            if (core == null) {
+                command.clear()
+                ProtectionControl.reply(requestId, observer, "unavailable")
+            } else {
+                try { protection.run(core, session, requestId, command, observer) }
+                finally { resources.releaseUi() }
+            }
+        }) {
+            command.clear()
+            ProtectionControl.reply(requestId, observer, "busy")
+        }
+    }
+
+    fun executeVault(controller: Any, epoch: Long, requestId: Long, payload: ByteArray, observer: ILoftHubEvents) {
         val command = try { VaultWire.readCommand(payload) } catch (_: java.io.IOException) { null }
         finally { payload.fill(0) }
         if (command == null || requestId <= 0) {
@@ -202,12 +282,21 @@ class LoftRuntimeOwner private constructor(context: Context) {
             HubControl.reply(requestId, observer, "invalid")
             return
         }
-        val work = VaultControl.Work(requestId, command, observer)
+        val session = protection.capture(controller, epoch)
+        if (session == null || session.area != ProtectedArea.VAULT) {
+            command.clear()
+            HubControl.reply(requestId, observer, "locked")
+            return
+        }
+        val work = VaultControl.Work(requestId, command, observer) { protection.isCurrent(session) }
         if (!vault.admit(work)) { vault.reject(work, "busy"); return }
         if (!submitCommand {
             val core = try { retainCoreOnWorker() }
             catch (_: Exception) { vault.reject(work, "unavailable"); return@submitCommand }
             catch (_: LinkageError) { vault.reject(work, "unavailable"); return@submitCommand }
+            try { protection.requireVault(core, session) }
+            catch (_: Exception) { resources.releaseUi(); vault.reject(work, "locked"); return@submitCommand }
+            catch (_: LinkageError) { resources.releaseUi(); vault.reject(work, "unavailable"); return@submitCommand }
             if (command is VaultCommand.Sync) vault.sync(core, work) { resources.releaseUi() }
             else try { vault.local(core, work) } finally { resources.releaseUi() }
         }) vault.reject(work, "busy")

@@ -47,6 +47,8 @@ pub enum LocalConfigEdit<'a> {
 pub enum PrivateRecord {
     Vault,
     Hub,
+    Protection,
+    Notes,
 }
 
 pub struct LoadedLocalConfig {
@@ -123,6 +125,12 @@ impl CoreState {
             state
                 .hub
                 .restored(state.local.server_candidate.as_deref(), &data)?;
+        }
+        if let Some(data) = store.load_private(PrivateRecord::Protection)? {
+            state.protection.pin = Some(crate::protection::PinRecord::restore(&data)?);
+        }
+        if let Some(data) = store.load_private(PrivateRecord::Notes)? {
+            state.notes = crate::notes::NotesState::restore(&data)?;
         }
         state.local_store = Some(Box::new(store));
         Ok(state)

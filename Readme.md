@@ -1,10 +1,14 @@
-# LOFT mobile · 0.1.6-LYNX
+# LOFT mobile · 0.1.7-LYNX
 
 LOFT is a native Android application framework with Rust-owned business state and source-pinned Go VPN adapters. Task `loftmobile-1125-01` builds the foundation against local `guide/guide.md` v3.6 and `guide/ui-design.md`. The complete P0–P5 product roadmap has separate implementation and device gates.
 
+Task `loftmobile-1128-02` adds Application protection for the TOTP vault and Secure Notes. Secure Notes supports local encrypted editing, Markdown with source visibility on the current line, search, tags, archive and deletion. The editor shares the existing hinge-safe layout and retains its draft across window resizing. A verified Hub profile and a paired device key enable optional background sync. Existing anonymous notes remain local. [Secure Notes contract](docs/contracts/secure-notes.md) · [Task report](report/loftmobile-1128-02-progress.md)
+
+The signed 0.1.7-LYNX ARM64 Release is `bin/loft.apk`, versionCode 8, SHA-256 `8f557b12f015b3c408df10018cf87228e254291029459e56521db916d69bcb17`. The APK carries the LOFT development certificate. The existing Hub serves Notes API v1. [APK verification](docs/validation/apk-0.1.7-release.json) · [Build evidence](docs/validation/build-0.1.7.json) · [Live Hub](https://aptist-loft-hub.pages.dev)
+
 Task `loftmobile-1128-01` adds a native overview with account, VPN and app traffic status, a direct VPN node directory, and a shared bottom shield. It also reduces HyrakenX UDP buffer usage and updates the mobile transport inputs to Gateway 8.0.36. [Task report](report/loftmobile-1128-01-progress.md)
 
-The 0.1.6-LYNX ARM64 Release is `bin/loft.apk`, versionCode 7, SHA256 `374460971ef192a0841f40a2bc28b2fad2d4a255b2439369c907e6ddf180cb53`. It uses the LOFT development signing certificate. The Hub was redeployed to Cloudflare Pages and Workers. [APK receipt](docs/validation/apk-0.1.6-release.json) · [Build receipt](docs/validation/build-0.1.6.json) · [Live Hub](https://aptist-loft-hub.pages.dev)
+The 0.1.6-LYNX ARM64 Release used versionCode 7 and SHA256 `374460971ef192a0841f40a2bc28b2fad2d4a255b2439369c907e6ddf180cb53`. It used the LOFT development signing certificate. [APK receipt](docs/validation/apk-0.1.6-release.json) · [Build receipt](docs/validation/build-0.1.6.json)
 
 Task `loftmobile-1126-02` adds durable Hub login, a native offline TOTP and password vault, and the Gateway 8.0.34 transport refresh. The vault supports camera or manual TOTP import, editing, archive and restore, and explicit encrypted sync. It stays usable after signing out. Hub uses the original Portal grant for mail, so expired mail access requests consent independently. [Vault contract](docs/contracts/vault.md) · [Hub contract](docs/contracts/hub.md) · [Task report](report/loftmobile-1126-02-progress.md)
 

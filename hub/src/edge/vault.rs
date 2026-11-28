@@ -15,9 +15,9 @@ thread_local! {
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
-struct Put {
-    base_revision: u32,
-    ciphertext: String,
+pub(super) struct Put {
+    pub(super) base_revision: u32,
+    pub(super) ciphertext: String,
 }
 
 #[derive(Deserialize, serde::Serialize)]
@@ -53,19 +53,7 @@ pub(super) async fn access(
     if device::find(db, &hash).await?.is_none() {
         return Err(SESSION);
     }
-    let put: Put = http::input_bounded(request, JSON_LIMIT).await?;
-    if put.base_revision == u32::MAX {
-        return Err(CONFLICT);
-    }
-    let decoded = URL_SAFE_NO_PAD
-        .decode(&put.ciphertext)
-        .map_err(|_| INVALID)?;
-    if decoded.len() > CIPHERTEXT_LIMIT {
-        return Err(TOO_LARGE);
-    }
-    if decoded.len() < 16 {
-        return Err(INVALID);
-    }
+    let put = read_upload(request).await?;
     let result: Option<u32> = first_col(
         db,
         include_str!("../sql/vault_write.sql"),
@@ -84,4 +72,21 @@ pub(super) async fn access(
         None if device::find(db, &hash).await?.is_some() => Err(CONFLICT),
         None => Err(SESSION),
     }
+}
+
+pub(super) async fn read_upload(request: &mut Request) -> Result<Put> {
+    let put: Put = http::input_bounded(request, JSON_LIMIT).await?;
+    if put.base_revision == u32::MAX {
+        return Err(CONFLICT);
+    }
+    let decoded = URL_SAFE_NO_PAD
+        .decode(&put.ciphertext)
+        .map_err(|_| INVALID)?;
+    if decoded.len() > CIPHERTEXT_LIMIT {
+        return Err(TOO_LARGE);
+    }
+    if decoded.len() < 16 {
+        return Err(INVALID);
+    }
+    Ok(put)
 }

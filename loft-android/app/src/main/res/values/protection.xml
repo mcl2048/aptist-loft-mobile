@@ -1,0 +1,18 @@
+<resources>
+    <string name="protection_title">App protection</string>
+    <string name="protection_setup_help">A six-digit PIN can protect Authenticator and Secure Notes.</string>
+    <string name="protection_enabled_help">App protection is on. Enter your current PIN to change it.</string>
+    <string name="protection_unlock_help">Enter your app PIN to continue.</string>
+    <string name="protection_pin">App PIN</string>
+    <string name="protection_current_pin">Current PIN</string>
+    <string name="protection_new_pin">New PIN</string>
+    <string name="protection_confirm_pin">Confirm PIN</string>
+    <string name="protection_unlock">Unlock</string>
+    <string name="protection_use_biometrics">Use fingerprint or face</string>
+    <string name="protection_save">Save protection</string>
+    <string name="protection_disable">Turn off app protection</string>
+    <string name="protection_incorrect">Incorrect PIN.</string>
+    <string name="protection_rate_limited">Too many attempts. Try again later.</string>
+    <string name="protection_invalid">Enter exactly six digits.</string>
+    <string name="protection_retry">Retry</string>
+</resources>
