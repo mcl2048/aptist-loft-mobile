@@ -35,7 +35,11 @@ WorkManager 每 60 分钟安排一次拉取，弹性窗口 15 分钟。编辑触
 
 ARM64 Release 版本号为 `0.1.7-LYNX`，versionCode 为 8。使用既有 LOFT 开发证书。APK SHA-256 为 `8f557b12f015b3c408df10018cf87228e254291029459e56521db916d69bcb17`。签名、manifest、16 KiB ZIP/ELF 对齐以及 Git 暂存区和 APK 凭据扫描均在发布流程中核验。 [APK 记录](../docs/validation/apk-0.1.7-release.json) · [构建记录](../docs/validation/build-0.1.7.json)
 
-API 29 x86_64 的应用和仪器测试 APK 均已构建。软件模拟器接收应用 APK 后，Android 包管理器的 `StorageManagerService.allocateBytes` 遇到空 `PackageManagerInternal`。重试期间系统服务重新启动，测试未开始。Pixel Fold、Galaxy Z Fold4、实际指纹/人脸识别、VPN 同步出口与实机耗电均未获得实机数据。
+API 29 x86_64 的应用和仪器测试 APK 均已构建，使用同一套 Rust 和 Go 源码。该对 APK 早于 ARM64 版的最终 Kotlin lint 缩进修正。软件模拟器接收应用 APK 后，Android 包管理器的 `StorageManagerService.allocateBytes` 遇到空 `PackageManagerInternal`。重试期间系统服务重新启动，测试未开始。Pixel Fold、Galaxy Z Fold4、实际指纹/人脸识别、VPN 同步出口与实机耗电均未获得实机数据。
+
+## 发布记录
+
+功能提交 `bba8b7025c7566622166f5df2e82f10a52eeaba2` 已正常推送，GitHub `main` 读回一致。任务文件中的凭据首次收到 HTTP 403，随后用现有 GitHub CLI 登录凭据通过 Git askpass 推送成功。发布检查读取实际 Git 暂存区及 `bin/loft.apk`。任务专用模拟器和 x86 Gradle 中间输出已清理，保留 APK 与日志。
 
 ## 验收清单
 
