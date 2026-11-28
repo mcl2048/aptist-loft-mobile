@@ -372,4 +372,6 @@
     <string name="vpn_node_details_action">Details zu %1$s</string>
     <string name="vpn_nodes_next_connection">Die Auswahl gilt ab der nächsten Verbindung.</string>
     <string name="vpn_connection_details">Verbindungsdetails</string>
+    <string name="vault_sync_legacy_session">Melde dich erneut an, um verschlüsselte Sicherungen zu synchronisieren.</string>
+    <string name="vault_sync_enrollment_required">Für die Synchronisierung verschlüsselter Sicherungen ist eine aktive Hub-Anmeldung erforderlich.</string>
 </resources>

@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "release": "0.1.8-LYNX",
+  "checked_at_utc": "2026-11-28T05:46:05.646535+00:00",
+  "source_file_count": 1081,
+  "source_manifest_sha256": "59cd61cbffa264b3a740e2bc5b926931fb447b17f1ea107edcd7a8a67e9c9aa6",
+  "base_source_commit": "f26058bc7862e70b090bdff9521bd6cea0c15f33",
+  "toolchain_lock": {
+    "path": "toolchain-lock.json",
+    "bytes": 633,
+    "sha256": "d43995dca2ad33d602f9a4036137f8a418125b3e20a4ca4a75141192018cf1a5"
+  },
+  "cargo_lock": {
+    "path": "loft-core-rust/Cargo.lock",
+    "bytes": 35994,
+    "sha256": "b878cda4b99dc8ca70e209d861a3ae4b42576c0c60e682c274b4d4cbb02ce14f"
+  },
+  "go_source_lock": {
+    "path": "loft-vpn-engine-go/third_party/SOURCE-LOCK.json",
+    "bytes": 176450,
+    "sha256": "d41644fc8a88cf5f76e7553743e5a946ca2469a78fdf7d5fcfe13c988d7d8d1d"
+  },
+  "gateway": {
+    "gateway_commit": "a984911c8aa0e932c885bb298134031432eb82b7",
+    "patched_files": 14,
+    "provenance_paths_read": false,
+    "status": "verified",
+    "verified_files": 440
+  },
+  "rust_workspace": {
+    "passed": 130,
+    "log_sha256": "387bda6bdc5b30522b3220dbb741c97e783e8db273caaa43414ae18315527024",
+    "clippy_log_sha256": "fb1145a6e25f5aa7382fd29cc2ec094c9b8000d0f9d5a7c1b118e909425885a7"
+  },
+  "go_normal": {
+    "top_level": 115,
+    "subtests": 145,
+    "log_sha256": "8ad98b37db86aae98e54c8011458028aab4113ac03f66533ced6ce8c1418e129"
+  },
+  "go_race": {
+    "top_level": 115,
+    "subtests": 145,
+    "log_sha256": "ea5840fc2d0fc4c42da6c858c4f4807b02e283eba440c470e81590d461d5f74d"
+  },
+  "arm64": {
+    "command": "bash scripts/build-android.sh",
+    "log_sha256": "67f6dd659b832fff28cd99952a1b3d534a94de8468e6eb6603262bb7cdbc2a41",
+    "native_inputs": [
+      {
+        "path": "loft-android/app/build/generated/jniLibs/arm64-v8a/libloft_ffi.so",
+        "bytes": 9734784,
+        "sha256": "dd6b7b4892981b863453cda4c8d01f87879ef9df9b99cec808880da4b912911f"
+      },
+      {
+        "path": "loft-android/app/build/generated/gomobile/loft-engine.aar",
+        "bytes": 11243408,
+        "sha256": "1a68a5252d7049005cba2574cef6f407341d091f87284a848bfdca1dee2d9aff"
+      },
+      {
+        "path": "loft-android/app/build/generated/uniffi/net/aptist/loft/core/generated/loft_ffi.kt",
+        "bytes": 250965,
+        "sha256": "5ce5995290dbe5e6c1bbdf370325d80abbb85bffc390cd0fd2afa14204c2f8fb"
+      }
+    ],
+    "unsigned": {
+      "path": "loft-android/app/build/outputs/apk/release/app-release-unsigned.apk",
+      "bytes": 30319790,
+      "sha256": "562e68f6d7af638641ae5521021d91ab5be191f46e5b30349fcee41111461844"
+    },
+    "app_jvm": {
+      "tests": 109,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "foundation_jvm": {
+      "tests": 121,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lint": {
+      "Warning": 56
+    }
+  },
+  "x86_64": {
+    "log_sha256": "763fb383e8167f4b567a7794967bc1409b9f7b2ccdc3b9b22880d4f4224dd212",
+    "native_inputs": [
+      {
+        "path": "tmp/loftmobile-1128-03/native-x86_64/jniLibs/x86_64/libloft_ffi.so",
+        "bytes": 9922856,
+        "sha256": "aa31bfc419d6061b502f158b9058149f3db4fbecd94bb7bf85254366b2dc43fb"
+      },
+      {
+        "path": "tmp/loftmobile-1128-03/native-x86_64/gomobile/loft-engine.aar",
+        "bytes": 12055829,
+        "sha256": "8ebd9867ff75e8c767a870c80c1a297df12395097fda71a3e2b17a67cd93db18"
+      },
+      {
+        "path": "tmp/loftmobile-1128-03/native-x86_64/uniffi/net/aptist/loft/core/generated/loft_ffi.kt",
+        "bytes": 250965,
+        "sha256": "5ce5995290dbe5e6c1bbdf370325d80abbb85bffc390cd0fd2afa14204c2f8fb"
+      }
+    ],
+    "app": {
+      "path": "tmp/loftmobile-1128-03/android-x86/app/outputs/apk/debug/app-debug.apk",
+      "bytes": 63195545,
+      "sha256": "a42f6aaeada21ba43759bad6f27d4945f8beef553ca0b06d67626f72b56208d6"
+    },
+    "instrumentation": {
+      "path": "tmp/loftmobile-1128-03/android-x86/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+      "bytes": 988515,
+      "sha256": "ccc9f3613f8ed6e88149b8f7d01e486ae73e82c9a5e7073c77ced92b9c02d55f"
+    },
+    "android_api": 29,
+    "instrumentation_passed": 0,
+    "runtime_log_sha256": "3e4bf281ab6e5ea97a285b4681bae5b769b162824f1c625bd512044eb5c04fa4"
+  },
+  "production_hub": {
+    "origin": "https://aptist-loft-hub.pages.dev",
+    "discovery": [
+      {
+        "status": 200,
+        "body": {
+          "authMode": "portal_bff",
+          "issuer": "https://portal.aptist.net/api/idp",
+          "modules": [
+            "mail"
+          ],
+          "product": "loft",
+          "version": 1
+        }
+      },
+      {
+        "status": 200,
+        "body": {
+          "authMode": "portal_bff",
+          "issuer": "https://portal.aptist.net/api/idp",
+          "modules": [
+            "mail",
+            "notes_sync"
+          ],
+          "product": "loft",
+          "version": 1
+        }
+      },
+      {
+        "status": 200,
+        "body": {
+          "authMode": "portal_bff",
+          "issuer": "https://portal.aptist.net/api/idp",
+          "modules": [
+            "mail",
+            "notes_sync",
+            "notes_reset"
+          ],
+          "product": "loft",
+          "version": 1
+        }
+      }
+    ],
+    "unauthenticated_reset": {
+      "status": 401,
+      "body": {
+        "error": "session_expired"
+      }
+    },
+    "worker_version": "91cf9ef5-1736-4f8c-b166-23619816bd58",
+    "pages_deployment": "443a81fb",
+    "migration": "0004_notes_key_epoch.sql",
+    "wasm_sha256": "180ec26a4749f5dae82abf75bcb70e1fa6d883e0ee32c65038828f368cd97e04"
+  }
+}

@@ -16,7 +16,7 @@ internal class NotesSyncRoute(val network: Network, val stillCurrent: () -> Bool
 
 internal class NotesSyncControl(
     private val route: () -> NotesSyncRoute?,
-    private val notify: (Long, Boolean) -> Unit,
+    private val notify: (Long, String) -> Unit,
 ) {
     private val transport = ThreadPoolExecutor(1, 1, 30, TimeUnit.SECONDS, ArrayBlockingQueue(1))
         .apply { allowCoreThreadTimeOut(true) }
@@ -39,7 +39,11 @@ internal class NotesSyncControl(
             transport.execute {
                 val code = try { exchange(core, work) }
                 catch (failure: SecureException) {
-                    if (failure is SecureException.NotSignedIn) notify(0, true)
+                    when (failure) {
+                        is SecureException.NotSignedIn -> notify(0, "session_changed")
+                        is SecureException.Conflict -> notify(0, "conflict")
+                        else -> Unit
+                    }
                     ProtectionControl.problem(failure)
                 }
                 catch (_: IOException) { "network" }
@@ -67,7 +71,14 @@ internal class NotesSyncControl(
                     if (!valid()) throw IOException()
                     val step = core.notesSyncFinish(request.requestId, response.status, response.mediaType, response.body)
                     next = step.nextRequest
-                    if (next == null) notify(step.generation.toLong(), false)
+                    if (next == null) {
+                        val status = when {
+                            step.resetCompleted -> "reset_completed"
+                            step.needsRecovery -> "needs_recovery"
+                            else -> "ok"
+                        }
+                        notify(step.generation.toLong(), status)
+                    }
                 } finally { response.body.fill(0) }
             } finally {
                 request.body.fill(0)

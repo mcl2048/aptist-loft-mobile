@@ -159,7 +159,7 @@ const cancel = tx => api(tx.path + '/cancel', body({ proof: tx.proof }));
 
 try {
   const d1 = await config.getD1Database('DB', 'hub');
-  for (const migration of ['0001_identity.sql', '0002_durable_identity_and_vault.sql', '0003_secure_notes.sql']) {
+  for (const migration of ['0001_identity.sql', '0002_durable_identity_and_vault.sql', '0003_secure_notes.sql', '0004_notes_key_epoch.sql']) {
     const sql = await readFile(new URL('../migrations/' + migration, import.meta.url), 'utf8');
     for (const statement of sql.split(';').map(s => s.trim()).filter(Boolean)) {
       await d1.prepare(statement).run();
@@ -172,6 +172,8 @@ try {
   assert.deepEqual(descriptor.modules, ['mail']);
   const supported = await expectStatus(api('/.well-known/loft-app', { headers: { 'X-Loft-Capabilities': 'notes-sync/1' } }), 200);
   assert.deepEqual((await supported.json()).modules, ['mail', 'notes_sync']);
+  const upgraded = await expectStatus(api('/.well-known/loft-app', { headers: { 'X-Loft-Capabilities': 'notes-sync/2' } }), 200);
+  assert.deepEqual((await upgraded.json()).modules, ['mail', 'notes_sync', 'notes_reset']);
 
   const tx = await create(true);
   const pending = await expectStatus(complete(tx), 202);
@@ -365,6 +367,44 @@ try {
     + ', 8 cross-account writes, ' + elapsed + ' ms local fixture');
   authorizationSubject = undefined;
 
+  const resetPath = notesPath + '/reset';
+  const resetId = random(16);
+  const rotatedCiphertext = random(72);
+  const notesWrite = (credentials, value, path = notesPath, method = 'PUT') => {
+    const request = body(value);
+    return api(path, { ...request, method, headers: { ...request.headers, ...credentials.headers } });
+  };
+  const resetBody = { baseRevision: 1, ciphertext: rotatedCiphertext, operationId: resetId };
+  const reset = (credentials, value = resetBody) => notesWrite(credentials, value, resetPath, 'POST');
+  await expectStatus(reset(auth), 401);
+  await expectStatus(reset(bearer(otherDevice.sessionToken)), 409);
+  await expectStatus(reset(authDevice, { ...resetBody, operationId: random(15) }), 400);
+  const resetRace = await Promise.all([
+    reset(authDevice),
+    reset(bearer(peer.sessionToken), { ...resetBody, operationId: random(16), ciphertext: random(72) }),
+  ]);
+  assert.deepEqual(resetRace.map(response => response.status).sort(), [200, 409]);
+  const winnerIndex = resetRace.findIndex(result => result.status === 200);
+  const applied = await resetRace[winnerIndex].json();
+  assert.equal(applied.revision, 2);
+  const activeReset = await (await expectStatus(api(notesPath, authDevice), 200)).json();
+  assert.equal(activeReset.keyEpoch, applied.operationId);
+  const replayBody = { baseRevision: 1, ciphertext: activeReset.ciphertext, operationId: activeReset.keyEpoch };
+  assert.deepEqual(await (await expectStatus(reset(authDevice, replayBody), 200)).json(), applied);
+  await expectStatus(reset(authDevice, { ...replayBody, ciphertext: random(72) }), 409);
+  await expectStatus(reset(authDevice, { ...replayBody, baseRevision: 2 }), 409);
+  await expectStatus(put(device.sessionToken, 2, random(64), notesPath), 409);
+  await expectStatus(notesWrite(authDevice, { baseRevision: 2, ciphertext: random(72), keyEpoch: random(16) }), 409);
+  const rotatedWrite = { baseRevision: 2, ciphertext: random(72), keyEpoch: applied.operationId };
+  await expectStatus(notesWrite(authDevice, rotatedWrite), 200);
+  const changed = await expectStatus(api(notesPath, { headers: { ...authDevice.headers, 'If-None-Match': '"2"' } }), 200);
+  assert.deepEqual(await changed.json(), { revision: 3, ciphertext: rotatedWrite.ciphertext, keyEpoch: applied.operationId });
+  assert.deepEqual(await (await expectStatus(reset(bearer(peer.sessionToken), replayBody), 200)).json(), applied);
+  const wipe = { baseRevision: 3, ciphertext: random(64), operationId: random(16) };
+  assert.deepEqual(await (await expectStatus(reset(authDevice, wipe), 200)).json(), { revision: 4, operationId: wipe.operationId });
+  await expectStatus(reset(authDevice, replayBody), 409);
+  await expectStatus(notesWrite(authDevice, { ...rotatedWrite, baseRevision: 4 }), 409);
+
   const logoutRace = await create(true, random(), { durable: true, token: device.sessionToken });
   await expectStatus(callback(logoutRace), 303);
   await expectStatus(api('/v1/logout', { ...authDevice, method: 'POST' }), 204);
@@ -382,7 +422,9 @@ try {
   const recovered = await (await expectStatus(complete(reenroll), 200)).json();
   const vaultAfterLogout = await (await expectStatus(api(vaultPath, bearer(recovered.sessionToken)), 200)).json();
   assert.deepEqual(vaultAfterLogout, { revision: 2, ciphertext });
-  assert.deepEqual(await (await expectStatus(api(notesPath, bearer(recovered.sessionToken)), 200)).json(), { revision: 1, ciphertext: notesCiphertext });
+  assert.deepEqual(await (await expectStatus(api(notesPath, bearer(recovered.sessionToken)), 200)).json(), {
+    revision: 4, ciphertext: wipe.ciphertext, keyEpoch: wipe.operationId,
+  });
 
   const discardedEnrollment = await create(false, random(), { durable: true });
   await expectStatus(callback(discardedEnrollment), 303);

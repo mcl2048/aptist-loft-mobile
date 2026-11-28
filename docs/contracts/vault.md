@@ -8,6 +8,8 @@ The existing Keystore-wrapped SQLCipher store migrates schema 1 to schema 2 in a
 
 The user enters a recovery passphrase on each sync. A successful first sync associates unassigned entries with the current account's exact origin, issuer and subject. Entries linked to a different account stay local. Argon2id derives a 256-bit key from a 16-byte salt using 64 MiB, three passes and four lanes. AES-256-GCM uses a fresh nonce and authenticates the scope and revision. D1 holds ciphertext and a revision counter. The passphrase, vault keys, password text and active codes remain on the device. A forgotten passphrase prevents recovery from that encrypted backup.
 
-The mobile client admits one sync, checks the current Hub and local generations before applying results, and uses revision-based three-way merge. Concurrent incompatible edits to the same entry return a conflict and preserve the local record. Archival propagates as a record change. The first version retains metadata and one selected reveal in the UI. Its queue and memory bounds do not establish handset PSS or scanning performance.
+The durable device session created by ordinary Hub sign-in authorizes the backup. Mail scope and mail expiry have their own lifecycle.
+
+The mobile client admits one sync, checks the current Hub and local generations before applying results, and uses revision-based three-way merge. A revision conflict on upload permits one fresh read and merge within the same explicit session. Concurrent incompatible edits to the same entry return a conflict and preserve each device's record. Archival propagates as a record change. The UI retains metadata and one selected reveal. Handset performance requires device measurement.
 
 [RFC 6238](https://www.rfc-editor.org/rfc/rfc6238) · [RFC 9106](https://www.rfc-editor.org/rfc/rfc9106) · [Android Keystore](https://developer.android.com/privacy-and-security/keystore)

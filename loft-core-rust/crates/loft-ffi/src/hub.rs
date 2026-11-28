@@ -122,6 +122,7 @@ pub struct HubSnapshot {
     pub origin: Option<String>,
     pub issuer: Option<String>,
     pub mail_supported: bool,
+    pub notes_discovery_required: bool,
     pub transaction_pending: bool,
     pub session: Option<HubSession>,
 }
@@ -133,6 +134,7 @@ impl From<loft_core::HubSnapshot> for HubSnapshot {
             origin: value.origin,
             issuer: value.issuer,
             mail_supported: value.mail_supported,
+            notes_discovery_required: value.notes_discovery_required,
             transaction_pending: value.transaction_pending,
             session: value.session.map(Into::into),
         }
@@ -146,6 +148,7 @@ pub struct HubSession {
     pub mail_access: bool,
     pub mail_available: bool,
     pub expires_in_seconds: u32,
+    pub durable: bool,
 }
 
 impl From<loft_core::HubSession> for HubSession {
@@ -156,6 +159,7 @@ impl From<loft_core::HubSession> for HubSession {
             mail_access: value.mail_access,
             mail_available: value.mail_available,
             expires_in_seconds: value.expires_in_seconds,
+            durable: value.durable,
         }
     }
 }
@@ -163,6 +167,7 @@ impl From<loft_core::HubSession> for HubSession {
 #[derive(uniffi::Record)]
 pub struct HubReceipt {
     pub snapshot: HubSnapshot,
+    pub next_request: Option<HubRequest>,
     pub browser_url: Option<String>,
     pub page: Option<HubMailPage>,
     pub message: Option<HubMailMessage>,
@@ -173,6 +178,7 @@ impl From<loft_core::HubReceipt> for HubReceipt {
     fn from(value: loft_core::HubReceipt) -> Self {
         Self {
             snapshot: value.snapshot.into(),
+            next_request: value.next_request.map(Into::into),
             browser_url: value.browser_url,
             page: value.page.map(Into::into),
             message: value.message.map(Into::into),

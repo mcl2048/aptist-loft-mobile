@@ -372,4 +372,6 @@
     <string name="vpn_node_details_action">查看 %1$s 的详情</string>
     <string name="vpn_nodes_next_connection">新选择的节点将在下次连接时生效。</string>
     <string name="vpn_connection_details">连接详情</string>
+    <string name="vault_sync_legacy_session">请重新登录以启用加密备份同步。</string>
+    <string name="vault_sync_enrollment_required">加密备份同步需要有效的 Hub 登录。</string>
 </resources>

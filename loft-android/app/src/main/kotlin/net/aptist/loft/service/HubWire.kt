@@ -28,13 +28,21 @@ internal object HubWire {
     internal fun encode(result: HubResult): ByteArray {
         val bytes = ByteArrayOutputStream()
         DataOutputStream(bytes).use { out ->
-            out.writeByte(3)
+            out.writeByte(4)
             with(result.snapshot) {
                 out.writeLong(generation.toLong())
                 out.optional(origin); out.optional(issuer)
                 out.writeBoolean(mailSupported); out.writeBoolean(transactionPending)
                 out.writeBoolean(session != null)
-                session?.let { out.text(it.subject); out.optional(it.email); out.writeBoolean(it.mailAccess); out.writeInt(it.expiresInSeconds.toInt()); out.writeBoolean(it.mailAvailable) }
+                session?.let {
+                    out.text(it.subject)
+                    out.optional(it.email)
+                    out.writeBoolean(it.mailAccess)
+                    out.writeInt(it.expiresInSeconds.toInt())
+                    out.writeBoolean(it.mailAvailable)
+                    out.writeBoolean(it.durable)
+                }
+                out.writeBoolean(notesDiscoveryRequired)
             }
             out.writeBoolean(result.notesSyncEligible)
             out.optional(result.browserUrl)
@@ -58,7 +66,7 @@ internal object HubWire {
     internal fun decode(bytes: ByteArray): HubResult {
         if (bytes.size !in 1..MAX_BYTES) throw IOException()
         val input = DataInputStream(ByteArrayInputStream(bytes))
-        if (input.readUnsignedByte() != 3) throw IOException()
+        if (input.readUnsignedByte() != 4) throw IOException()
         val generation = input.readLong().toULong()
         val origin = input.optional(); val issuer = input.optional()
         val mailSupported = input.flag(); val transactionPending = input.flag()
@@ -67,9 +75,17 @@ internal object HubWire {
             val email = input.optional()
             val mailAccess = input.flag()
             val remaining = input.readInt().toUInt()
-            HubSession(subject, email, mailAccess, input.flag(), remaining)
+            HubSession(subject, email, mailAccess, input.flag(), remaining, durable = input.flag())
         } else null
-        val snapshot = HubSnapshot(generation, origin, issuer, mailSupported, transactionPending, session)
+        val snapshot = HubSnapshot(
+            generation = generation,
+            origin = origin,
+            issuer = issuer,
+            mailSupported = mailSupported,
+            notesDiscoveryRequired = input.flag(),
+            transactionPending = transactionPending,
+            session = session,
+        )
         val notesSyncEligible = input.flag()
         val browser = input.optional()
         val page = if (input.flag()) {

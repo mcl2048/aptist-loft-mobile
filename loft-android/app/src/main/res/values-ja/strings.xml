@@ -372,4 +372,6 @@
     <string name="vpn_node_details_action">%1$s の詳細</string>
     <string name="vpn_nodes_next_connection">選択したノードは次回の接続から適用されます。</string>
     <string name="vpn_connection_details">接続の詳細</string>
+    <string name="vault_sync_legacy_session">暗号化バックアップを同期するには、もう一度サインインしてください。</string>
+    <string name="vault_sync_enrollment_required">暗号化バックアップを同期するには、有効な Hub のサインインが必要です。</string>
 </resources>

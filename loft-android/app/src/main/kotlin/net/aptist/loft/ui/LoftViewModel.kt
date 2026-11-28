@@ -122,6 +122,8 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     private var appsEpoch = 0L
     private var hubRequest: Long? = null
     private var hubAction: HubAction? = null
+    private data class HubIdentity(val origin: String, val issuer: String, val subject: String)
+    private var notesDiscoveryAttempt: HubIdentity? = null
     private var browserUrl: String? = null
     private var hubExpiry: Job? = null
     private var pendingExport: HubExport? = null
@@ -130,17 +132,23 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     private val mutableNotesRefresh = MutableStateFlow(0L)
     internal val notesRefresh: StateFlow<Long> = mutableNotesRefresh
     private var displayedNotesGeneration: ULong? = null
+    private var notesResetRecoveredEpoch: Long? = null
 
-    private fun receiveNotesSync(generation: Long, signedOut: Boolean) {
-        if (signedOut) {
-            clearHub()
-            updateNotesSchedule(false)
-            refreshProtection()
+    private fun receiveNotesSync(generation: Long, status: String) {
+        if (status == "session_changed") {
+            // The authoritative receipt may already belong to a newer signed-in account.
             refreshHub()
-        } else if (visible && mutable.value.presentation.navigation.page == Page.NOTES &&
-            displayedNotesGeneration != generation.toULong()) {
-            mutableNotesRefresh.value = Math.incrementExact(mutableNotesRefresh.value)
+            return
         }
+        val statusChanged = status == "reset_completed" || status == "needs_recovery" || status == "conflict"
+        if (visible && mutable.value.presentation.navigation.page == Page.NOTES &&
+            (statusChanged || displayedNotesGeneration != generation.toULong())) {
+            advanceNotesRefresh()
+        }
+    }
+
+    private fun advanceNotesRefresh() {
+        mutableNotesRefresh.value = Math.incrementExact(mutableNotesRefresh.value)
     }
 
     private var notesSyncScheduled = false
@@ -148,6 +156,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         when (command) {
             is NotesCommand.SyncConfigure -> updateNotesSchedule(true, edited = true)
             NotesCommand.SyncDisable -> updateNotesSchedule(false)
+            is NotesCommand.SyncReset, NotesCommand.SyncRetry -> scheduleNotesReset()
             is NotesCommand.Save, is NotesCommand.Archive, is NotesCommand.Delete ->
                 if (notesSyncScheduled) NotesSyncSchedule.edited(getApplication<Application>())
             else -> Unit
@@ -157,8 +166,15 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
     internal fun executeNotes(command: NotesCommand, receive: (String, NotesResult?) -> Unit): Boolean =
         protection.notes(command) { code, result ->
             if (result is NotesResult.Page) displayedNotesGeneration = result.value.generation
+            if (result is NotesResult.SyncStatus && result.value.resetPending &&
+                notesResetRecoveredEpoch != protection.state.value.epoch) scheduleNotesReset()
             receive(code, result)
         }
+
+    private fun scheduleNotesReset() {
+        notesResetRecoveredEpoch = protection.state.value.epoch
+        NotesSyncSchedule.reset(getApplication<Application>())
+    }
 
     private fun updateNotesSchedule(eligible: Boolean, edited: Boolean = false) {
         val app = getApplication<Application>()
@@ -387,13 +403,40 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         if (result != null) {
             updateNotesSchedule(result.notesSyncEligible)
             val oldHub = state.hub
-            if (oldHub?.origin != latest?.origin || oldHub?.issuer != latest?.issuer ||
-                oldHub?.session?.subject != latest?.session?.subject) {
-                if (state.presentation.navigation.page == Page.NOTES) refreshProtection(force = true)
+            val identityChanged = oldHub?.session?.subject != latest?.session?.subject ||
+                (oldHub?.session != null && (oldHub.origin != latest?.origin || oldHub.issuer != latest?.issuer)) ||
+                oldHub?.session?.durable != latest?.session?.durable
+            if (state.presentation.navigation.page == Page.NOTES) {
+                val discoveryChangedScope = action == HubAction.DISCOVER && scopeChanged
+                if ((identityChanged && oldHub?.session != null) || discoveryChangedScope) {
+                    refreshProtection(force = true)
+                } else if (identityChanged || oldHub?.notesDiscoveryRequired != latest?.notesDiscoveryRequired) {
+                    advanceNotesRefresh()
+                }
             }
             scheduleHubExpiry(latest)
+            refreshNotesCapability(latest)
         }
     }
+
+    private fun refreshNotesCapability(snapshot: HubSnapshot?) {
+        val session = snapshot?.session
+        if (session == null) {
+            notesDiscoveryAttempt = null
+            return
+        }
+        val origin = snapshot.origin ?: return
+        val issuer = snapshot.issuer ?: return
+        val state = mutable.value
+        if (!snapshot.notesDiscoveryRequired || !session.durable || snapshot.transactionPending ||
+            !visible || !state.canChangeConfiguration || state.pendingRequest != null ||
+            state.native?.core?.serverAddress != origin || state.presentation.navigation.page !in hubSnapshotPages) return
+        val identity = HubIdentity(origin, issuer, session.subject)
+        if (notesDiscoveryAttempt == identity || hubRequest != null) return
+        notesDiscoveryAttempt = identity
+        submitHub(HubAction.DISCOVER)
+    }
+
     private fun scheduleHubExpiry(snapshot: HubSnapshot?) {
         hubExpiry?.cancel()
         val session = snapshot?.session?.takeIf { it.mailAvailable } ?: return
@@ -421,6 +464,7 @@ class LoftViewModel(application: Application) : AndroidViewModel(application) {
         mutable.value = mutable.value.copy(hubBusy = false)
     }
     private fun clearHub() {
+        notesDiscoveryAttempt = null
         cancelHubUiWork()
         hubExpiry?.cancel()
         hubExpiry = null

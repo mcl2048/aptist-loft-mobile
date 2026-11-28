@@ -2,13 +2,16 @@ use loft_ffi::{AppCore, HubAction, HubRequest, NotesDraft, ProtectionScope, Secu
 use serde_json::{Value, json};
 
 fn reply(core: &AppCore, request: HubRequest, status: u32, body: Value) {
-    core.hub_finish(
-        request.request_id,
-        status,
-        Some("application/json".into()),
-        serde_json::to_vec(&body).unwrap(),
-    )
-    .unwrap();
+    let media = Some("application/json".into());
+    let bytes = serde_json::to_vec(&body).unwrap();
+    let receipt = core
+        .hub_finish(request.request_id, status, media.clone(), bytes.clone())
+        .unwrap();
+    if let Some(next) = receipt.next_request {
+        assert_eq!(next.requested_capabilities.as_deref(), Some("notes-sync/1"));
+        core.hub_finish(next.request_id, status, media, bytes)
+            .unwrap();
+    }
 }
 
 fn login(core: &AppCore, subject: &str, modules: &[&str]) {
@@ -16,7 +19,7 @@ fn login(core: &AppCore, subject: &str, modules: &[&str]) {
     let request = core.hub_begin(HubAction::Discover, None, false).unwrap();
     assert_eq!(
         request.requested_capabilities.as_deref(),
-        Some("notes-sync/1")
+        Some("notes-sync/2")
     );
     reply(
         core,
@@ -271,4 +274,271 @@ fn enrollment_keeps_existing_guest_notes_on_the_device() {
         a.notes_detail(guest, paired).err(),
         Some(SecureError::NotFound)
     );
+}
+
+#[test]
+fn concurrent_edits_to_one_note_keep_each_device_copy() {
+    let a = AppCore::new();
+    let b = AppCore::new();
+    login(&a, "same-user", &["notes_sync"]);
+    login(&b, "same-user", &["notes_sync"]);
+    let a_lease = a
+        .protection_begin(ProtectionScope::Notes, 100)
+        .unwrap()
+        .challenge;
+    let b_lease = b
+        .protection_begin(ProtectionScope::Notes, 100)
+        .unwrap()
+        .challenge;
+    let code = a
+        .notes_sync_configure(a_lease.clone(), None)
+        .unwrap()
+        .unwrap();
+    b.notes_sync_configure(b_lease.clone(), Some(code.into_bytes()))
+        .unwrap();
+    let id = save(&a, &a_lease, "Shared before edits");
+    let mut revision = 0;
+    let mut ciphertext = None;
+    exchange(&a, &mut revision, &mut ciphertext);
+    exchange(&b, &mut revision, &mut ciphertext);
+    for (core, lease, title) in [(&a, &a_lease, "Edited on A"), (&b, &b_lease, "Edited on B")] {
+        let version = core
+            .notes_detail(lease.clone(), id.clone())
+            .unwrap()
+            .summary
+            .version;
+        core.notes_save(
+            lease.clone(),
+            NotesDraft {
+                id: Some(id.clone()),
+                expected_version: Some(version),
+                title: title.into(),
+                body: "Confidential phrase".into(),
+                icon: None,
+                tags: String::new(),
+            },
+            100,
+        )
+        .unwrap();
+    }
+    exchange(&a, &mut revision, &mut ciphertext);
+    let get = b.notes_sync_begin().unwrap().unwrap();
+    let result = b.notes_sync_finish(
+        get.request_id,
+        200,
+        Some("application/json".into()),
+        serde_json::to_vec(&json!({"revision":revision,"ciphertext":ciphertext})).unwrap(),
+    );
+    assert_eq!(result.err(), Some(SecureError::Conflict));
+    assert_eq!(
+        b.notes_detail(b_lease, id.clone()).unwrap().summary.title,
+        "Edited on B"
+    );
+    assert_eq!(
+        a.notes_detail(a_lease, id).unwrap().summary.title,
+        "Edited on A"
+    );
+}
+
+fn reply_notes(
+    core: &AppCore,
+    request: &HubRequest,
+    status: u32,
+    body: Value,
+) -> loft_ffi::NotesSyncStep {
+    core.notes_sync_finish(
+        request.request_id,
+        status,
+        Some("application/json".into()),
+        serde_json::to_vec(&body).unwrap(),
+    )
+    .unwrap()
+}
+
+#[test]
+fn staged_rotation_replays_identical_ciphertext_after_sqlcipher_reopen() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("notes.db").to_string_lossy().into_owned();
+    let key = vec![38; 32];
+    let core = AppCore::open_persistent(path.clone(), key.clone(), true).unwrap();
+    login(&core, "same-user", &["mail", "notes_sync", "notes_reset"]);
+    let lease = core
+        .protection_begin(ProtectionScope::Notes, 100)
+        .unwrap()
+        .challenge;
+    let old_code = core
+        .notes_sync_configure(lease.clone(), None)
+        .unwrap()
+        .unwrap();
+    let note = save(&core, &lease, "Kept during rotation");
+    let mut revision = 0;
+    let mut ciphertext = None;
+    exchange(&core, &mut revision, &mut ciphertext);
+    core.notes_sync_reset(lease.clone(), false).unwrap();
+    assert!(core.notes_sync_status(lease.clone()).unwrap().reset_pending);
+    assert!(core.notes_sync_recovery_code(lease).unwrap().is_none());
+    let get = core.notes_sync_begin().unwrap().unwrap();
+    assert!(get.if_none_match.is_none());
+    let post = reply_notes(
+        &core,
+        &get,
+        200,
+        json!({"revision":revision,"ciphertext":ciphertext}),
+    )
+    .next_request
+    .unwrap();
+    assert!(post.url.ends_with("/v1/notes/reset"));
+    let reset: Value = serde_json::from_slice(&post.body).unwrap();
+    assert_eq!(reset["baseRevision"], 1);
+    drop(core);
+    let core = AppCore::open_persistent(path, key, false).unwrap();
+    let lease = core
+        .protection_begin(ProtectionScope::Notes, 100)
+        .unwrap()
+        .challenge;
+    let resumed = core.notes_sync_begin().unwrap().unwrap();
+    assert_eq!(resumed.body, post.body);
+    let ack = reply_notes(
+        &core,
+        &resumed,
+        200,
+        json!({"revision":2,"operationId":reset["operationId"]}),
+    );
+    assert!(ack.reset_completed);
+    assert_eq!(
+        core.notes_detail(lease.clone(), note.clone())
+            .unwrap()
+            .summary
+            .title,
+        "Kept during rotation"
+    );
+    let code = core.notes_sync_recovery_code(lease).unwrap().unwrap();
+    assert_ne!(old_code, code);
+    let peer = AppCore::new();
+    login(&peer, "same-user", &["notes_sync", "notes_reset"]);
+    let peer_lease = peer
+        .protection_begin(ProtectionScope::Notes, 100)
+        .unwrap()
+        .challenge;
+    peer.notes_sync_configure(peer_lease.clone(), Some(old_code.into_bytes()))
+        .unwrap();
+    let remote =
+        json!({"revision":2,"ciphertext":reset["ciphertext"],"keyEpoch":reset["operationId"]});
+    let get = peer.notes_sync_begin().unwrap().unwrap();
+    assert!(reply_notes(&peer, &get, 200, remote.clone()).needs_recovery);
+    assert!(!peer.notes_sync_eligible());
+    peer.notes_sync_configure(peer_lease.clone(), Some(code.into_bytes()))
+        .unwrap();
+    let get = peer.notes_sync_begin().unwrap().unwrap();
+    assert!(reply_notes(&peer, &get, 200, remote).next_request.is_none());
+    assert_eq!(
+        peer.notes_detail(peer_lease, note).unwrap().summary.title,
+        "Kept during rotation"
+    );
+}
+
+#[test]
+fn reset_wipe_waits_for_exact_receipt_and_keeps_later_local_edits() {
+    let core = AppCore::new();
+    login(&core, "same-user", &["notes_sync", "notes_reset"]);
+    let lease = core
+        .protection_begin(ProtectionScope::Notes, 100)
+        .unwrap()
+        .challenge;
+    let wipe = save(&core, &lease, "Erase after acknowledgement");
+    let preserve = save(&core, &lease, "Preserve subsequent modification");
+    core.notes_sync_reset(lease.clone(), true).unwrap();
+    let current = core
+        .notes_detail(lease.clone(), preserve.clone())
+        .unwrap()
+        .summary;
+    core.notes_save(
+        lease.clone(),
+        NotesDraft {
+            id: Some(preserve.clone()),
+            expected_version: Some(current.version),
+            title: "Edited after confirmation".into(),
+            body: "Unaffected".into(),
+            icon: None,
+            tags: String::new(),
+        },
+        101,
+    )
+    .unwrap();
+    let get = core.notes_sync_begin().unwrap().unwrap();
+    let post = reply_notes(&core, &get, 404, json!({"error":"not_found"}))
+        .next_request
+        .unwrap();
+    let reset: Value = serde_json::from_slice(&post.body).unwrap();
+    assert!(core.notes_detail(lease.clone(), wipe.clone()).is_ok());
+    let wrong = core.notes_sync_finish(
+        post.request_id,
+        200,
+        Some("application/json".into()),
+        serde_json::to_vec(&json!({"revision":2,"operationId":reset["operationId"]})).unwrap(),
+    );
+    assert_eq!(wrong.err(), Some(SecureError::InvalidInput));
+    assert!(core.notes_detail(lease.clone(), wipe.clone()).is_ok());
+    let retry = core.notes_sync_begin().unwrap().unwrap();
+    assert_eq!(retry.body, post.body);
+    assert!(
+        reply_notes(
+            &core,
+            &retry,
+            200,
+            json!({"revision":1,"operationId":reset["operationId"]})
+        )
+        .reset_completed
+    );
+    assert_eq!(
+        core.notes_detail(lease.clone(), wipe).err(),
+        Some(SecureError::NotFound)
+    );
+    assert_eq!(
+        core.notes_detail(lease, preserve).unwrap().summary.title,
+        "Edited after confirmation"
+    );
+}
+
+#[test]
+fn ordinary_durable_login_survives_legacy_descriptor_fallback() {
+    let core = AppCore::new();
+    login(&core, "same-user", &["notes_sync"]);
+    let request = core.hub_begin(HubAction::Discover, None, false).unwrap();
+    let next = core
+        .hub_finish(
+            request.request_id,
+            200,
+            Some("application/json".into()),
+            serde_json::to_vec(
+                &json!({"version":1,"product":"loft","authMode":"portal_bff",
+            "issuer":"https://identity.example/api/idp","modules":[]}),
+            )
+            .unwrap(),
+        )
+        .unwrap()
+        .next_request
+        .unwrap();
+    assert_eq!(next.requested_capabilities.as_deref(), Some("notes-sync/1"));
+    let snapshot = core
+        .hub_finish(
+            next.request_id,
+            200,
+            Some("application/json".into()),
+            serde_json::to_vec(
+                &json!({"version":1,"product":"loft","authMode":"portal_bff",
+            "issuer":"https://identity.example/api/idp","modules":["notes_sync"]}),
+            )
+            .unwrap(),
+        )
+        .unwrap()
+        .snapshot;
+    let session = snapshot.session.unwrap();
+    assert!(session.durable);
+    assert!(!session.mail_access);
+    let lease = core
+        .protection_begin(ProtectionScope::Notes, 100)
+        .unwrap()
+        .challenge;
+    assert!(core.notes_sync_status(lease).unwrap().available);
 }

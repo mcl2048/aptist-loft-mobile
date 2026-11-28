@@ -11,7 +11,10 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 
-internal class VaultControl(private val unavailable: (AppCore) -> Unit) {
+internal class VaultControl(
+    private val unavailable: (AppCore) -> Unit,
+    private val onIdentityChanged: () -> Unit,
+) {
     class Work(val id: Long, val command: VaultCommand, val observer: ILoftHubEvents, private val visible: () -> Boolean) {
         val cancelled = AtomicBoolean(false)
         fun active() = !cancelled.get() && visible()
@@ -94,8 +97,8 @@ internal class VaultControl(private val unavailable: (AppCore) -> Unit) {
     private fun exchange(core: AppCore, work: Work) {
         val command = work.command as VaultCommand.Sync
         var request = try { core.vaultSyncBegin(command.passphrase) } finally { command.clear() }
-        // Rust owns the bounded GET/PUT sequence and admits each follow-up.
-        repeat(3) {
+        // A concurrent write can require one additional GET and PUT.
+        repeat(4) {
             var next: net.aptist.loft.core.generated.HubRequest? = null
             try {
                 val response = exchangeHub(request) { work.active() }
@@ -120,7 +123,10 @@ internal class VaultControl(private val unavailable: (AppCore) -> Unit) {
             is VaultException.NotFound, is VaultException.Archived -> "missing"
             is VaultException.Conflict, is VaultException.StaleGeneration -> "conflict"
             is VaultException.TooLarge -> "capacity"
-            is VaultException.NotSignedIn -> "sign_in"
+            is VaultException.NotSignedIn -> {
+                onIdentityChanged()
+                "sign_in"
+            }
             is VaultException.AuthenticationFailed -> "passphrase"
             is VaultException.Busy -> "busy"
             is VaultException.NetworkUnavailable -> "network"

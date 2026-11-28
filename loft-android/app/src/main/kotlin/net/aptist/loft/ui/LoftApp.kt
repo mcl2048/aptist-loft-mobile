@@ -93,7 +93,8 @@ fun LoftApp(model: LoftViewModel, onExit: () -> Unit, onTheme: (ThemeChoice) -> 
                     ModuleRail(state, model, layout, viewport.height, Modifier.offset(x = layout.railLeft.dp).width(layout.railWidth.dp).fillMaxHeight())
                     if (notesOpen) {
                         key(protectedPage.epoch) {
-                            SecureNotesScreen(Modifier.fillMaxSize(), model::executeNotes, layout.primary, layout.secondary, notesRefresh)
+                            SecureNotesScreen(Modifier.fillMaxSize(), model::executeNotes, layout.primary, layout.secondary,
+                                notesRefresh, onOpenAccount = { model.navigate(Page.ACCOUNT) })
                         }
                     } else {
                         Pane(layout.primary) {
@@ -294,7 +295,9 @@ private fun PrimaryContent(state: LoftUiState, model: LoftViewModel, dual: Boole
             ScrollPage(modifier) {
                 PageTitle(R.string.vault_title)
                 if (protection.area == ProtectedArea.VAULT) {
-                    if (protection.unlocked) PrivateEditorInput { VaultPageContent(state, model.vault) }
+                    if (protection.unlocked) PrivateEditorInput {
+                        VaultPageContent(state, model.vault) { model.navigate(Page.ACCOUNT) }
+                    }
                     else ProtectionGate(protection, model.protection)
                 }
             }
@@ -505,8 +508,10 @@ private fun VpnDirectory(
     LinkButton(onClick = model::checkHub, enabled = enabled) {
         Text(stringResource(R.string.hub_check_server))
     }
-    if (profile.session == null) PrimaryButton(R.string.hub_sign_in, { model.signIn(false) }, enabled)
-    else LinkButton(onClick = model::logoutHub, enabled = enabled) { Text(stringResource(R.string.hub_sign_out)) }
+    if (profile.session?.durable != true) PrimaryButton(R.string.hub_sign_in, { model.signIn(false) }, enabled)
+    if (profile.session != null) {
+        LinkButton(onClick = model::logoutHub, enabled = enabled) { Text(stringResource(R.string.hub_sign_out)) }
+    }
     if (profile.mailSupported) {
         if (profile.session?.mailAvailable != true) {
             Text(stringResource(R.string.hub_mail_consent), style = MaterialTheme.typography.bodySmall)

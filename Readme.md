@@ -1,10 +1,14 @@
-# LOFT mobile · 0.1.7-LYNX
+# LOFT mobile · 0.1.8-LYNX
 
 LOFT is a native Android application framework with Rust-owned business state and source-pinned Go VPN adapters. Task `loftmobile-1125-01` builds the foundation against local `guide/guide.md` v3.6 and `guide/ui-design.md`. The complete P0–P5 product roadmap has separate implementation and device gates.
 
+Task `loftmobile-1128-03` adds Secure Notes pairing-key reset with an explicit keep or wipe choice and sensitive clipboard copy. Notes and TOTP sync use the durable Hub identity from ordinary sign-in. Mail consent is independent. Concurrent updates to separate entries can merge, and conflicting edits to the same entry preserve each device's version. TOTP sync re-reads once if another device commits during upload. [Secure Notes contract](docs/contracts/secure-notes.md) · [Vault contract](docs/contracts/vault.md) · [Task report](report/loftmobile-1128-03-progress.md)
+
+The signed 0.1.8-LYNX ARM64 Release is `bin/loft.apk`, versionCode 9, SHA-256 `d0ae8912249ab4201c1034b2ddca81379e6e9fee6e9dbd521e4a75f6c4e6ba6f`. The APK uses the LOFT development certificate. [APK verification](docs/validation/apk-0.1.8-release.json) · [Build evidence](docs/validation/build-0.1.8.json) · [Live Hub](https://aptist-loft-hub.pages.dev)
+
 Task `loftmobile-1128-02` adds Application protection for the TOTP vault and Secure Notes. Secure Notes supports local encrypted editing, Markdown with source visibility on the current line, search, tags, archive and deletion. The editor shares the existing hinge-safe layout and retains its draft across window resizing. A verified Hub profile and a paired device key enable optional background sync. Existing anonymous notes remain local. [Secure Notes contract](docs/contracts/secure-notes.md) · [Task report](report/loftmobile-1128-02-progress.md)
 
-The signed 0.1.7-LYNX ARM64 Release is `bin/loft.apk`, versionCode 8, SHA-256 `8f557b12f015b3c408df10018cf87228e254291029459e56521db916d69bcb17`. The APK carries the LOFT development certificate. The existing Hub serves Notes API v1. [APK verification](docs/validation/apk-0.1.7-release.json) · [Build evidence](docs/validation/build-0.1.7.json) · [Live Hub](https://aptist-loft-hub.pages.dev)
+The 0.1.7-LYNX ARM64 Release used versionCode 8 and SHA-256 `8f557b12f015b3c408df10018cf87228e254291029459e56521db916d69bcb17`. [APK verification](docs/validation/apk-0.1.7-release.json) · [Build evidence](docs/validation/build-0.1.7.json)
 
 Task `loftmobile-1128-01` adds a native overview with account, VPN and app traffic status, a direct VPN node directory, and a shared bottom shield. It also reduces HyrakenX UDP buffer usage and updates the mobile transport inputs to Gateway 8.0.36. [Task report](report/loftmobile-1128-01-progress.md)
 

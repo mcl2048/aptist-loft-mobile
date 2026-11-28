@@ -100,3 +100,10 @@ The0.1.2 Root host checkpoint independently passed93 Rust tests/fmt/Clippy and G
 - The app PIN's persisted attempt reservation precedes Argon2id. Run the KDF outside the AppCore mutex. The Android prompt proves possession of a current authentication-bound Keystore operation, and its callback must still match the current visible page epoch.
 - Archive and delete use actual drag distance. Compose swipe velocity can commit before the nominal threshold. A floating-point product of width and 0.60 can also miss the exactly 60% case. Test exact-threshold and cancellation behavior. Keep the writer's cursor and draft above narrow and split layout slots.
 - WorkManager's library manifest includes the standard wake-lock permission. Record app-owned resources and system scheduling separately. Device package and activity services can register before boot settles. Require a completed boot and matching APK installation receipts before counting API instrumentation.
+
+## Notes key rotation from 0.1.8
+
+- Store a reset's original base revision and exact ciphertext identity with its active key epoch. The replay receipt must return that original revision even after later ordinary writes. A later reset fences older receipts. Old clients write only to the pre-reset epoch.
+- Rebuild the same pending ciphertext after SQLCipher reopen from the frozen collection, key, operation ID and nonce. Require the original apply revision and ID before committing a local wipe or disclosing the new pairing key.
+- A version discrepancy on TOTP upload permits one authenticated re-read. Compare changes against the confirmed baseline and preserve each device's value for divergent edits. A rotated Notes key invalidates the previous sync scope. After re-pairing, divergent offline edits can stay device-local.
+- Use the platform's sensitive clipboard flag on the copied pairing code. Check the clip metadata separately from Android UI and physical-device behavior.

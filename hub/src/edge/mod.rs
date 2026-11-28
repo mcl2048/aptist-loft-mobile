@@ -197,6 +197,7 @@ async fn route(mut request: Request, env: Env) -> Result<Response> {
             .map_err(|_| INVALID)?
             .as_deref()
         {
+            Some("notes-sync/2") => &["mail", "notes_sync", "notes_reset"][..],
             Some("notes-sync/1") => &["mail", "notes_sync"][..],
             _ => &["mail"][..],
         };
@@ -268,6 +269,7 @@ async fn route(mut request: Request, env: Env) -> Result<Response> {
             vault::access(&config, &db, &mut request, &path["/v1/vault/".len()..]).await
         }
         (Method::Get | Method::Put, "/v1/notes") => notes::access(&config, &db, &mut request).await,
+        (Method::Post, "/v1/notes/reset") => notes::reset(&config, &db, &mut request).await,
         (Method::Get, path)
             if path == MAIL
                 || path

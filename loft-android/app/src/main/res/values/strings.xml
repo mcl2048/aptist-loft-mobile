@@ -372,4 +372,6 @@
     <string name="vpn_node_details_action">Details for %1$s</string>
     <string name="vpn_nodes_next_connection">Your selection applies to the next connection.</string>
     <string name="vpn_connection_details">Connection details</string>
+    <string name="vault_sync_legacy_session">Sign in again to enable encrypted backup sync.</string>
+    <string name="vault_sync_enrollment_required">Encrypted backup sync requires an active Hub sign-in.</string>
 </resources>

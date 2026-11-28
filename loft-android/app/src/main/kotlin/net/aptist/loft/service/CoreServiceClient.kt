@@ -25,7 +25,7 @@ import net.aptist.loft.core.generated.NodePage
 class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -> Unit,
     private val onReceipt: (Long, ReceiptCode) -> Unit, private val onLost: (ReceiptCode) -> Unit,
     private val onNodePage: (Long, NodePage?, ReceiptCode?) -> Unit = { _, _, _ -> },
-    private val onNotesSyncReceipt: (Long, Boolean) -> Unit = { _, _ -> }) {
+    private val onNotesSyncReceipt: (Long, String) -> Unit = { _, _ -> }) {
     private val appContext = context.applicationContext
     private val handler = Handler(Looper.getMainLooper())
     private val epoch = VisibilityEpoch()
@@ -81,10 +81,10 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
         val observationTicket = epoch.begin()
         val bindingTicket = bindingGeneration
         val callback = object : ILoftEvents.Stub() {
-            override fun onNotesSync(generation: Long, signedOut: Boolean) {
-                if (Binder.getCallingUid() != Process.myUid()) return
+            override fun onNotesSync(generation: Long, status: String) {
+                if (Binder.getCallingUid() != Process.myUid() || status.length > 40) return
                 handler.post {
-                    if (bindingTicket == bindingGeneration && epoch.accepts(observationTicket)) onNotesSyncReceipt(generation, signedOut)
+                    if (bindingTicket == bindingGeneration && epoch.accepts(observationTicket)) onNotesSyncReceipt(generation, status)
                 }
             }
             override fun onNodePage(requestId: Long, code: String, payload: ByteArray) = Unit
@@ -122,7 +122,7 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
         val control = remote ?: return false
         val bindingTicket = bindingGeneration
         val callback = object : ILoftEvents.Stub() {
-            override fun onNotesSync(generation: Long, signedOut: Boolean) = Unit
+            override fun onNotesSync(generation: Long, status: String) = Unit
             override fun onSnapshot(payload: ByteArray) = Unit
             override fun onNodePage(requestId: Long, code: String, payload: ByteArray) = Unit
             override fun onReceipt(id: Long, code: String, snapshotPayload: ByteArray) {
@@ -145,7 +145,7 @@ class CoreServiceClient(context: Context, private val onFrame: (SnapshotFrame) -
         val ticket = bindingGeneration
         if (!pages.expect(ticket, requestId, offset, generation)) return false
         val callback = object : ILoftEvents.Stub() {
-            override fun onNotesSync(generation: Long, signedOut: Boolean) = Unit
+            override fun onNotesSync(generation: Long, status: String) = Unit
             override fun onSnapshot(payload: ByteArray) = Unit
             override fun onReceipt(id: Long, code: String, payload: ByteArray) = Unit
             override fun onNodePage(id: Long, code: String, payload: ByteArray) {

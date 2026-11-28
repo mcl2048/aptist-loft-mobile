@@ -44,7 +44,7 @@ import net.aptist.loft.core.generated.VaultKind
 private enum class VaultEditor { TOTP, PASSWORD, URI, SYNC }
 
 @Composable
-internal fun VaultPageContent(app: LoftUiState, model: VaultPresentation) {
+internal fun VaultPageContent(app: LoftUiState, model: VaultPresentation, onOpenAccount: () -> Unit) {
     val state by model.state.collectAsStateWithLifecycle()
     val activity = LocalActivity.current as? MainActivity
     val context = LocalContext.current
@@ -122,9 +122,16 @@ internal fun VaultPageContent(app: LoftUiState, model: VaultPresentation) {
     if (page != null && page.offset != 0u) TextButton(enabled = enabled, onClick = { model.load(previous = true) }) { Text(stringResource(R.string.vault_previous)) }
     HorizontalDivider()
     Text(stringResource(R.string.vault_offline), style = MaterialTheme.typography.bodySmall)
-    if (app.hub?.session != null) TextButton(enabled = enabled, onClick = { model.hide(); editor = VaultEditor.SYNC }) {
-        Text(stringResource(R.string.vault_sync))
-    } else Text(stringResource(R.string.vault_sync_signed_out), style = MaterialTheme.typography.bodySmall)
+    val hub = app.hub
+    if (hub?.session?.durable == true) {
+        TextButton(enabled = enabled, onClick = { model.hide(); editor = VaultEditor.SYNC }) {
+            Text(stringResource(R.string.vault_sync))
+        }
+    } else if (hub != null) {
+        val message = if (hub.session == null) R.string.vault_sync_signed_out else R.string.vault_sync_legacy_session
+        Text(stringResource(message), style = MaterialTheme.typography.bodySmall)
+        TextButton(onClick = onOpenAccount) { Text(stringResource(R.string.account_title)) }
+    }
 }
 
 @Composable
@@ -198,7 +205,7 @@ private fun vaultStatus(code: String?): Int? = when (code) {
     "conflict" -> R.string.vault_conflict
     "busy" -> R.string.vault_busy
     "capacity" -> R.string.vault_capacity
-    "sign_in" -> R.string.vault_sync_signed_out
+    "sign_in" -> R.string.vault_sync_enrollment_required
     "passphrase" -> R.string.vault_bad_passphrase
     "network" -> R.string.hub_network_unavailable
     "saved" -> R.string.vault_saved

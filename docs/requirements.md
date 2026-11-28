@@ -1,6 +1,6 @@
 # LOFT framework requirement status
 
-The 0.1.7-LYNX task adds Application protection and Secure Notes with optional paired Hub sync. The preceding 0.1.6-LYNX task added the overview, VPN node directory, traffic totals and UDP allocation reductions. [Current task report](../report/loftmobile-1128-02-progress.md) · [0.1.6 report](../report/loftmobile-1128-01-progress.md)
+The 0.1.8-LYNX task adds Secure Notes pairing-key reset, ordinary Hub sign-in recognition and concurrent sync handling for Secure Notes and TOTP. [Current task report](../report/loftmobile-1128-03-progress.md) · [0.1.7 report](../report/loftmobile-1128-02-progress.md)
 
 | Requirement | Implementation / owner | Verified boundary and remaining work |
 | --- | --- | --- |

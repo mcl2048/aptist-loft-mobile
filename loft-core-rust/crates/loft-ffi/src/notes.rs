@@ -164,12 +164,19 @@ pub struct NoteTag {
 pub struct NotesSyncStatus {
     pub available: bool,
     pub configured: bool,
+    pub signed_in: bool,
+    pub reset_available: bool,
+    pub reset_pending: bool,
+    pub needs_recovery: bool,
+    pub recovery_code_ready: bool,
 }
 
 #[derive(uniffi::Record)]
 pub struct NotesSyncStep {
     pub next_request: Option<HubRequest>,
     pub generation: u64,
+    pub reset_completed: bool,
+    pub needs_recovery: bool,
 }
 
 #[uniffi::export]
@@ -332,6 +339,11 @@ impl AppCore {
         Ok(NotesSyncStatus {
             available: status.available,
             configured: status.configured,
+            signed_in: status.signed_in,
+            reset_available: status.reset_available,
+            reset_pending: status.reset_pending,
+            needs_recovery: status.needs_recovery,
+            recovery_code_ready: status.recovery_code_ready,
         })
     }
 
@@ -342,6 +354,16 @@ impl AppCore {
     ) -> Result<Option<String>, SecureError> {
         let mut state = self.state.lock().map_err(|_| SecureError::Unavailable)?;
         Ok(state.notes_sync_configure(&lease, recovery_code)?)
+    }
+
+    pub fn notes_sync_reset(&self, lease: String, wipe: bool) -> Result<(), SecureError> {
+        let mut state = self.state.lock().map_err(|_| SecureError::Unavailable)?;
+        Ok(state.notes_sync_reset(&lease, wipe)?)
+    }
+
+    pub fn notes_sync_recovery_code(&self, lease: String) -> Result<Option<String>, SecureError> {
+        let state = self.state.lock().map_err(|_| SecureError::Unavailable)?;
+        Ok(state.notes_sync_recovery_code(&lease)?)
     }
 
     pub fn notes_sync_disable(&self, lease: String) -> Result<(), SecureError> {
@@ -382,6 +404,8 @@ impl AppCore {
         Ok(NotesSyncStep {
             next_request: step.next_request.map(Into::into),
             generation: step.generation,
+            reset_completed: step.reset_completed,
+            needs_recovery: step.needs_recovery,
         })
     }
 

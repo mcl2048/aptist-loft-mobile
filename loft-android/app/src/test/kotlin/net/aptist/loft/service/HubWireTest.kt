@@ -11,8 +11,11 @@ import org.junit.Test
 import java.io.IOException
 
 class HubWireTest {
-    private val profile = HubSnapshot(1u, "https://hub.invalid", "https://idp.invalid/api/idp", true, false,
-        HubSession("subject", "guest@example.invalid", true, true, 60u))
+    private val profile = HubSnapshot(
+        generation = 1u, origin = "https://hub.invalid", issuer = "https://idp.invalid/api/idp",
+        mailSupported = true, notesDiscoveryRequired = false, transactionPending = false,
+        session = HubSession("subject", "guest@example.invalid", true, true, 60u, durable = true),
+    )
     private val row = HubMailSummary("a".repeat(64), "Example Sender", "Example Recipient", "Review", "2026-01-01T00:00:00Z",
         false, "inbox", 1u, 100u)
 
@@ -31,6 +34,21 @@ class HubWireTest {
         assertEquals("subject", actual.session?.subject)
         assertTrue(actual.session?.mailAccess == true)
         assertFalse(actual.session?.mailAvailable == true)
+    }
+
+    @Test fun identityOnlySessionUsesEnrollmentAwareWire() {
+        val identityOnly = profile.copy(session = profile.session?.copy(
+            mailAccess = false, mailAvailable = false, expiresInSeconds = 0u,
+        ), notesDiscoveryRequired = true)
+        val encoded = HubWire.encode(HubResult(identityOnly))
+        assertEquals(4, encoded.first().toInt())
+        val projected = HubWire.decode(encoded).snapshot
+        assertTrue(projected.notesDiscoveryRequired)
+        val restored = checkNotNull(projected.session)
+        assertTrue(restored.durable)
+        assertEquals("subject", restored.subject)
+        assertFalse(restored.mailAccess)
+        assertFalse(restored.mailAvailable)
     }
 
     @Test fun completeBoundedDetailCarriesTheFileDescriptorsMetadataOnly() {

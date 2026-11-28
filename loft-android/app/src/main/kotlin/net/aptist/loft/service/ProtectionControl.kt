@@ -83,6 +83,8 @@ internal class ProtectionControl {
             "ok"
         } catch (_: ProtectedPageClosed) {
             "locked"
+        } catch (failure: NotesSyncRetryFailure) {
+            failure.code
         } catch (failure: SecureException) {
             if (command is ProtectedCommand.Pin || command is ProtectedCommand.Configure) {
                 result = runCatching { ProtectedResult.Access(false, core.protectionStatus()) }.getOrNull()
@@ -110,7 +112,18 @@ internal class ProtectionControl {
             NotesCommand.SyncStatus -> NotesResult.SyncStatus(core.notesSyncStatus(lease))
             is NotesCommand.SyncConfigure -> NotesResult.SyncConfigured(core.notesSyncConfigure(lease, command.recoveryCode))
             NotesCommand.SyncDisable -> { core.notesSyncDisable(lease); null }
+            is NotesCommand.SyncReset -> { core.notesSyncReset(lease, command.wipe); null }
+            NotesCommand.SyncRecoveryCode -> NotesResult.SyncConfigured(core.notesSyncRecoveryCode(lease))
+            NotesCommand.SyncRetry -> {
+                val status = core.notesSyncStatus(lease)
+                if (!status.signedIn) throw NotesSyncRetryFailure("sign_in")
+                if (!status.available) throw NotesSyncRetryFailure("unsupported")
+                if (!status.resetPending) throw NotesSyncRetryFailure("conflict")
+                null
+            }
         }
+
+    private class NotesSyncRetryFailure(val code: String) : Exception()
 
     private fun scope(area: ProtectedArea): ProtectionScope? = when (area) {
         ProtectedArea.SETTINGS -> null
@@ -128,7 +141,8 @@ internal class ProtectionControl {
             is SecureException.RateLimited -> "rate_limited"
             is SecureException.TooLarge -> "capacity"
             is SecureException.Busy -> "busy"
-            is SecureException.NotSignedIn, is SecureException.Unsupported -> "sign_in"
+            is SecureException.NotSignedIn -> "sign_in"
+            is SecureException.Unsupported -> "unsupported"
             is SecureException.AuthenticationFailed -> "authentication"
             is SecureException.NetworkUnavailable -> "network"
             is SecureException.Unavailable, is SecureException.StorageRecoveryRequired -> "unavailable"

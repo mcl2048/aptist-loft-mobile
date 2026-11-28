@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicLong
 internal object NotesSyncSchedule {
     private const val PERIODIC = "secure-notes-periodic-v1"
     private const val EDITS = "secure-notes-edits-v1"
+    private const val RESET = "secure-notes-reset-v1"
     private val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
         .setRequiresBatteryNotLow(true).build()
 
@@ -41,7 +42,16 @@ internal object NotesSyncSchedule {
         } else {
             manager.cancelUniqueWork(PERIODIC)
             manager.cancelUniqueWork(EDITS)
+            manager.cancelUniqueWork(RESET)
         }
+    }
+
+    fun reset(context: Context) {
+        val request = OneTimeWorkRequestBuilder<NotesSyncWorker>()
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
+            .setConstraints(constraints)
+            .build()
+        WorkManager.getInstance(context).enqueueUniqueWork(RESET, ExistingWorkPolicy.KEEP, request)
     }
 
     fun edited(context: Context) {
@@ -83,11 +93,9 @@ class NotesSyncWorker(context: Context, parameters: WorkerParameters) : Coroutin
             runCatching { control?.cancelNotesSync(requestId) }
             applicationContext.unbindService(connection)
         } else null
-        if (outcome == "sign_in") {
-            NotesSyncSchedule.configure(applicationContext, false)
+        if (outcome in setOf("ok", "ineligible", "sign_in", "unsupported", "authentication", "capacity", "invalid")) {
             return Result.success()
         }
-        if (outcome in setOf("ok", "ineligible", "authentication", "capacity", "invalid")) return Result.success()
         return if (runAttemptCount < 2) Result.retry() else Result.success()
     }
 

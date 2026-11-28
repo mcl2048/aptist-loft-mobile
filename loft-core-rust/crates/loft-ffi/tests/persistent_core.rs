@@ -263,7 +263,13 @@ fn durable_identity_restores_from_sqlcipher_and_logout_stays_local_without_netwo
     core.stage_server("hub.example".into()).unwrap();
     let discovery = core.hub_begin(HubAction::Discover, None, false).unwrap();
     let media = Some("application/json".to_string());
-    core.hub_finish(discovery.request_id, 200, media.clone(), br#"{"version":1,"product":"loft","authMode":"portal_bff","issuer":"https://portal.example/api/idp","modules":["mail"]}"#.to_vec()).unwrap();
+    let descriptor = br#"{"version":1,"product":"loft","authMode":"portal_bff","issuer":"https://portal.example/api/idp","modules":["mail"]}"#.to_vec();
+    let receipt = core
+        .hub_finish(discovery.request_id, 200, media.clone(), descriptor.clone())
+        .unwrap();
+    let fallback = receipt.next_request.unwrap();
+    core.hub_finish(fallback.request_id, 200, media.clone(), descriptor)
+        .unwrap();
     let login = core.hub_begin(HubAction::SignIn, None, false).unwrap();
     core.hub_finish(login.request_id, 201, media.clone(), br#"{"transactionId":"AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE","authorizationUrl":"https://portal.example/api/idp/authorize?state=fixture","expiresAt":1800000300,"expiresIn":300}"#.to_vec()).unwrap();
     let complete = core.hub_begin(HubAction::Complete, None, false).unwrap();

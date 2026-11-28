@@ -66,6 +66,7 @@ pub struct HubSnapshot {
     pub origin: Option<String>,
     pub issuer: Option<String>,
     pub mail_supported: bool,
+    pub notes_discovery_required: bool,
     pub transaction_pending: bool,
     pub session: Option<HubSession>,
 }
@@ -75,12 +76,14 @@ pub struct HubSession {
     pub subject: String,
     pub email: Option<String>,
     pub mail_access: bool,
+    pub durable: bool,
     pub mail_available: bool,
     pub expires_in_seconds: u32,
 }
 
 pub struct HubReceipt {
     pub snapshot: HubSnapshot,
+    pub next_request: Option<HubRequest>,
     pub browser_url: Option<String>,
     pub page: Option<HubMailPage>,
     pub message: Option<HubMailMessage>,
@@ -212,6 +215,8 @@ struct Profile {
     issuer: String,
     mail: bool,
     notes_sync: bool,
+    notes_reset: bool,
+    notes_negotiated: bool,
 }
 
 struct Transaction {
@@ -241,6 +246,7 @@ struct InFlight {
 
 enum Operation {
     Discover,
+    DiscoverV1(Profile),
     SignIn {
         proof: Zeroizing<String>,
         mail: bool,
@@ -264,6 +270,21 @@ impl HubState {
 
     pub(crate) fn scope_generation(&self) -> u64 {
         self.generation
+    }
+
+    pub(crate) fn notes_reset_supported(&self) -> bool {
+        self.profile
+            .as_ref()
+            .is_some_and(|profile| profile.notes_reset)
+    }
+
+    pub(crate) fn signed_in(&self) -> bool {
+        self.session.as_ref().is_some_and(|session| {
+            session.durable
+                || session
+                    .deadline
+                    .is_some_and(|deadline| deadline > Instant::now())
+        })
     }
 
     pub(crate) fn scope_for_notes(&self, origin: &str) -> Result<(String, &str), HubError> {
@@ -312,6 +333,8 @@ impl HubState {
             issuer: stored.issuer,
             mail: stored.mail_supported,
             notes_sync: stored.notes_sync,
+            notes_reset: stored.notes_reset,
+            notes_negotiated: stored.notes_negotiated,
         });
         self.session = Some(Session {
             bearer: stored.bearer,
@@ -340,6 +363,8 @@ impl HubState {
             mail: session.mail,
             mail_supported: profile.mail,
             notes_sync: profile.notes_sync,
+            notes_reset: profile.notes_reset,
+            notes_negotiated: profile.notes_negotiated,
             expires_at: session.expires_at,
             bearer: session.bearer.clone(),
         };
@@ -404,11 +429,17 @@ impl HubState {
             origin: origin.map(str::to_owned),
             issuer: self.profile.as_ref().map(|profile| profile.issuer.clone()),
             mail_supported: self.profile.as_ref().is_some_and(|profile| profile.mail),
+            notes_discovery_required: self.durable_session().is_some()
+                && self
+                    .profile
+                    .as_ref()
+                    .is_some_and(|profile| !profile.notes_negotiated),
             transaction_pending: self.transaction.is_some(),
             session: self.session.as_ref().map(|session| HubSession {
                 subject: session.subject.clone(),
                 email: session.email.clone(),
                 mail_access: session.mail,
+                durable: session.durable,
                 mail_available: session.mail && session.deadline.is_some(),
                 expires_in_seconds: session.deadline.map_or(0, |deadline| {
                     deadline
@@ -467,7 +498,7 @@ impl HubState {
         let operation = match action {
             HubAction::Discover => {
                 request.url.push_str(DISCOVERY);
-                request.requested_capabilities = Some("notes-sync/1".into());
+                request.requested_capabilities = Some("notes-sync/2".into());
                 Operation::Discover
             }
             HubAction::SignIn => {
@@ -592,24 +623,50 @@ impl HubState {
             return Err(self.reject(&active.operation, status, &body));
         }
         let mut browser_url = None;
+        let mut next_request = None;
         let mut page = None;
         let mut message = None;
         let mut file = None;
         match active.operation {
-            Operation::Discover if status == 200 => {
+            Operation::Discover | Operation::DiscoverV1(_) if status == 200 => {
                 let descriptor: Descriptor =
                     read_json(media_type, &body).map_err(|_| HubError::IncompatibleServer)?;
                 let profile = descriptor.profile()?;
-                if let Some(current) = self.profile.as_ref() {
-                    if current.issuer != profile.issuer || current.mail != profile.mail {
-                        self.clear_scope();
-                    } else if current.notes_sync != profile.notes_sync {
-                        // Capability negotiation on the same profile cannot
-                        // revoke the user's verified durable identity.
-                        self.advance();
+                if let Operation::DiscoverV1(expected) = active.operation {
+                    if profile.issuer != expected.issuer
+                        || profile.mail != expected.mail
+                        || profile.notes_reset
+                    {
+                        return Err(HubError::IncompatibleServer);
                     }
+                    self.accept_profile(profile);
+                } else if !profile.notes_sync {
+                    let origin = origin.ok_or(HubError::StaleRequest)?;
+                    let id = self
+                        .request_id
+                        .checked_add(1)
+                        .ok_or(HubError::StateUnavailable)?;
+                    self.request_id = id;
+                    next_request = Some(HubRequest {
+                        request_id: id,
+                        generation: self.generation,
+                        url: format!("{origin}{DISCOVERY}"),
+                        method: "GET".into(),
+                        bearer: None,
+                        body: Vec::new(),
+                        max_response_bytes: MAX_AUTH_BYTES,
+                        if_none_match: None,
+                        requested_capabilities: Some("notes-sync/1".into()),
+                    });
+                    self.active = Some(InFlight {
+                        id,
+                        started: now,
+                        operation: Operation::DiscoverV1(profile),
+                        limit: MAX_AUTH_BYTES,
+                    });
+                } else {
+                    self.accept_profile(profile);
                 }
-                self.profile = Some(profile);
             }
             Operation::SignIn { proof, mail } if status == 201 => {
                 let started: Started = read_json(media_type, &body)?;
@@ -748,11 +805,25 @@ impl HubState {
         }
         Ok(HubReceipt {
             snapshot: self.snapshot(origin),
+            next_request,
             browser_url,
             page,
             message,
             file,
         })
+    }
+
+    fn accept_profile(&mut self, profile: Profile) {
+        if let Some(current) = self.profile.as_ref() {
+            if current.issuer != profile.issuer || current.mail != profile.mail {
+                self.clear_scope();
+            } else if current.notes_sync != profile.notes_sync
+                || current.notes_reset != profile.notes_reset
+            {
+                self.advance();
+            }
+        }
+        self.profile = Some(profile);
     }
 
     fn reject(&mut self, operation: &Operation, status: u32, body: &[u8]) -> HubError {
@@ -761,7 +832,9 @@ impl HubState {
             .map(|response| response.error);
         let code = wire.as_deref();
         match (operation, status, code) {
-            (Operation::Discover, 404, _) => HubError::IncompatibleServer,
+            (Operation::Discover | Operation::DiscoverV1(_), 404, _) => {
+                HubError::IncompatibleServer
+            }
             (Operation::Complete, _, Some("transaction_expired" | "access_denied")) => {
                 self.advance();
                 self.transaction = None;
@@ -828,12 +901,18 @@ impl Descriptor {
             || self.product != "loft"
             || self.auth_mode != "portal_bff"
             || !normalize_server_origin(origin).is_ok_and(|normalized| normalized == origin)
-            || self.modules.len() > 2
+            || self.modules.len() > 3
             || !self
                 .modules
                 .iter()
-                .all(|module| matches!(module.as_str(), "mail" | "notes_sync"))
-            || (self.modules.len() == 2 && self.modules[0] == self.modules[1])
+                .all(|module| matches!(module.as_str(), "mail" | "notes_sync" | "notes_reset"))
+            || self
+                .modules
+                .iter()
+                .enumerate()
+                .any(|(index, module)| self.modules[..index].contains(module))
+            || (self.modules.iter().any(|module| module == "notes_reset")
+                && !self.modules.iter().any(|module| module == "notes_sync"))
         {
             return Err(HubError::IncompatibleServer);
         }
@@ -841,6 +920,8 @@ impl Descriptor {
             issuer: self.issuer,
             mail: self.modules.iter().any(|module| module == "mail"),
             notes_sync: self.modules.iter().any(|module| module == "notes_sync"),
+            notes_reset: self.modules.iter().any(|module| module == "notes_reset"),
+            notes_negotiated: true,
         })
     }
 }
@@ -917,6 +998,10 @@ struct StoredSession {
     mail_supported: bool,
     #[serde(default)]
     notes_sync: bool,
+    #[serde(default)]
+    notes_reset: bool,
+    #[serde(default)]
+    notes_negotiated: bool,
     #[serde(serialize_with = "serialize_secret", deserialize_with = "secret")]
     bearer: Zeroizing<String>,
 }

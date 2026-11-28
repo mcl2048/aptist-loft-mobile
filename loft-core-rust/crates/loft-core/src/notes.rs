@@ -93,10 +93,13 @@ pub(crate) struct NotesState {
 
 impl NotesState {
     pub(crate) fn restore(data: &[u8]) -> Result<Self, CoreError> {
-        let state: Self =
+        let mut state: Self =
             serde_json::from_slice(data).map_err(|_| CoreError::StorageRecoveryRequired)?;
         if data.len() > NOTES_IMAGE_LIMIT || !state.valid() {
             return Err(CoreError::StorageRecoveryRequired);
+        }
+        for profile in state.profiles.values_mut() {
+            profile.restore_baseline();
         }
         Ok(state)
     }
@@ -138,8 +141,9 @@ impl NotesState {
 
     fn insert(&mut self, scope: Option<&str>, note: Note) -> Result<(), SecureError> {
         if let Some(profile) = scope.and_then(|scope| self.profiles.get_mut(scope)) {
+            profile.ensure_editable()?;
+            profile.changed(note.id.clone());
             profile.data.notes.insert(note.id.clone(), note);
-            profile.dirty = true;
             profile.data.validate()?;
         } else {
             self.local.insert(note.id.clone(), note);
@@ -306,9 +310,10 @@ impl CoreState {
                 .as_deref()
                 .and_then(|scope| next.profiles.get_mut(scope))
                 .ok_or(SecureError::NotFound)?;
+            profile.ensure_editable()?;
             let note = profile.data.notes.remove(id).ok_or(SecureError::NotFound)?;
             profile.data.deleted.insert(note.id.clone());
-            profile.dirty = true;
+            profile.deleted(id);
         }
         self.commit_notes(next)
     }
@@ -358,6 +363,14 @@ impl CoreState {
 }
 
 impl Note {
+    fn same_content(&self, other: &Self) -> bool {
+        self.title == other.title
+            && self.body == other.body
+            && self.icon == other.icon
+            && self.tags == other.tags
+            && self.archived == other.archived
+    }
+
     fn valid(&self, id: &str) -> bool {
         id == self.id
             && fixed_id(id, 16)

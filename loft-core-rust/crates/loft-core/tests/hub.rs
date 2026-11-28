@@ -33,13 +33,18 @@ fn prepare(core: &mut CoreState) {
     assert_eq!(request.url, format!("{ORIGIN}/.well-known/loft-app"));
     assert_eq!(request.method, "GET");
     assert!(request.bearer.is_none() && request.body.is_empty());
-    core.hub_finish(
-        request.request_id,
-        200,
-        Some("application/json"),
-        discovery(),
-    )
-    .unwrap();
+    finish_discovery(core, request.request_id);
+}
+
+fn finish_discovery(core: &mut CoreState, id: u64) {
+    let receipt = core
+        .hub_finish(id, 200, Some("application/json"), discovery())
+        .unwrap();
+    if let Some(next) = receipt.next_request {
+        assert_eq!(next.requested_capabilities.as_deref(), Some("notes-sync/1"));
+        core.hub_finish(next.request_id, 200, Some("application/json"), discovery())
+            .unwrap();
+    }
 }
 
 fn start(core: &mut CoreState, mail_read: bool) -> Value {
@@ -137,8 +142,7 @@ fn candidate_changes_invalidate_receipts_even_after_returning_to_old_origin() {
         Some(HubError::StaleRequest)
     );
     assert!(core.hub_snapshot().issuer.is_none());
-    core.hub_finish(fresh.request_id, 200, Some("application/json"), discovery())
-        .unwrap();
+    finish_discovery(&mut core, fresh.request_id);
     assert_eq!(core.hub_snapshot().issuer.as_deref(), Some(ISSUER));
 }
 
@@ -516,4 +520,70 @@ fn unrelated_server_error_keeps_durable_account_and_logout_fences_pending_kdf() 
         Some(VaultError::StaleGeneration)
     );
     assert!(core.hub_snapshot().session.is_none());
+}
+
+#[test]
+fn vault_revision_conflict_refetches_once_in_the_same_recovery_session() {
+    let mut core = CoreState::new();
+    prepare(&mut core);
+    start(&mut core, false);
+    let request = core.hub_begin(HubAction::Complete, None, false).unwrap();
+    let mut identity = completion(false, ISSUER, 0);
+    identity["durable"] = json!(true);
+    identity["expiresAt"] = json!(0);
+    json_reply(&mut core, request.request_id, 200, identity).unwrap();
+    core.vault_save(loft_core::VaultDraft {
+        id: None,
+        kind: loft_core::VaultKind::Password,
+        label: "Fixture".into(),
+        account: String::new(),
+        issuer: String::new(),
+        secret: Some(b"secret data".to_vec()),
+        algorithm: None,
+        digits: None,
+        period: None,
+    })
+    .unwrap();
+    let first = core
+        .vault_sync_begin(b"recovery fixture passphrase".to_vec())
+        .unwrap();
+    let response = br#"{"error":"not_found"}"#.to_vec();
+    let put = core
+        .vault_sync_finish(
+            first.request_id,
+            404,
+            Some("application/json"),
+            response.clone(),
+        )
+        .unwrap()
+        .next_request
+        .unwrap();
+    let retry = core
+        .vault_sync_finish(
+            put.request_id,
+            409,
+            Some("application/json"),
+            br#"{"error":"conflict"}"#.to_vec(),
+        )
+        .unwrap()
+        .next_request
+        .unwrap();
+    assert_eq!(retry.method, "GET");
+    assert_ne!(retry.request_id, first.request_id);
+    let put = core
+        .vault_sync_finish(retry.request_id, 404, Some("application/json"), response)
+        .unwrap()
+        .next_request
+        .unwrap();
+    assert_eq!(
+        core.vault_sync_finish(
+            put.request_id,
+            409,
+            Some("application/json"),
+            br#"{"error":"conflict"}"#.to_vec()
+        )
+        .err(),
+        Some(loft_core::VaultError::Conflict)
+    );
+    assert_eq!(core.vault_list(false, 0, None).unwrap().entries.len(), 1);
 }

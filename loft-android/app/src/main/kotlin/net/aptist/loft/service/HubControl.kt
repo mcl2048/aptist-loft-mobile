@@ -82,33 +82,45 @@ internal class HubControl(private val publishCoreAvailability: (AppCore) -> Unit
 
     private fun exchange(core: AppCore, work: Work): HubResult {
         val action = work.action ?: return HubResult(core.hubSnapshot(), notesSyncEligible = notesEligible(core))
-        val request = core.hubBegin(action, work.input, work.mailAccess)
-        try {
-            val response = exchangeHub(request) { !work.cancelled.get() }
-            try {
-                if (work.cancelled.get()) throw IOException()
-                val receipt = core.hubFinish(request.requestId, response.status, response.mediaType, response.body)
-                receipt.file?.let { file ->
-                    try {
-                        val destination = work.destination ?: throw IOException()
-                        try {
-                            ParcelFileDescriptor.AutoCloseOutputStream(destination).use { stream ->
-                                for (offset in file.indices step (64 * 1024)) {
-                                    if (work.cancelled.get()) throw IOException()
-                                    stream.write(file, offset, minOf(64 * 1024, file.size - offset))
-                                }
-                            }
-                        } catch (_: IOException) {
-                            throw HubDestinationFailure()
-                        }
-                    } finally { file.fill(0) }
-                }
+        var request = core.hubBegin(action, work.input, work.mailAccess)
+        repeat(2) {
+            val receipt = try {
+                val response = exchangeHub(request) { !work.cancelled.get() }
+                try {
+                    if (work.cancelled.get()) throw IOException()
+                    core.hubFinish(request.requestId, response.status, response.mediaType, response.body)
+                } finally { response.body.fill(0) }
+            } finally {
+                request.body.fill(0)
+                runCatching { core.hubAbandon(request.requestId) }
+            }
+            val next = receipt.nextRequest
+            if (next == null) {
+                receipt.file?.let { file -> saveFile(work, file) }
                 return HubResult(receipt.snapshot, receipt.browserUrl, receipt.page, receipt.message, notesEligible(core))
-            } finally { response.body.fill(0) }
-        } finally {
-            request.body.fill(0)
-            runCatching { core.hubAbandon(request.requestId) }
+            }
+            receipt.file?.fill(0)
+            request = next
         }
+        request.body.fill(0)
+        runCatching { core.hubAbandon(request.requestId) }
+        throw IOException()
+    }
+
+    private fun saveFile(work: Work, file: ByteArray) {
+        try {
+            val destination = work.destination ?: throw IOException()
+            try {
+                ParcelFileDescriptor.AutoCloseOutputStream(destination).use { stream ->
+                    for (offset in file.indices step (64 * 1024)) {
+                        if (work.cancelled.get()) throw IOException()
+                        stream.write(file, offset, minOf(64 * 1024, file.size - offset))
+                    }
+                }
+            } catch (_: IOException) {
+                throw HubDestinationFailure()
+            }
+        } finally { file.fill(0) }
     }
 
     private fun notesEligible(core: AppCore): Boolean = runCatching { core.notesSyncEligible() }.getOrDefault(false)

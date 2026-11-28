@@ -1,0 +1,54 @@
+{
+  "origin": "https://aptist-loft-hub.pages.dev",
+  "discovery": [
+    {
+      "status": 200,
+      "body": {
+        "authMode": "portal_bff",
+        "issuer": "https://portal.aptist.net/api/idp",
+        "modules": [
+          "mail"
+        ],
+        "product": "loft",
+        "version": 1
+      }
+    },
+    {
+      "status": 200,
+      "body": {
+        "authMode": "portal_bff",
+        "issuer": "https://portal.aptist.net/api/idp",
+        "modules": [
+          "mail",
+          "notes_sync"
+        ],
+        "product": "loft",
+        "version": 1
+      }
+    },
+    {
+      "status": 200,
+      "body": {
+        "authMode": "portal_bff",
+        "issuer": "https://portal.aptist.net/api/idp",
+        "modules": [
+          "mail",
+          "notes_sync",
+          "notes_reset"
+        ],
+        "product": "loft",
+        "version": 1
+      }
+    }
+  ],
+  "unauthenticated_reset": {
+    "status": 401,
+    "body": {
+      "error": "session_expired"
+    }
+  },
+  "worker_version": "91cf9ef5-1736-4f8c-b166-23619816bd58",
+  "pages_deployment": "443a81fb",
+  "migration": "0004_notes_key_epoch.sql",
+  "wasm_sha256": "180ec26a4749f5dae82abf75bcb70e1fa6d883e0ee32c65038828f368cd97e04"
+}

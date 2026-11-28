@@ -91,6 +91,7 @@ internal fun SecureNotesScreen(
     primary: PaneBounds? = null,
     secondary: PaneBounds? = null,
     refreshGeneration: Long = 0,
+    onOpenAccount: () -> Unit = {},
 ) {
     val requests = remember { NotesRequests() }
     val search = remember { TextFieldState() }
@@ -252,7 +253,10 @@ internal fun SecureNotesScreen(
                 },
             )
         }
-        if (syncOpen) NotesSyncDialog(requests, execute) { syncOpen = false; resetPage() }
+        if (syncOpen) NotesSyncDialog(requests, execute, refreshGeneration, onOpenAccount) {
+            syncOpen = false
+            resetPage()
+        }
     }
 }
 

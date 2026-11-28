@@ -42,6 +42,9 @@ internal sealed interface NotesCommand : ProtectedCommand {
     data object SyncStatus : NotesCommand
     class SyncConfigure(val recoveryCode: ByteArray?) : NotesCommand
     data object SyncDisable : NotesCommand
+    data class SyncReset(val wipe: Boolean) : NotesCommand
+    data object SyncRecoveryCode : NotesCommand
+    data object SyncRetry : NotesCommand
 }
 
 internal sealed interface ProtectedResult {
@@ -59,6 +62,7 @@ internal sealed interface NotesResult : ProtectedResult {
 
 /** Bounded, strict wire shared by the private protection and notes result callback. */
 internal object ProtectedWire {
+    private const val SCHEMA = 2
     private const val TITLE = 240
     private const val BODY = 25_600
     private const val ICON = 64
@@ -98,6 +102,9 @@ internal object ProtectedWire {
             NotesCommand.SyncStatus -> writeByte(16)
             is NotesCommand.SyncConfigure -> { writeByte(17); optionalBytes(command.recoveryCode, RECOVERY_CODE) }
             NotesCommand.SyncDisable -> writeByte(18)
+            is NotesCommand.SyncReset -> { writeByte(19); writeBoolean(command.wipe) }
+            NotesCommand.SyncRecoveryCode -> writeByte(20)
+            NotesCommand.SyncRetry -> writeByte(21)
         }
     }
 
@@ -125,6 +132,9 @@ internal object ProtectedWire {
             16 -> NotesCommand.SyncStatus
             17 -> NotesCommand.SyncConfigure(optionalBytes(RECOVERY_CODE))
             18 -> NotesCommand.SyncDisable
+            19 -> NotesCommand.SyncReset(flag())
+            20 -> NotesCommand.SyncRecoveryCode
+            21 -> NotesCommand.SyncRetry
             else -> throw IOException()
         }.also { if (available() != 0) { it.clear(); throw IOException() } }
     }
@@ -149,7 +159,18 @@ internal object ProtectedWire {
                 writeByte(13); count(result.value.size, MAX_TAGS)
                 result.value.forEach { text(it.name, TAG); writeInt(it.count.toInt()) }
             }
-            is NotesResult.SyncStatus -> { writeByte(14); writeBoolean(result.value.available); writeBoolean(result.value.configured) }
+            is NotesResult.SyncStatus -> {
+                writeByte(14)
+                with(result.value) {
+                    writeBoolean(available)
+                    writeBoolean(configured)
+                    writeBoolean(signedIn)
+                    writeBoolean(resetAvailable)
+                    writeBoolean(resetPending)
+                    writeBoolean(needsRecovery)
+                    writeBoolean(recoveryCodeReady)
+                }
+            }
             is NotesResult.SyncConfigured -> { writeByte(15); optionalText(result.code, RECOVERY_CODE) }
         }
     }
@@ -165,7 +186,7 @@ internal object ProtectedWire {
             11 -> NotesResult.Detail(NoteDetail(summary(), text(BODY)))
             12 -> NotesResult.Saved(summary())
             13 -> NotesResult.Tags(List(count(MAX_TAGS)) { NoteTag(text(TAG), readInt().toUInt()) })
-            14 -> NotesResult.SyncStatus(NotesSyncStatus(flag(), flag()))
+            14 -> NotesResult.SyncStatus(NotesSyncStatus(flag(), flag(), flag(), flag(), flag(), flag(), flag()))
             15 -> NotesResult.SyncConfigured(optionalText(RECOVERY_CODE))
             else -> throw IOException()
         }
@@ -184,7 +205,7 @@ internal object ProtectedWire {
     private inline fun encode(block: DataOutputStream.() -> Unit): ByteArray {
         val output = ClearOutput()
         return try {
-            DataOutputStream(output).use { it.writeByte(1); it.block() }
+            DataOutputStream(output).use { it.writeByte(SCHEMA); it.block() }
             if (output.size() > VaultWire.MAX_FRAME) throw IOException()
             output.toByteArray()
         } finally { output.clear() }
@@ -192,7 +213,7 @@ internal object ProtectedWire {
     private inline fun <T> decode(frame: ByteArray, block: DataInputStream.() -> T): T {
         if (frame.size !in 2..VaultWire.MAX_FRAME) throw IOException()
         return DataInputStream(ByteArrayInputStream(frame)).use {
-            if (it.readUnsignedByte() != 1) throw IOException()
+            if (it.readUnsignedByte() != SCHEMA) throw IOException()
             val result = it.block()
             if (it.available() != 0) throw IOException()
             result

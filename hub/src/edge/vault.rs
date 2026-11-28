@@ -7,7 +7,7 @@ use super::{Config, MailPermit, device, first, first_col, number};
 use crate::opaque_token;
 
 const CIPHERTEXT_LIMIT: usize = 256 * 1024;
-const JSON_LIMIT: usize = 350 * 1024;
+pub(super) const JSON_LIMIT: usize = 350 * 1024;
 
 thread_local! {
     static REQUESTS: std::cell::Cell<u8> = const { std::cell::Cell::new(0) };
@@ -15,9 +15,9 @@ thread_local! {
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
-pub(super) struct Put {
-    pub(super) base_revision: u32,
-    pub(super) ciphertext: String,
+struct Put {
+    base_revision: u32,
+    ciphertext: String,
 }
 
 #[derive(Deserialize, serde::Serialize)]
@@ -53,7 +53,8 @@ pub(super) async fn access(
     if device::find(db, &hash).await?.is_none() {
         return Err(SESSION);
     }
-    let put = read_upload(request).await?;
+    let put: Put = http::input_bounded(request, JSON_LIMIT).await?;
+    check_upload(put.base_revision, &put.ciphertext)?;
     let result: Option<u32> = first_col(
         db,
         include_str!("../sql/vault_write.sql"),
@@ -74,19 +75,16 @@ pub(super) async fn access(
     }
 }
 
-pub(super) async fn read_upload(request: &mut Request) -> Result<Put> {
-    let put: Put = http::input_bounded(request, JSON_LIMIT).await?;
-    if put.base_revision == u32::MAX {
+pub(super) fn check_upload(base_revision: u32, ciphertext: &str) -> Result<()> {
+    if base_revision == u32::MAX {
         return Err(CONFLICT);
     }
-    let decoded = URL_SAFE_NO_PAD
-        .decode(&put.ciphertext)
-        .map_err(|_| INVALID)?;
+    let decoded = URL_SAFE_NO_PAD.decode(ciphertext).map_err(|_| INVALID)?;
     if decoded.len() > CIPHERTEXT_LIMIT {
         return Err(TOO_LARGE);
     }
     if decoded.len() < 16 {
         return Err(INVALID);
     }
-    Ok(put)
+    Ok(())
 }

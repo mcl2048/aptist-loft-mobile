@@ -54,11 +54,13 @@ struct Active {
     origin: String,
     generation: u64,
     hub_generation: u64,
+    passphrase: Zeroizing<Vec<u8>>,
+    retried: bool,
     phase: Phase,
 }
 
 enum Phase {
-    Get(Zeroizing<Vec<u8>>),
+    Get,
     Put { revision: u32, next: VaultState },
 }
 
@@ -145,7 +147,9 @@ impl CoreState {
             origin,
             generation: self.vault.generation,
             hub_generation: self.hub.scope_generation(),
-            phase: Phase::Get(passphrase),
+            passphrase,
+            retried: false,
+            phase: Phase::Get,
         };
         let request = active.request("GET", Vec::new());
         self.vault_sync.active = Some(active);
@@ -203,7 +207,7 @@ impl CoreState {
             return Err(VaultError::NotSignedIn);
         }
         match active.phase {
-            Phase::Get(_) => {
+            Phase::Get => {
                 self.vault_sync.computing = Some(active.id);
                 Ok(VaultSyncReceipt::Compute(Box::new(VaultSyncWork {
                     active,
@@ -214,7 +218,23 @@ impl CoreState {
             }
             Phase::Put { revision, next } => {
                 if status == 409 {
-                    return Err(VaultError::Conflict);
+                    if active.retried {
+                        return Err(VaultError::Conflict);
+                    }
+                    let rejected: Rejected = serde_json::from_slice(&body)
+                        .map_err(|_| VaultError::NetworkUnavailable)?;
+                    if rejected.error != "conflict" {
+                        return Err(VaultError::NetworkUnavailable);
+                    }
+                    let active = Active {
+                        id: self.vault_sync.next_id()?,
+                        retried: true,
+                        phase: Phase::Get,
+                        ..active
+                    };
+                    let request = active.request("GET", Vec::new());
+                    self.vault_sync.active = Some(active);
+                    return Ok(VaultSyncReceipt::Complete(self.sync_step(Some(request))));
                 }
                 let applied: Applied =
                     serde_json::from_slice(&body).map_err(|_| VaultError::NetworkUnavailable)?;
@@ -297,13 +317,11 @@ impl CoreState {
 }
 
 impl VaultSyncWork {
-    pub fn compute(mut self) -> VaultSyncUpdate {
-        let outcome = match &self.active.phase {
-            Phase::Get(passphrase) => self.finish_get(passphrase),
+    pub fn compute(self) -> VaultSyncUpdate {
+        let outcome = match self.active.phase {
+            Phase::Get => self.finish_get(&self.active.passphrase),
             Phase::Put { .. } => Err(VaultError::StaleGeneration),
         };
-        // Keep the reservation identifiers but release the recovery passphrase immediately.
-        self.active.phase = Phase::Get(Zeroizing::new(Vec::new()));
         VaultSyncUpdate {
             active: self.active,
             outcome,

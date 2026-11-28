@@ -108,21 +108,41 @@ class HubDatabase(unittest.TestCase):
     def test_notes_revision_cas_and_conditional_reads_are_owner_scoped(self):
         self.durable_fixture()
         def create(i):
-            return self.execute('notes_write', 'hash-a', 0, 'notes-ciphertext-fixture-' + str(i))
+            return self.execute('notes_write', 'hash-a', 0, 'notes-ciphertext-fixture-' + str(i), None)
         with ThreadPoolExecutor() as executor:
             results = list(executor.map(create, range(10)))
         self.assertEqual(results.count({'revision': 1}), 1)
         self.assertIsNone(self.execute('notes_read', 'not-enrolled', 0))
-        self.assertEqual(self.execute('notes_read', 'hash-b', 1), {'revision': None, 'ciphertext': None})
-        self.assertEqual(self.execute('notes_read', 'hash-a2', 1), {'revision': 1, 'ciphertext': None})
-        self.assertIsNone(self.execute('notes_write', 'hash-b', 1, 'foreign-ciphertext-fixture'))
-        self.assertIsNone(self.execute('notes_write', 'not-enrolled', 1, 'foreign-ciphertext-fixture'))
-        self.assertEqual(self.execute('notes_write', 'hash-a2', 1, 'replacement-ciphertext-fixture'), {'revision': 2})
-        self.assertEqual(self.execute('notes_read', 'hash-a', 1), {'revision': 2, 'ciphertext': 'replacement-ciphertext-fixture'})
+        self.assertEqual(self.execute('notes_read', 'hash-b', 1), {'revision': None, 'ciphertext': None, 'key_epoch': None})
+        self.assertEqual(self.execute('notes_read', 'hash-a2', 1), {'revision': 1, 'ciphertext': None, 'key_epoch': None})
+        self.assertIsNone(self.execute('notes_write', 'hash-b', 1, 'foreign-ciphertext-fixture', None))
+        self.assertIsNone(self.execute('notes_write', 'not-enrolled', 1, 'foreign-ciphertext-fixture', None))
+        self.assertEqual(self.execute('notes_write', 'hash-a2', 1, 'replacement-ciphertext-fixture', None), {'revision': 2})
+        self.assertEqual(self.execute('notes_read', 'hash-a', 1), {'revision': 2, 'ciphertext': 'replacement-ciphertext-fixture', 'key_epoch': None})
         with closing(sqlite3.connect(self.path)) as connection, connection:
             connection.execute("DELETE FROM hub_device_session WHERE session_hash = 'hash-a'")
-        self.assertIsNone(self.execute('notes_write', 'hash-a', 2, 'revoked-ciphertext-fixture'))
+        self.assertIsNone(self.execute('notes_write', 'hash-a', 2, 'revoked-ciphertext-fixture', None))
         self.assertIsNone(self.execute('notes_read', 'hash-a', 2))
+
+    def test_notes_reset_replaces_pre_migration_row_and_replay_cannot_replace_new_write(self):
+        self.durable_fixture()
+        epoch = 'a' * 22
+        fingerprint = 'b' * 43
+        with closing(sqlite3.connect(self.path)) as connection, connection:
+            # An upgraded deployment can already have a 0.1.7 dataset.
+            connection.execute("INSERT INTO hub_notes (owner_hash, revision, ciphertext) VALUES (?, ?, ?)",
+                               ('owner-a', 9, 'pre-migration-ciphertext-fixture'))
+        self.assertIsNone(self.execute('notes_reset', 'hash-b', 9, 'replacement-ciphertext-fixture', epoch, fingerprint))
+        self.assertEqual(self.execute('notes_reset', 'hash-a', 9, 'replacement-ciphertext-fixture', epoch, fingerprint),
+                         {'revision': 10})
+        self.assertIsNone(self.execute('notes_write', 'hash-a2', 10, 'legacy-ciphertext-fixture', None))
+        self.assertEqual(self.execute('notes_write', 'hash-a2', 10, 'peer-update-ciphertext-fixture', epoch), {'revision': 11})
+        self.assertIsNone(self.execute('notes_reset', 'hash-a', 9, 'replacement-ciphertext-fixture', epoch, fingerprint))
+        self.assertEqual(self.execute('notes_reset_receipt', 'hash-a2', epoch, 9, fingerprint), {'reset_revision': 10})
+        self.assertIsNone(self.execute('notes_reset_receipt', 'hash-b', epoch, 9, fingerprint))
+        self.assertIsNone(self.execute('notes_reset_receipt', 'hash-a', epoch, 9, 'c' * 43))
+        self.assertEqual(self.execute('notes_read', 'hash-a', 10),
+                         {'revision': 11, 'ciphertext': 'peer-update-ciphertext-fixture', 'key_epoch': epoch})
 
 
 if __name__ == '__main__':

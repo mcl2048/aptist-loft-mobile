@@ -480,14 +480,14 @@ checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
 
 [[package]]
 name = "loft-bindgen"
-version = "0.1.7"
+version = "0.1.8"
 dependencies = [
  "uniffi",
 ]
 
 [[package]]
 name = "loft-core"
-version = "0.1.7"
+version = "0.1.8"
 dependencies = [
  "argon2",
  "base64 0.22.1",
@@ -504,7 +504,7 @@ dependencies = [
 
 [[package]]
 name = "loft-ffi"
-version = "0.1.7"
+version = "0.1.8"
 dependencies = [
  "base64 0.22.1",
  "loft-core",
@@ -519,7 +519,7 @@ dependencies = [
 
 [[package]]
 name = "loft-storage"
-version = "0.1.7"
+version = "0.1.8"
 dependencies = [
  "loft-core",
  "rusqlite",

@@ -49,7 +49,10 @@ class LoftRuntimeOwner private constructor(context: Context) {
     private val hub = HubControl { core -> broadcast(capture(core)) }
     private val protection = ProtectionControl()
     private val notesSync = NotesSyncControl(::notesSyncRoute, ::notifyNotesSync)
-    private val vault = VaultControl { core -> broadcast(capture(core)) }
+    private val vault = VaultControl(
+        unavailable = { core -> broadcast(capture(core)) },
+        onIdentityChanged = { notifyNotesSync(0, "session_changed") },
+    )
     private val starts = executor(1)
     private val events = executor(1)
     private val priority = executor(1)
@@ -211,9 +214,9 @@ class LoftRuntimeOwner private constructor(context: Context) {
         }) notesSync.reject(work, "busy")
     }
 
-    private fun notifyNotesSync(generation: Long, signedOut: Boolean) {
+    private fun notifyNotesSync(generation: Long, status: String) {
         observerTargets().forEach { observer ->
-            try { observer.onNotesSync(generation, signedOut) }
+            try { observer.onNotesSync(generation, status) }
             catch (_: RemoteException) { observers.unregister(observer) }
         }
     }
